@@ -1,427 +1,333 @@
 package app;
 
+import app.model.*;
+import app.service.TransacaoService;
+import app.view.TransacaoDetalheView;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import utils.RelatorioHelper;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main extends Application {
-    /**
-     * @param tipo      "Entrada" ou "Saída"
-     * @param valor     Valor digitado pelo usuário
-     * @param categoria "Salário", "Aluguel", etc.
-     * @param meta      Nome da meta
-     */
-    public record Transacao(String tipo, double valor, String categoria, String meta) {
 
-        @Override
-        public String toString() {
-            if (meta != null && !meta.isEmpty()) {
-                return tipo + " - R$ " + String.format("%.2f", valor)
-                        + " (" + categoria + " → Meta: " + meta + ")";
-            }
-            return tipo + " - R$ " + String.format("%.2f", valor) + " (" + categoria + ")";
-        }
-    }
-
-    static class Meta {
-        private final String nome;
-        private final Double valorAlvo;
-        private double valorAtual;
-
-        public Meta(String nome, Double valorAlvo) {
-            this.nome = nome;
-            this.valorAlvo = valorAlvo;
-            this.valorAtual = 0.0;
-        }
-
-        public String getNome() {
-            return nome;
-        }
-
-        public boolean possuiAlvo() {
-            return valorAlvo != null;
-        }
-
-        public boolean estaAlcancada() {
-            return possuiAlvo() && valorAtual >= valorAlvo;
-        }
-
-        public double restanteParaAlvo() {
-            if (!possuiAlvo()) return Double.MAX_VALUE;
-            return Math.max(valorAlvo - valorAtual, 0);
-        }
-
-        public void adicionarValor(double v) {
-            valorAtual += v;
-        }
-
-        public double progresso() {
-            if (valorAlvo == null || valorAlvo == 0) return 0;
-            return Math.min(valorAtual / valorAlvo, 1.0);
-        }
-
-        @Override
-        public String toString() {
-            if (!possuiAlvo()) {
-                return "R$ " + String.format("%.2f", valorAtual);
-            }
-            return "R$ " + String.format("%.2f", valorAtual)
-                    + " / R$ " + String.format("%.2f", valorAlvo);
-        }
-    }
-
-    private static final String ARQUIVO = "transacoes.txt";
-    private static final String ARQUIVO_METAS = "metas.txt";
     private final List<Transacao> transacoes = new ArrayList<>();
     private final List<Meta> metas = new ArrayList<>();
-    private final ListView<String> listaTransacoes = new ListView<>();
+
+    private TransacaoService service;
+
+    private final ListView<Transacao> listaTransacoes = new ListView<>();
     private final VBox painelMetas = new VBox(10);
-    private final Label lblSaldo = new Label("Saldo: R$ 0,00");
+
+    private final Label lblSaldo = new Label();
+    private final Label lblMediaMensal = new Label();
+    private final Label lblMediaSemanal = new Label();
+
+    private final NumberFormat nf = NumberFormat.getCurrencyInstance();
 
     @Override
     public void start(Stage stage) {
-        carregarMetas();
-        carregarTransacoes();
-        atualizarRelatorio();
 
-        Button btnNova = new Button("Nova Transação");
-        Button btnMeta = new Button("Nova Meta");
+        service = new TransacaoService(transacoes, metas);
 
-        btnNova.setOnAction(_ -> NovaTransacao());
-        btnMeta.setOnAction(_ -> NovaMeta());
+        Button btnNovaTransacao = new Button("Nova Transação");
+        Button btnNovaMeta = new Button("Nova Meta");
+        Button btnExcluirTransacao = new Button("Excluir Transação");
 
-        HBox botoes = new HBox(10, btnNova, btnMeta);
+        btnNovaTransacao.setOnAction(_ -> novaTransacao());
+        btnNovaMeta.setOnAction(_ -> novaMeta());
+        btnExcluirTransacao.setOnAction(_ -> excluirTransacao());
+
+            listaTransacoes.setOnMouseClicked(e -> {
+                if (e.getClickCount() == 2) {
+                    Transacao t = listaTransacoes.getSelectionModel().getSelectedItem();
+                    if (t != null) {
+                        TransacaoDetalheView.abrir(t);
+                        atualizarUI();
+                    }
+                }
+            });
+
+        listaTransacoes.setCellFactory(_ -> new ListCell<>() {
+
+            @Override
+            protected void updateItem(Transacao t, boolean empty) {
+                super.updateItem(t, empty);
+
+                if (empty || t == null) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+
+                String valor = nf.format(t.getValorCentavos() / 100.0);
+
+                String titulo = t.getNome().isBlank()
+                        ? t.getCategoria().name()
+                        : t.getNome();
+
+                String meta = t.getMetaNome().isBlank()
+                        ? ""
+                        : " → Meta: " + t.getMetaNome();
+
+                String data = t.getDataHora()
+                        .toLocalDate()
+                        .toString();
+
+                setText(
+                        titulo + "\n" +
+                                valor + meta + "\n" +
+                                data
+                );
+            }
+        });
+
 
         VBox layout = new VBox(
                 10,
-                botoes,
-                new Label("Metas"), painelMetas,
-                new Label("Transações"), listaTransacoes,
-                lblSaldo
+                new HBox(10, btnNovaTransacao, btnNovaMeta, btnExcluirTransacao),
+                lblSaldo,
+                lblMediaMensal,
+                lblMediaSemanal,
+                new Label("Metas"),
+                painelMetas,
+                new Label("Transações"),
+                listaTransacoes
         );
 
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #e0efda; -fx-font-size: 14px;");
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setStyle("-fx-padding:20;");
 
         atualizarUI();
 
-        Scene scene = new Scene(layout, 500, 650);
+        stage.setScene(new Scene(layout, 640, 720));
         stage.setTitle("Aplicativo de Finanças");
-        stage.getIcons().add(new Image("file:icon.png"));
-        stage.setScene(scene);
         stage.show();
     }
 
-    private void NovaMeta() { // Referente ao botão de nova meta
-        Stage janela = new Stage();
+    private void novaTransacao() {
 
-        TextField txtNome = new TextField();
-        TextField txtAlvo = new TextField();
+        Stage stage = new Stage();
 
-        Button salvar = BotaoSalvarMeta(txtNome, txtAlvo, janela);
+        ComboBox<TipoTransacao> cbTipo = new ComboBox<>();
+        cbTipo.getItems().addAll(TipoTransacao.values());
 
-        VBox layout = new VBox(
-                10,
-                new Label("Nome da Meta"), txtNome,
-                new Label("Valor Alvo"), txtAlvo,
-                salvar
-        );
-
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #e0efda; -fx-text-fill: red;");
-        janela.setScene(new Scene(layout, 300, 250));
-        janela.show();
-    }
-
-    private Button BotaoSalvarMeta(TextField txtNome, TextField txtAlvo, Stage janela) {
-        Button salvar = new Button("Salvar");
-
-        salvar.setOnAction(_ -> {
-            try {
-                String nome = txtNome.getText();
-                Double alvo = txtAlvo.getText().isEmpty()
-                        ? null
-                        : Double.parseDouble(txtAlvo.getText());
-
-                metas.add(new Meta(nome, alvo));
-                atualizarUI();
-                janela.close();
-            } catch (Exception ex) {
-                new Alert(Alert.AlertType.ERROR, "Dados inválidos").showAndWait();
-            }
-        });
-        return salvar;
-    }
-
-    public void NovaTransacao() { // Referente ao botão de nova transação
-        Stage janela = new Stage();
-
-        ComboBox<String> cbTipo = new ComboBox<>(); // Caixinha de tipo e valores
-        cbTipo.getItems().addAll("Entrada", "Saída");
-
-        ComboBox<String> cbCategoria = new ComboBox<>(); // Caixinha categoria
-
-        ComboBox<Meta> cbMetas = new ComboBox<>(); // Caixinha de metas
-
-        cbMetas.getItems().addAll(metas);
-        cbMetas.setCellFactory(_ -> new ListCell<>() {
-            @Override
-            protected void updateItem(Meta meta, boolean empty) {
-                super.updateItem(meta, empty);
-
-                if (empty || meta == null) {
-                    setText(null);
-                } else {
-                    if (meta.possuiAlvo()) {
-                        setText(
-                                meta.getNome()
-                                        + ": R$ "
-                                        + String.format("%.2f", meta.valorAtual)
-                                        + " / R$ "
-                                        + String.format("%.2f", meta.valorAlvo)
-                        );
-                    } else {
-                        setText(
-                                meta.getNome()
-                                        + "  R$ "
-                                        + String.format("%.2f", meta.valorAtual)
-                        );
-                    }
-                }
-            }
-        });
-
-        cbMetas.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Meta meta, boolean empty) {
-                super.updateItem(meta, empty);
-
-                if (empty || meta == null) {
-                    setText(null);
-                } else {
-                    if (meta.possuiAlvo()) {
-                        setText(
-                                meta.getNome()
-                                        + " — R$ "
-                                        + String.format("%.2f", meta.valorAtual)
-                                        + " / R$ "
-                                        + String.format("%.2f", meta.valorAlvo)
-                        );
-                    } else {
-                        setText(
-                                meta.getNome()
-                                        + " R$ "
-                                        + String.format("%.2f", meta.valorAtual)
-                        );
-                    }
-                }
-            }
-        });
+        ComboBox<Categoria> cbCategoria = new ComboBox<>();
+        ComboBox<Meta> cbMeta = new ComboBox<>();
+        cbMeta.getItems().addAll(metas);
 
         TextField txtValor = new TextField();
+        TextField txtComentario = new TextField();
+        TextField txtTags = new TextField();
 
-        cbTipo.valueProperty().addListener((_, _, n) -> {
+        cbMeta.visibleProperty().bind(
+                cbCategoria.valueProperty().isEqualTo(Categoria.AdicionarMeta)
+                        .or(cbCategoria.valueProperty().isEqualTo(Categoria.RetirarMeta))
+        );
+        cbMeta.managedProperty().bind(cbMeta.visibleProperty());
+
+        cbTipo.valueProperty().addListener((_, _, tipo) -> {
             cbCategoria.getItems().clear();
-            if ("Entrada".equals(n)) {
-                cbCategoria.getItems().addAll("Salário", "Empréstimo", "Adicionar à Meta", "Outros");
-            } else if ("Saída".equals(n)) {
-                cbCategoria.getItems().addAll("Aluguel", "Alimentação", "Internet",
-                        "Conta de água", "Conta de luz", "Compras", "Outros");
+            if (tipo == TipoTransacao.Entrada) {
+                cbCategoria.getItems().addAll(
+                        Categoria.Salario,
+                        Categoria.Emprestimo,
+                        Categoria.AdicionarMeta,
+                        Categoria.Outros
+                );
+            } else {
+                cbCategoria.getItems().addAll(
+                        Categoria.Aluguel,
+                        Categoria.Alimentacao,
+                        Categoria.Internet,
+                        Categoria.Agua,
+                        Categoria.Luz,
+                        Categoria.Compras,
+                        Categoria.RetirarMeta,
+                        Categoria.Outros
+                );
             }
         });
+
+        DatePicker datePicker = new DatePicker(LocalDate.now());
+
+        Spinner<Integer> horaSpinner =
+                new Spinner<>(0, 23, LocalTime.now().getHour());
+        Spinner<Integer> minutoSpinner =
+                new Spinner<>(0, 59, LocalTime.now().getMinute());
+
+        HBox horaBox = new HBox(5,
+                new Label("Hora"),
+                horaSpinner,
+                new Label("Min"),
+                minutoSpinner
+        );
+
 
         Button salvar = new Button("Salvar");
-
         salvar.setOnAction(_ -> {
             try {
-                String tipo = cbTipo.getValue();
-                String categoria = cbCategoria.getValue();
-                double valor = Double.parseDouble(txtValor.getText());
 
-                Meta metaSelecionada = cbMetas.getValue();
-                String nomeMeta = metaSelecionada != null ? metaSelecionada.getNome() : "";
-
-                if ("Entrada".equals(tipo) && "Adicionar à Meta".equals(categoria)) {
-
-                    if (metaSelecionada == null) {
-                        throw new IllegalArgumentException("Selecione uma meta");
-                    }
-
-                    if (metaSelecionada.estaAlcancada()) {
-                        new Alert(Alert.AlertType.INFORMATION, "Meta alcançada").showAndWait();
-                        return;
-                    }
-
-                    double saldoAtual = calcularSaldoAtual();
-
-                    double limiteSaldo = Math.min(valor, saldoAtual);
-                    if (limiteSaldo <= 0) {
-                        new Alert(Alert.AlertType.WARNING, "Saldo insuficiente").showAndWait();
-                        return;
-                    }
-
-                    double limiteMeta = Math.min(
-                            limiteSaldo,
-                            metaSelecionada.restanteParaAlvo()
-                    );
-
-                    if (limiteMeta <= 0) {
-                        new Alert(Alert.AlertType.INFORMATION, "Meta alcançada").showAndWait();
-                        return;
-                    }
-
-                    metaSelecionada.adicionarValor(limiteMeta);
-
-                    transacoes.add(
-                            new Transacao("Saída", limiteMeta, "Adicionar à Meta", nomeMeta)
-                    );
-
-                } else {
-                    transacoes.add(new Transacao(tipo, valor, categoria, nomeMeta));
+                if (cbTipo.getValue() == null || cbCategoria.getValue() == null) {
+                    alerta("Selecione tipo e categoria");
+                    return;
                 }
 
-                salvarTransacoes();
-                salvarMetas();
-                atualizarUI();
-                atualizarRelatorio();
-                janela.close();
+                if (txtValor.getText().isBlank()) {
+                    alerta("Informe um valor");
+                    return;
+                }
 
-            } catch (Exception ex) {
-                new Alert(Alert.AlertType.ERROR, "Dados inválidos").showAndWait();
+                BigDecimal valor = new BigDecimal(
+                        txtValor.getText().replace(",", ".")
+                );
+
+                long centavos = valor
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100))
+                        .longValueExact();
+
+                Set<String> tags = txtTags.getText().isBlank()
+                        ? Set.of()
+                        : Arrays.stream(txtTags.getText().split(","))
+                        .map(String::trim)
+                        .filter( s -> !s.isEmpty())
+                        .collect(Collectors.toSet());
+
+                LocalDate data = datePicker.getValue();
+                if (data == null) {
+                    alerta("Selecione uma data");
+                    return;
+                }
+
+                LocalDateTime dataHora = data.atTime(
+                        horaSpinner.getValue(),
+                        minutoSpinner.getValue()
+                );
+
+                service.registrar(
+                        cbTipo.getValue(),
+                        cbCategoria.getValue(),
+                        centavos,
+                        cbMeta.getValue(),
+                        txtComentario.getText(),
+                        tags,
+                        dataHora
+                );
+
+                atualizarUI();
+                stage.close();
+
+            } catch (Exception e) {
+                alerta(e.getMessage());
             }
         });
 
-        VBox layout = new VBox(
-                10,
+
+        VBox layout = new VBox(10,
                 new Label("Tipo"), cbTipo,
                 new Label("Valor"), txtValor,
                 new Label("Categoria"), cbCategoria,
-                new Label("Meta"), cbMetas,
+                new Label("Meta"), cbMeta,
+                new Label("Comentário"), txtComentario,
+                new Label("Tags (separadas por vírgula)"), txtTags,
                 salvar
         );
 
-        layout.setStyle("-fx-padding: 20;");
-        janela.setScene(new Scene(layout, 300, 350));
-        janela.show();
+        layout.setStyle("-fx-padding:20;");
+        stage.setScene(new Scene(layout, 380, 520));
+        stage.show();
     }
 
-    private void atualizarRelatorio() {
-        listaTransacoes.getItems().clear();
-        for (Transacao t : transacoes) {
-            listaTransacoes.getItems().add(t.toString());
+    private void novaMeta() {
+
+        Stage s = new Stage();
+
+        TextField nome = new TextField();
+        TextField alvo = new TextField();
+
+        Button salvar = new Button("Salvar");
+        salvar.setOnAction(_ -> {
+            try {
+                Long alvoCentavos = alvo.getText().isBlank()
+                        ? null
+                        : Math.round(Double.parseDouble(alvo.getText()) * 100);
+
+                metas.add(new Meta(nome.getText(), alvoCentavos));
+                atualizarUI();
+                s.close();
+
+            } catch (Exception e) {
+                alerta("Dados inválidos");
+            }
+        });
+
+        s.setScene(new Scene(new VBox(10,
+                new Label("Nome da Meta"), nome,
+                new Label("Valor Alvo"), alvo,
+                salvar
+        ), 300, 260));
+        s.show();
+    }
+
+    private void excluirTransacao() {
+        int index = listaTransacoes.getSelectionModel().getSelectedIndex();
+        if (index < 0) {
+            alerta("Selecione uma transação");
+            return;
         }
-        double saldo = RelatorioHelper.calcularSaldo(transacoes);
-        lblSaldo.setText("Saldo: R$ " + String.format("%.2f", saldo));
+        service.excluirTransacao(index);
+        atualizarUI();
     }
 
     private void atualizarUI() {
-        listaTransacoes.getItems().clear();
-        for (Transacao t : transacoes) {
-            listaTransacoes.getItems().add(t.toString());
-        }
+
+        listaTransacoes.getItems().setAll(transacoes);
 
         painelMetas.getChildren().clear();
         for (Meta m : metas) {
+
             Label nome = new Label(m.getNome());
-            nome.setMaxWidth(Double.MAX_VALUE); // nome.set para centralizar o título
-            nome.setAlignment(Pos.CENTER);
-            Label valor = new Label(m.toString());
-            valor.setMaxWidth(Double.MAX_VALUE); // valor.set para centralizar o valor R$
-            valor.setAlignment(Pos.CENTER);
+            Label valor = new Label(nf.format(m.getAtualCentavos() / 100.0));
 
             ProgressBar pb = new ProgressBar(m.progresso());
+            pb.setMaxWidth(Double.MAX_VALUE);
 
-            VBox card = new VBox(5, nome, valor, pb);
-            card.setStyle("""
-                    -fx-padding: 10;
-                    -fx-background-color: #dddddd;
-                    -fx-background-radius: 10;
-                    """);
+            Button excluir = new Button("Excluir");
+            excluir.setOnAction(_ -> {
+                service.excluirMeta(m);
+                atualizarUI();
+            });
+
+            VBox card = new VBox(6, nome, valor, pb, excluir);
+            card.setStyle("-fx-padding:10; -fx-background-color:#ddd; -fx-background-radius:10;");
 
             painelMetas.getChildren().add(card);
         }
 
-        double saldo = transacoes.stream()
-                .mapToDouble(t -> "Entrada".equals(t.tipo()) ? t.valor() : -t.valor())
-                .sum();
+        lblSaldo.setText("Saldo disponível: " +
+                nf.format(service.calcularSaldoDisponivelCentavos() / 100.0));
 
-        lblSaldo.setText("Saldo: R$ " + String.format("%.2f", saldo));
+        lblMediaMensal.setText("Gasto médio mensal: " +
+                nf.format(service.gastoMedioMensal()));
+
+        lblMediaSemanal.setText("Gasto médio semanal: " +
+                nf.format(service.gastoMedioSemanal()));
     }
 
-    private void carregarTransacoes() { // Carrega o txt "transacoes"
-        File arq = new File(ARQUIVO);
-        if (!arq.exists()) return;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(arq))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] p = linha.split(";");
-                transacoes.add(new Transacao(
-                        p[0],
-                        Double.parseDouble(p[1]),
-                        p[2],
-                        p.length > 3 ? p[3] : ""
-                ));
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    private void salvarTransacoes() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(ARQUIVO))) {
-            for (Transacao t : transacoes) {
-                pw.println(t.tipo() + ";" + t.valor() + ";" + t.categoria() + ";" + t.meta());
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    private void salvarMetas() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(ARQUIVO_METAS))) {
-            for (Meta m : metas) {
-                pw.println(m.getNome() + ";" + (m.valorAlvo == null ? "null" : m.valorAlvo) + ";" + m.valorAtual);
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    private void carregarMetas() {
-        File arq = new File(ARQUIVO_METAS);
-        if (!arq.exists()) return;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(arq))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] p = linha.split(";");
-                Double alvo = "null".equals(p[1]) ? null : Double.parseDouble(p[1]);
-                Meta m = new Meta(p[0], alvo);
-                m.valorAtual = Double.parseDouble(p[2]);
-                metas.add(m);
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    private double calcularSaldoAtual() {
-        double saldo = 0;
-
-        for (Transacao t : transacoes) {
-            if ("Entrada".equals(t.tipo())) {
-                saldo += t.valor();
-            } else {
-                saldo -= t.valor();
-            }
-        }
-
-        return saldo;
+    private void alerta(String msg) {
+        new Alert(Alert.AlertType.WARNING, msg).showAndWait();
     }
 
     public static void main(String[] args) {
