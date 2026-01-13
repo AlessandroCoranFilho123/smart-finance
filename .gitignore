@@ -1,3 +1,3 @@
-transacoes.txt
-metas.txt
 out/
+data/metas.dat
+data/transacoes.dat

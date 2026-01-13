@@ -1,0 +1,126 @@
+.root {
+    -fx-font-family: "Segoe UI", "Inter", Arial;
+    -fx-background-color: #d8dcff; /* Cor de fundo do app */
+}
+
+.label { /* Cor dos textos card meta*/
+    -fx-text-fill: #06070e;
+    -fx-font-size: 13px;
+}
+
+.label.title { /* Saldo disponível */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.label.subtitle { /* "Saldo disponível" e "Metas" */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 4 0;
+}
+
+.text-field,
+.combo-box,
+.spinner {
+    -fx-background-color: #020617;
+    -fx-text-fill: #e5e7eb;
+    -fx-border-color: #334155;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.text-field:focused,
+.combo-box:focused,
+.spinner:focused {
+    -fx-border-color: #4a69bd;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+
+.button { /* Botões de nova transação e nova meta */
+    -fx-background-color: #38bdf8;
+    -fx-text-fill: #06070e;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #0ea5e9;
+}
+
+.button:pressed {
+    -fx-background-color: #19647e;
+}
+
+.button.danger { /* Botão excluir transação */
+    -fx-background-color: #ed254e;
+    -fx-text-fill: #ffffff;
+}
+
+.button.danger:hover {
+    -fx-background-color: #d63230;
+}
+
+.meta-card { /* Card da meta */
+    -fx-background-color: #cfd8ff;
+    -fx-padding: 14;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #cad0fa;
+}
+
+.meta-nome {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.meta-valor {
+    -fx-text-fill: #57606f;
+}
+
+.list-view { /* Lista de transações*/
+    -fx-background-color: #eee5e5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 5;
+}
+
+.list-cell {
+    -fx-padding: 10;
+    -fx-border-color: transparent transparent #ecf0f1 transparent;
+}
+
+.list-cell:selected {
+    -fx-background-color: #dff0ff;
+    -fx-text-fill: #1e3799;
+}
+
+.progress-bar {
+    -fx-accent: #4a69bd;
+}
+
+.progress-bar .track {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 6;
+}
+
+.section {
+    -fx-spacing: 10;
+    -fx-padding: 10 0;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+

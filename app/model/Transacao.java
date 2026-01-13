@@ -1,17 +1,19 @@
 package app.model;
 
-import java.time.LocalDateTime;
+import java.io.Serial;
 import java.util.Set;
+import java.io.Serializable;
 
-public class Transacao {
+public class Transacao implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final TipoTransacao tipo;
     private final Categoria categoria;
     private final long valorCentavos;
     private final String metaNome;
-    private final String comentario;
+    private String comentario;
     private final Set<String> tags;
-    private LocalDateTime dataHora;
     private final String nome;
 
     public Transacao(
@@ -21,7 +23,6 @@ public class Transacao {
             String metaNome,
             String comentario,
             Set<String> tags,
-            LocalDateTime dataHora,
             String nome
     ) {
         this.tipo = tipo;
@@ -30,7 +31,6 @@ public class Transacao {
         this.metaNome = metaNome == null ? "" : metaNome;
         this.comentario = comentario == null ? "" : comentario;
         this.tags = tags == null ? Set.of() : tags;
-        this.dataHora = dataHora == null ? LocalDateTime.now() : dataHora;
         this.nome = nome == null ? "" : nome;
     }
 
@@ -58,10 +58,6 @@ public class Transacao {
         return tags;
     }
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
     public String getNome() {
         return nome;
     }
@@ -70,9 +66,10 @@ public class Transacao {
         return !metaNome.isBlank();
     }
 
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
+    public void setComentario(String comentario) {
+        this.comentario = comentario == null ? "" : comentario;
     }
 }
+
 
 

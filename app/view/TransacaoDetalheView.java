@@ -10,19 +10,14 @@ import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class TransacaoDetalheView {
 
     private static final NumberFormat nf =
             NumberFormat.getCurrencyInstance();
 
-    public static void abrir(Transacao t) {
+    public static void abrir(Transacao t, Runnable onSave) {
 
         Stage stage = new Stage();
 
@@ -57,54 +52,13 @@ public class TransacaoDetalheView {
                         : String.join(", ", t.getTags())
         );
 
-        // ==== DATA EDITÁVEL ====
-        Label lblData = new Label("Data:");
-
-        DatePicker datePicker =
-                new DatePicker(t.getDataHora().toLocalDate());
-
-        Spinner<Integer> horaSpinner =
-                new Spinner<>(0, 23, t.getDataHora().getHour());
-
-        Spinner<Integer> minutoSpinner =
-                new Spinner<>(0, 59, t.getDataHora().getMinute());
-
-        HBox horaBox = new HBox(5,
-                new Label("Hora"), horaSpinner,
-                new Label("Min"), minutoSpinner
-        );
-
-        Button btnSalvarData = new Button("Salvar data");
-
-        btnSalvarData.setOnAction(_ -> {
-
-            LocalDate data = datePicker.getValue();
-            if (data == null) {
-                alerta("Selecione uma data válida");
-                return;
-            }
-
-            LocalTime hora = LocalTime.of(
-                    horaSpinner.getValue(),
-                    minutoSpinner.getValue()
-            );
-
-            LocalDateTime novaData = data.atTime(hora);
-
-            t.setDataHora(novaData);
-            stage.close();
-        });
-
         VBox layout = new VBox(10,
                 lblNome, txtNome,
                 lblValor, txtValor,
                 lblCategoria, txtCategoria,
                 lblMeta, txtMeta,
                 lblComentario, txtComentario,
-                lblTags, txtTags,
-                lblData, datePicker,
-                horaBox,
-                btnSalvarData
+                lblTags, txtTags
         );
 
         layout.setPadding(new Insets(20));

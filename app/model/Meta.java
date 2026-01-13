@@ -1,6 +1,12 @@
 package app.model;
 
-public class Meta {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Meta implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String nome;
     private final Long alvoCentavos;
@@ -10,6 +16,11 @@ public class Meta {
         this.nome = nome;
         this.alvoCentavos = alvoCentavos;
         this.atualCentavos = 0;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 
     public String getNome() {
@@ -25,11 +36,11 @@ public class Meta {
     }
 
     public boolean possuiAlvo() {
-        return alvoCentavos != null;
+        return alvoCentavos == null;
     }
 
     public long restanteParaAlvo() {
-        if (!possuiAlvo()) return Long.MAX_VALUE;
+        if (possuiAlvo()) return Long.MAX_VALUE;
         return Math.max(alvoCentavos - atualCentavos, 0);
     }
 
@@ -44,7 +55,7 @@ public class Meta {
     }
 
     public double progresso() {
-        if (!possuiAlvo() || alvoCentavos == 0) return 0;
+        if (possuiAlvo() || alvoCentavos == 0) return 0;
         return Math.min((double) atualCentavos / alvoCentavos, 1.0);
     }
 }
