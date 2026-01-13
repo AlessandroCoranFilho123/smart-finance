@@ -2,9 +2,6 @@ package app.service;
 
 import app.model.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.WeekFields;
 import java.util.*;
 
 public class TransacaoService {
@@ -23,10 +20,8 @@ public class TransacaoService {
             long valorCentavos,
             Meta meta,
             String comentario,
-            Set<String> tags,
-            LocalDateTime dataHora
+            Set<String> tags
     ) {
-
         if (valorCentavos <= 0)
             throw new IllegalArgumentException("Valor inválido");
 
@@ -55,7 +50,6 @@ public class TransacaoService {
                     meta.getNome(),
                     comentario,
                     tags,
-                    dataHora,
                     "Aplicação em meta"
             ));
             return;
@@ -74,7 +68,6 @@ public class TransacaoService {
                     meta.getNome(),
                     comentario,
                     tags,
-                    dataHora,
                     "Resgate de meta"
             ));
             return;
@@ -87,7 +80,6 @@ public class TransacaoService {
                 "",
                 comentario,
                 tags,
-                dataHora,
                 categoria.name()
         ));
     }
@@ -119,9 +111,8 @@ public class TransacaoService {
                     Categoria.Outros,
                     devolvido,
                     "",
-                    "Exclusão de meta: " + meta.getNome(),
+                    "Exclusão da meta: " + meta.getNome(),
                     Set.of("ajuste"),
-                    LocalDateTime.now(),
                     "Devolução de meta"
             ));
         }
@@ -131,43 +122,11 @@ public class TransacaoService {
 
     public long calcularSaldoDisponivelCentavos() {
         return transacoes.stream()
-                .filter(t -> !t.temMeta())
                 .mapToLong(t ->
                         t.getTipo() == TipoTransacao.Entrada
                                 ? t.getValorCentavos()
                                 : -t.getValorCentavos()
                 ).sum();
-    }
-
-    public double gastoMedioMensal() {
-        return mediaPorPeriodo(true);
-    }
-
-    public double gastoMedioSemanal() {
-        return mediaPorPeriodo(false);
-    }
-
-    private double mediaPorPeriodo(boolean mensal) {
-
-        Map<Object, Long> mapa = new HashMap<>();
-
-        for (Transacao t : transacoes) {
-            if (t.getTipo() != TipoTransacao.Saida) continue;
-            if (t.temMeta()) continue;
-
-            LocalDate d = t.getDataHora().toLocalDate();
-
-            Object chave = mensal
-                    ? d.getYear() + "-" + d.getMonthValue()
-                    : d.get(WeekFields.ISO.weekOfWeekBasedYear());
-
-            mapa.merge(chave, t.getValorCentavos(), Long::sum);
-        }
-
-        return mapa.values().stream()
-                .mapToLong(v -> v)
-                .average()
-                .orElse(0) / 100.0;
     }
 
     private Meta encontrarMeta(String nome) {
@@ -176,4 +135,12 @@ public class TransacaoService {
                 .findFirst()
                 .orElse(null);
     }
+
+    public void editarComentario(Transacao transacao, String novoComentario) {
+        if (transacao == null)
+            throw new IllegalArgumentException("Transação inválida");
+
+        transacao.setComentario(novoComentario);
+    }
+
 }

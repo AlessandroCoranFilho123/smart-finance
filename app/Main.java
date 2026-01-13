@@ -1,10 +1,11 @@
 package app;
 
 import app.model.*;
+import app.service.PersistenciaService;
 import app.service.TransacaoService;
-import app.view.TransacaoDetalheView;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,9 +15,6 @@ import javafx.stage.Stage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,20 +22,17 @@ public class Main extends Application {
 
     private final List<Transacao> transacoes = new ArrayList<>();
     private final List<Meta> metas = new ArrayList<>();
-
     private TransacaoService service;
-
     private final ListView<Transacao> listaTransacoes = new ListView<>();
     private final VBox painelMetas = new VBox(10);
-
     private final Label lblSaldo = new Label();
-    private final Label lblMediaMensal = new Label();
-    private final Label lblMediaSemanal = new Label();
-
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
 
     @Override
     public void start(Stage stage) {
+
+        transacoes.addAll(PersistenciaService.carregarTransacoes());
+        metas.addAll(PersistenciaService.carregarMetas());
 
         service = new TransacaoService(transacoes, metas);
 
@@ -45,19 +40,85 @@ public class Main extends Application {
         Button btnNovaMeta = new Button("Nova Meta");
         Button btnExcluirTransacao = new Button("Excluir Transação");
 
+        btnExcluirTransacao.getStyleClass().add("danger");
+
         btnNovaTransacao.setOnAction(_ -> novaTransacao());
         btnNovaMeta.setOnAction(_ -> novaMeta());
         btnExcluirTransacao.setOnAction(_ -> excluirTransacao());
 
-            listaTransacoes.setOnMouseClicked(e -> {
-                if (e.getClickCount() == 2) {
-                    Transacao t = listaTransacoes.getSelectionModel().getSelectedItem();
-                    if (t != null) {
-                        TransacaoDetalheView.abrir(t);
+        HBox barraBotoes = new HBox(10,
+                btnNovaTransacao,
+                btnNovaMeta,
+                btnExcluirTransacao
+        );
+        barraBotoes.setAlignment(Pos.CENTER);
+
+        lblSaldo.getStyleClass().add("subtitle");
+
+        lblSaldo.setAlignment(Pos.CENTER);
+        lblSaldo.setMaxWidth(Double.MAX_VALUE);
+
+        VBox painelStatus = new VBox(6,
+                lblSaldo
+        );
+        painelStatus.setAlignment(Pos.CENTER);
+
+        listaTransacoes.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+
+                Transacao t = listaTransacoes.getSelectionModel().getSelectedItem();
+                if (t == null) return;
+
+                Label lblNome = new Label(t.getNome());
+                Label lblTipo = new Label("Tipo: " + t.getTipo());
+                Label lblCategoria = new Label("Categoria: " + t.getCategoria());
+                Label lblValor = new Label(
+                        "Valor: " + nf.format(t.getValorCentavos() / 100.0)
+                );
+                Label lblTags = new Label("Tags: " + t.getTags());
+
+                if (t.temMeta()) {
+                    lblCategoria.setText(
+                            lblCategoria.getText() + " (Meta: " + t.getMetaNome() + ")"
+                    );
+                }
+                lblNome.getStyleClass().add("title");
+
+                TextArea areaComentario = new TextArea(t.getComentario());
+                areaComentario.setWrapText(true);
+                areaComentario.setPrefRowCount(5);
+
+                VBox conteudo = new VBox(10,
+                        lblNome,
+                        lblTipo,
+                        lblCategoria,
+                        lblValor,
+                        lblTags,
+                        new Separator(),
+                        new Label("Comentário"),
+                        areaComentario
+                );
+                conteudo.setPadding(new Insets(10));
+
+                Dialog<ButtonType> dialog = new Dialog<>();
+                dialog.setTitle("Detalhes da Transação");
+                dialog.getDialogPane().setContent(conteudo);
+
+                dialog.getDialogPane().getButtonTypes().addAll(
+                        ButtonType.OK,
+                        ButtonType.CANCEL
+                );
+
+                dialog.showAndWait().ifPresent(bt -> {
+                    if (bt == ButtonType.OK) {
+
+                        service.editarComentario(t, areaComentario.getText());
+                        PersistenciaService.salvarTransacoes(transacoes);
                         atualizarUI();
                     }
-                }
-            });
+                });
+            }
+        });
 
         listaTransacoes.setCellFactory(_ -> new ListCell<>() {
 
@@ -81,38 +142,66 @@ public class Main extends Application {
                         ? ""
                         : " → Meta: " + t.getMetaNome();
 
-                String data = t.getDataHora()
-                        .toLocalDate()
-                        .toString();
 
                 setText(
                         titulo + "\n" +
-                                valor + meta + "\n" +
-                                data
+                                valor + meta +
+                                (t.getComentario().isBlank() ? "" : " " + t.getComentario())
                 );
+
             }
         });
 
-
-        VBox layout = new VBox(
-                10,
-                new HBox(10, btnNovaTransacao, btnNovaMeta, btnExcluirTransacao),
-                lblSaldo,
-                lblMediaMensal,
-                lblMediaSemanal,
-                new Label("Metas"),
-                painelMetas,
+        VBox secaoTransacoes = new VBox(6,
                 new Label("Transações"),
                 listaTransacoes
         );
+        secaoTransacoes.getStyleClass().add("section");
 
+        Label tituloMetas = new Label("Metas");
+        tituloMetas.getStyleClass().add("subtitle");
+
+        painelMetas.setSpacing(10);
+        ScrollPane scrollMetas = new ScrollPane(painelMetas);
+
+        scrollMetas.setFitToWidth(true);
+        scrollMetas.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollMetas.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        scrollMetas.setPrefHeight(305);
+        scrollMetas.setMaxHeight(300);
+
+        VBox secaoMetas = new VBox(6,
+                tituloMetas,
+                scrollMetas
+        );
+
+        secaoMetas.getStyleClass().add("section");
+
+
+
+
+        VBox layout = new VBox(14,
+                barraBotoes,
+                painelStatus,
+                secaoMetas,
+                secaoTransacoes
+        );
         layout.setAlignment(Pos.TOP_CENTER);
         layout.setStyle("-fx-padding:20;");
 
         atualizarUI();
 
-        stage.setScene(new Scene(layout, 640, 720));
+        Scene scene = new Scene(layout, 1600, 900);
+        stage.setMaximized(true);
+        scene.getStylesheets().add(
+                Objects.requireNonNull(getClass()
+                                .getResource("/app/style/app.css"))
+                        .toExternalForm()
+        );
+
         stage.setTitle("Aplicativo de Finanças");
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -160,21 +249,6 @@ public class Main extends Application {
             }
         });
 
-        DatePicker datePicker = new DatePicker(LocalDate.now());
-
-        Spinner<Integer> horaSpinner =
-                new Spinner<>(0, 23, LocalTime.now().getHour());
-        Spinner<Integer> minutoSpinner =
-                new Spinner<>(0, 59, LocalTime.now().getMinute());
-
-        HBox horaBox = new HBox(5,
-                new Label("Hora"),
-                horaSpinner,
-                new Label("Min"),
-                minutoSpinner
-        );
-
-
         Button salvar = new Button("Salvar");
         salvar.setOnAction(_ -> {
             try {
@@ -202,19 +276,8 @@ public class Main extends Application {
                         ? Set.of()
                         : Arrays.stream(txtTags.getText().split(","))
                         .map(String::trim)
-                        .filter( s -> !s.isEmpty())
+                        .filter(s -> !s.isEmpty())
                         .collect(Collectors.toSet());
-
-                LocalDate data = datePicker.getValue();
-                if (data == null) {
-                    alerta("Selecione uma data");
-                    return;
-                }
-
-                LocalDateTime dataHora = data.atTime(
-                        horaSpinner.getValue(),
-                        minutoSpinner.getValue()
-                );
 
                 service.registrar(
                         cbTipo.getValue(),
@@ -222,9 +285,11 @@ public class Main extends Application {
                         centavos,
                         cbMeta.getValue(),
                         txtComentario.getText(),
-                        tags,
-                        dataHora
+                        tags
                 );
+
+                PersistenciaService.salvarTransacoes(transacoes);
+                PersistenciaService.salvarMetas(metas);
 
                 atualizarUI();
                 stage.close();
@@ -233,7 +298,6 @@ public class Main extends Application {
                 alerta(e.getMessage());
             }
         });
-
 
         VBox layout = new VBox(10,
                 new Label("Tipo"), cbTipo,
@@ -265,6 +329,9 @@ public class Main extends Application {
                         : Math.round(Double.parseDouble(alvo.getText()) * 100);
 
                 metas.add(new Meta(nome.getText(), alvoCentavos));
+
+                PersistenciaService.salvarMetas(metas);
+
                 atualizarUI();
                 s.close();
 
@@ -288,6 +355,10 @@ public class Main extends Application {
             return;
         }
         service.excluirTransacao(index);
+
+        PersistenciaService.salvarTransacoes(transacoes);
+        PersistenciaService.salvarMetas(metas);
+
         atualizarUI();
     }
 
@@ -307,23 +378,22 @@ public class Main extends Application {
             Button excluir = new Button("Excluir");
             excluir.setOnAction(_ -> {
                 service.excluirMeta(m);
+
+                PersistenciaService.salvarMetas(metas);
+                PersistenciaService.salvarTransacoes(transacoes);
+
                 atualizarUI();
             });
 
+
             VBox card = new VBox(6, nome, valor, pb, excluir);
-            card.setStyle("-fx-padding:10; -fx-background-color:#ddd; -fx-background-radius:10;");
+            card.getStyleClass().add("meta-card");
 
             painelMetas.getChildren().add(card);
         }
 
         lblSaldo.setText("Saldo disponível: " +
                 nf.format(service.calcularSaldoDisponivelCentavos() / 100.0));
-
-        lblMediaMensal.setText("Gasto médio mensal: " +
-                nf.format(service.gastoMedioMensal()));
-
-        lblMediaSemanal.setText("Gasto médio semanal: " +
-                nf.format(service.gastoMedioSemanal()));
     }
 
     private void alerta(String msg) {
