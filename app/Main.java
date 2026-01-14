@@ -5,10 +5,12 @@ import app.service.PersistenciaService;
 import app.service.TransacaoService;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -23,9 +25,11 @@ public class Main extends Application {
     private final List<Transacao> transacoes = new ArrayList<>();
     private final List<Meta> metas = new ArrayList<>();
     private TransacaoService service;
+
     private final ListView<Transacao> listaTransacoes = new ListView<>();
-    private final VBox painelMetas = new VBox(10);
+    private final VBox painelMetas = new VBox(12);
     private final Label lblSaldo = new Label();
+
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
 
     @Override
@@ -36,173 +40,260 @@ public class Main extends Application {
 
         service = new TransacaoService(transacoes, metas);
 
+        BorderPane root = new BorderPane();
+        root.getStyleClass().add("root-pane");
+
+        root.setTop(criarHeader());
+        root.setLeft(criarPainelMetas());
+        root.setCenter(criarSecaoTransacoes());
+
+        atualizarUI();
+
+        Scene scene = new Scene(root, 1100, 650);
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        getClass().getResource("/app/style/app.css")
+                ).toExternalForm()
+        );
+
+        stage.setScene(scene);
+        stage.setTitle("Aplicativo de Finanças");
+        stage.getIcons().add(
+                new Image(
+                        Objects.requireNonNull(
+                                getClass().getResourceAsStream("/app/icons/app.png")
+                        )
+                )
+        );
+
+        stage.show();
+    }
+
+    private Node criarHeader() {
+
         Button btnNovaTransacao = new Button("Nova Transação");
         Button btnNovaMeta = new Button("Nova Meta");
-        Button btnExcluirTransacao = new Button("Excluir Transação");
+        Button btnExcluir = new Button("Excluir Transação");
 
-        btnExcluirTransacao.getStyleClass().add("danger");
+        btnNovaTransacao.getStyleClass().add("btn-primary");
+        btnNovaMeta.getStyleClass().add("btn-secondary");
+        btnExcluir.getStyleClass().add("btn-danger-header");
+        btnExcluir.getStyleClass().add("danger");
 
         btnNovaTransacao.setOnAction(_ -> novaTransacao());
         btnNovaMeta.setOnAction(_ -> novaMeta());
-        btnExcluirTransacao.setOnAction(_ -> excluirTransacao());
+        btnExcluir.setOnAction(_ -> excluirTransacao());
 
-        HBox barraBotoes = new HBox(10,
-                btnNovaTransacao,
-                btnNovaMeta,
-                btnExcluirTransacao
-        );
-        barraBotoes.setAlignment(Pos.CENTER);
+        HBox botoes = new HBox(10, btnNovaTransacao, btnNovaMeta, btnExcluir);
+        botoes.setAlignment(Pos.CENTER);
 
-        lblSaldo.getStyleClass().add("subtitle");
+        lblSaldo.getStyleClass().add("saldo-label");
+        lblSaldo.setTextAlignment(javafx.scene.text.TextAlignment.LEFT);
 
-        lblSaldo.setAlignment(Pos.CENTER);
-        lblSaldo.setMaxWidth(Double.MAX_VALUE);
+        GridPane header = new GridPane();
+        header.getStyleClass().add("header");
 
-        VBox painelStatus = new VBox(6,
-                lblSaldo
-        );
-        painelStatus.setAlignment(Pos.CENTER);
+        // 3 colunas: esquerda | centro | direita
+        ColumnConstraints colLeft = new ColumnConstraints();
+        colLeft.setHgrow(Priority.ALWAYS);
 
-        listaTransacoes.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
+        ColumnConstraints colCenter = new ColumnConstraints();
+        colCenter.setHgrow(Priority.NEVER);
 
-                Transacao t = listaTransacoes.getSelectionModel().getSelectedItem();
-                if (t == null) return;
+        ColumnConstraints colRight = new ColumnConstraints();
+        colRight.setHgrow(Priority.ALWAYS);
 
-                Label lblNome = new Label(t.getNome());
-                Label lblTipo = new Label("Tipo: " + t.getTipo());
-                Label lblCategoria = new Label("Categoria: " + t.getCategoria());
-                Label lblValor = new Label(
-                        "Valor: " + nf.format(t.getValorCentavos() / 100.0)
-                );
-                Label lblTags = new Label("Tags: " + t.getTags());
+        header.getColumnConstraints().addAll(colLeft, colCenter, colRight);
 
-                if (t.temMeta()) {
-                    lblCategoria.setText(
-                            lblCategoria.getText() + " (Meta: " + t.getMetaNome() + ")"
-                    );
-                }
-                lblNome.getStyleClass().add("title");
+        // adiciona elementos
+        header.add(lblSaldo, 0, 0);
+        header.add(botoes, 1, 0);
 
-                TextArea areaComentario = new TextArea(t.getComentario());
-                areaComentario.setWrapText(true);
-                areaComentario.setPrefRowCount(5);
+        // alinhamentos verticais
+        GridPane.setValignment(lblSaldo, VPos.CENTER);
+        GridPane.setValignment(botoes, VPos.CENTER);
 
-                VBox conteudo = new VBox(10,
-                        lblNome,
-                        lblTipo,
-                        lblCategoria,
-                        lblValor,
-                        lblTags,
-                        new Separator(),
-                        new Label("Comentário"),
-                        areaComentario
-                );
-                conteudo.setPadding(new Insets(10));
+        return header;
 
-                Dialog<ButtonType> dialog = new Dialog<>();
-                dialog.setTitle("Detalhes da Transação");
-                dialog.getDialogPane().setContent(conteudo);
+    }
 
-                dialog.getDialogPane().getButtonTypes().addAll(
-                        ButtonType.OK,
-                        ButtonType.CANCEL
-                );
+    private void abrirDetalhesTransacao(Transacao t) {
 
-                dialog.showAndWait().ifPresent(bt -> {
-                    if (bt == ButtonType.OK) {
+        Stage stage = new Stage();
+        stage.setTitle("Detalhes da Transação");
 
-                        service.editarComentario(t, areaComentario.getText());
-                        PersistenciaService.salvarTransacoes(transacoes);
-                        atualizarUI();
-                    }
-                });
-            }
+        Label nome = new Label("Nome: " +
+                (t.getNome().isBlank() ? "-" : t.getNome()));
+
+        Label tipo = new Label("Tipo: " + t.getTipo());
+        Label categoria = new Label("Categoria: " + t.getCategoria());
+        Label valor = new Label("Valor: " +
+                nf.format(t.getValorCentavos() / 100.0));
+
+        Label tags = new Label("Tags: " +
+                (t.getTags().isEmpty()
+                        ? "-"
+                        : String.join(", ", t.getTags())));
+
+        TextArea comentario = new TextArea(t.getComentario());
+        comentario.setWrapText(true);
+
+        Button salvar = new Button("Salvar Comentário");
+        salvar.setOnAction(_ -> {
+            t.setComentario(comentario.getText());
+            PersistenciaService.salvarTransacoes(transacoes);
+            atualizarUI();
+            stage.close();
         });
 
-        listaTransacoes.setCellFactory(_ -> new ListCell<>() {
+        VBox layout = new VBox(10,
+                nome,
+                tipo,
+                categoria,
+                valor,
+                tags,
+                new Label("Comentário"),
+                comentario,
+                salvar
+        );
+        layout.getStyleClass().add("dialog-form");
 
+        Scene scene = new Scene(layout, 420, 420);
+        stage.getIcons().add(
+                new Image(
+                        Objects.requireNonNull(
+                                getClass().getResourceAsStream("/app/icons/details.png")
+                        )
+                )
+        );
+        stage.setTitle("Detalhes da Transação");
+
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        getClass().getResource("/app/style/app.css")
+                ).toExternalForm()
+        );
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private Node criarSecaoTransacoes() {
+
+        listaTransacoes.setCellFactory(_ -> new ListCell<>() {
             @Override
             protected void updateItem(Transacao t, boolean empty) {
                 super.updateItem(t, empty);
 
                 if (empty || t == null) {
-                    setText(null);
                     setGraphic(null);
+                    setOnMouseClicked(null);
                     return;
                 }
 
-                String valor = nf.format(t.getValorCentavos() / 100.0);
-
-                String titulo = t.getNome().isBlank()
-                        ? t.getCategoria().name()
-                        : t.getNome();
-
-                String meta = t.getMetaNome().isBlank()
-                        ? ""
-                        : " → Meta: " + t.getMetaNome();
-
-
-                setText(
-                        titulo + "\n" +
-                                valor + meta +
-                                (t.getComentario().isBlank() ? "" : " " + t.getComentario())
+                Label titulo = new Label(
+                        t.getNome().isBlank()
+                                ? t.getCategoria().name()
+                                : t.getNome()
                 );
+                titulo.getStyleClass().add("transacao-titulo");
 
+                Label valor = new Label(
+                        nf.format(t.getValorCentavos() / 100.0)
+                );
+                valor.getStyleClass().add("transacao-valor");
+
+                String extraTexto =
+                        (t.getMetaNome().isBlank() ? "" : "Meta: " + t.getMetaNome()) +
+                                (t.getComentario().isBlank() ? "" : " • " + t.getComentario());
+
+                Label extra = new Label(extraTexto);
+                extra.getStyleClass().add("transacao-extra");
+
+                VBox box = new VBox(4, titulo, valor, extra);
+                box.getStyleClass().add("transacao-item");
+
+                setGraphic(box);
+
+                setOnMouseClicked(e -> {
+                    if (e.getClickCount() == 2 && !isEmpty()) {
+                        abrirDetalhesTransacao(t);
+                    }
+                });
             }
         });
 
-        VBox secaoTransacoes = new VBox(6,
-                new Label("Transações"),
-                listaTransacoes
+        Label titulo = new Label("Transações");
+        titulo.getStyleClass().add("section-title");
+        titulo.setMaxWidth(Double.MAX_VALUE);
+        titulo.setAlignment(Pos.CENTER);
+
+        VBox container = new VBox(8, titulo, listaTransacoes);
+        container.getStyleClass().add("section");
+
+        VBox.setVgrow(listaTransacoes, Priority.ALWAYS);
+        return container;
+    }
+
+    private Node criarPainelMetas() {
+
+        painelMetas.getStyleClass().add("metas-panel");
+        painelMetas.setFillWidth(true);
+        ScrollPane scroll = new ScrollPane(painelMetas);
+        scroll.setFitToWidth(true);
+        scroll.setPrefWidth(300);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        Label titulo = new Label("Metas");
+        titulo.getStyleClass().add("section-title");
+        titulo.setMaxWidth(Double.MAX_VALUE);
+        titulo.setAlignment(Pos.CENTER);
+
+        VBox container = new VBox(8, titulo, scroll);
+        container.getStyleClass().add("section");
+
+        return container;
+    }
+
+    private void atualizarUI() {
+
+        listaTransacoes.getItems().setAll(transacoes);
+        painelMetas.getChildren().clear();
+
+        for (Meta m : metas) {
+
+            Label nome = new Label(m.getNome());
+            nome.getStyleClass().add("meta-nome");
+
+            Label valor = new Label(
+                    nf.format(m.getAtualCentavos() / 100.0)
+            );
+            valor.getStyleClass().add("meta-valor");
+
+            ProgressBar pb = new ProgressBar(m.progresso());
+
+            Button excluir = new Button("Excluir");
+            excluir.getStyleClass().add("danger");
+            excluir.setOnAction(_ -> {
+                service.excluirMeta(m);
+                PersistenciaService.salvarMetas(metas);
+                PersistenciaService.salvarTransacoes(transacoes);
+                atualizarUI();
+            });
+
+            VBox card = new VBox(6, nome, valor, pb, excluir);
+            card.getStyleClass().add("meta-card");
+            card.setMaxWidth(Double.MAX_VALUE);
+
+            painelMetas.getChildren().add(card);
+        }
+
+        lblSaldo.setText(
+                "Saldo disponível:\n " +
+                        nf.format(service.calcularSaldoDisponivelCentavos() / 100.0)
         );
-        secaoTransacoes.getStyleClass().add("section");
-
-        Label tituloMetas = new Label("Metas");
-        tituloMetas.getStyleClass().add("subtitle");
-
-        painelMetas.setSpacing(10);
-        ScrollPane scrollMetas = new ScrollPane(painelMetas);
-
-        scrollMetas.setFitToWidth(true);
-        scrollMetas.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollMetas.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        scrollMetas.setPrefHeight(305);
-        scrollMetas.setMaxHeight(300);
-
-        VBox secaoMetas = new VBox(6,
-                tituloMetas,
-                scrollMetas
-        );
-
-        secaoMetas.getStyleClass().add("section");
-
-
-
-
-        VBox layout = new VBox(14,
-                barraBotoes,
-                painelStatus,
-                secaoMetas,
-                secaoTransacoes
-        );
-        layout.setAlignment(Pos.TOP_CENTER);
-        layout.setStyle("-fx-padding:20;");
-
-        atualizarUI();
-
-        Scene scene = new Scene(layout, 1600, 900);
-        stage.setMaximized(true);
-        scene.getStylesheets().add(
-                Objects.requireNonNull(getClass()
-                                .getResource("/app/style/app.css"))
-                        .toExternalForm()
-        );
-
-        stage.setTitle("Aplicativo de Finanças");
-        stage.setScene(scene);
-        stage.show();
+        lblSaldo.setAlignment(Pos.CENTER);
     }
 
     private void novaTransacao() {
@@ -308,9 +399,25 @@ public class Main extends Application {
                 new Label("Tags (separadas por vírgula)"), txtTags,
                 salvar
         );
+        layout.getStyleClass().add("dialog-form");
 
-        layout.setStyle("-fx-padding:20;");
-        stage.setScene(new Scene(layout, 380, 520));
+        Scene scene = new Scene(layout, 380, 520);
+        stage.getIcons().add(
+                new Image(
+                        Objects.requireNonNull(
+                                getClass().getResourceAsStream("/app/icons/transaction.png")
+                        )
+                )
+        );
+        stage.setTitle("Nova Transação");
+
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        getClass().getResource("/app/style/app.css")
+                ).toExternalForm()
+        );
+
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -329,7 +436,6 @@ public class Main extends Application {
                         : Math.round(Double.parseDouble(alvo.getText()) * 100);
 
                 metas.add(new Meta(nome.getText(), alvoCentavos));
-
                 PersistenciaService.salvarMetas(metas);
 
                 atualizarUI();
@@ -340,11 +446,30 @@ public class Main extends Application {
             }
         });
 
-        s.setScene(new Scene(new VBox(10,
+        VBox layout = new VBox(10,
                 new Label("Nome da Meta"), nome,
                 new Label("Valor Alvo"), alvo,
                 salvar
-        ), 300, 260));
+        );
+        layout.getStyleClass().add("dialog-form");
+
+        Scene scene = new Scene(layout, 300, 260);
+        s.getIcons().add(
+                new Image(
+                        Objects.requireNonNull(
+                                getClass().getResourceAsStream("/app/icons/meta.png")
+                        )
+                )
+        );
+        s.setTitle("Nova Meta");
+
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        getClass().getResource("/app/style/app.css")
+                ).toExternalForm()
+        );
+
+        s.setScene(scene);
         s.show();
     }
 
@@ -354,46 +479,12 @@ public class Main extends Application {
             alerta("Selecione uma transação");
             return;
         }
-        service.excluirTransacao(index);
 
+        service.excluirTransacao(index);
         PersistenciaService.salvarTransacoes(transacoes);
         PersistenciaService.salvarMetas(metas);
 
         atualizarUI();
-    }
-
-    private void atualizarUI() {
-
-        listaTransacoes.getItems().setAll(transacoes);
-
-        painelMetas.getChildren().clear();
-        for (Meta m : metas) {
-
-            Label nome = new Label(m.getNome());
-            Label valor = new Label(nf.format(m.getAtualCentavos() / 100.0));
-
-            ProgressBar pb = new ProgressBar(m.progresso());
-            pb.setMaxWidth(Double.MAX_VALUE);
-
-            Button excluir = new Button("Excluir");
-            excluir.setOnAction(_ -> {
-                service.excluirMeta(m);
-
-                PersistenciaService.salvarMetas(metas);
-                PersistenciaService.salvarTransacoes(transacoes);
-
-                atualizarUI();
-            });
-
-
-            VBox card = new VBox(6, nome, valor, pb, excluir);
-            card.getStyleClass().add("meta-card");
-
-            painelMetas.getChildren().add(card);
-        }
-
-        lblSaldo.setText("Saldo disponível: " +
-                nf.format(service.calcularSaldoDisponivelCentavos() / 100.0));
     }
 
     private void alerta(String msg) {

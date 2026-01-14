@@ -1,29 +1,58 @@
-.root {
+.root-pane {
     -fx-font-family: "Segoe UI", "Inter", Arial;
-    -fx-background-color: #d8dcff; /* Cor de fundo do app */
+    -fx-padding: 16;
+    -fx-bg-app: #d8dcff;
+    -fx-bg-card: #cfd8ff;
+    -fx-bg-header: #c7d2fe;
+    -fx-bg-list: #eee5e5;
+
+    -fx-primary: #38bdf8;
+    -fx-primary-hover: #0ea5e9;
+    -fx-primary-active: #19647e;
+
+    -fx-danger: #ed254e;
+    -fx-danger-hover: #d63230;
+
+    -fx-text-main: #06070e;
+    -fx-text-muted: #57606f;
+
+    -fx-border-soft: #cad0fa;
+
+    -fx-background-color: -fx-bg-app;
 }
 
-.label { /* Cor dos textos card meta*/
+.label {
     -fx-text-fill: #06070e;
     -fx-font-size: 13px;
 }
 
-.label.title { /* Saldo disponível */
-    -fx-font-size: 16px;
+.label.section-title {
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-alignment: center;
 }
 
-.label.subtitle { /* "Saldo disponível" e "Metas" */
-    -fx-font-size: 13px;
+.saldo-label {
+    -fx-text-alignment: center;
+    -fx-line-spacing: -4px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-padding: 6 0 4 0;
+}
+
+.header {
+    -fx-background-color: #c7d2fe;
+    -fx-padding: 16;
+    -fx-spacing: 10;
+    -fx-background-radius: 12;
+}
+
+.section {
+    -fx-spacing: 8;
+    -fx-padding: 16 16 16 0;
 }
 
 .text-field,
 .combo-box,
 .spinner {
-    -fx-background-color: #020617;
     -fx-text-fill: #e5e7eb;
     -fx-border-color: #334155;
     -fx-border-radius: 8;
@@ -31,18 +60,16 @@
     -fx-padding: 8;
 }
 
+.text-field {
+    -fx-prompt-text-fill: #94a3b8;
+}
+
 .text-field:focused,
-.combo-box:focused,
-.spinner:focused {
-    -fx-border-color: #4a69bd;
+.combo-box:focused {
+    -fx-border-color: #38bdf8;
 }
 
-.spinner .increment-arrow-button,
-.spinner .decrement-arrow-button {
-    -fx-background-color: transparent;
-}
-
-.button { /* Botões de nova transação e nova meta */
+.button {
     -fx-background-color: #38bdf8;
     -fx-text-fill: #06070e;
     -fx-font-weight: bold;
@@ -59,18 +86,55 @@
     -fx-background-color: #19647e;
 }
 
-.button.danger { /* Botão excluir transação */
+.button.danger {
     -fx-background-color: #ed254e;
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: white;
 }
 
 .button.danger:hover {
     -fx-background-color: #d63230;
 }
 
-.meta-card { /* Card da meta */
+.list-view {
+    -fx-background-color: #eee5e5;
+    -fx-background-radius: 8;
+    -fx-padding: 0;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+}
+
+.transacao-item {
+    -fx-background-color: white;
+    -fx-padding: 10;
+    -fx-spacing: 4;
+    -fx-background-radius: 8;
+}
+
+.transacao-titulo {
+    -fx-font-weight: bold;
+}
+
+.transacao-valor {
+    -fx-text-fill: #1e293b;
+}
+
+.transacao-extra {
+    -fx-font-size: 11px;
+    -fx-text-fill: #57606f;
+}
+
+.metas-panel {
+    -fx-padding: 0;
+    -fx-spacing: 12;
+}
+
+.meta-card {
     -fx-background-color: #cfd8ff;
     -fx-padding: 14;
+    -fx-spacing: 6;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
     -fx-border-color: #cad0fa;
@@ -85,23 +149,6 @@
     -fx-text-fill: #57606f;
 }
 
-.list-view { /* Lista de transações*/
-    -fx-background-color: #eee5e5;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-padding: 5;
-}
-
-.list-cell {
-    -fx-padding: 10;
-    -fx-border-color: transparent transparent #ecf0f1 transparent;
-}
-
-.list-cell:selected {
-    -fx-background-color: #dff0ff;
-    -fx-text-fill: #1e3799;
-}
-
 .progress-bar {
     -fx-accent: #4a69bd;
 }
@@ -111,12 +158,14 @@
     -fx-background-radius: 6;
 }
 
-.section {
+.dialog-form {
+    -fx-padding: 20;
     -fx-spacing: 10;
-    -fx-padding: 10 0;
+    -fx-background-color: #d8dcff;
 }
 
 .scroll-pane {
+    -fx-padding: 0;
     -fx-background-color: transparent;
 }
 
@@ -124,3 +173,63 @@
     -fx-background-color: transparent;
 }
 
+.dialog-form .text-field,
+.dialog-form .combo-box,
+.dialog-form .spinner,
+.dialog-form .text-area {
+    -fx-background-color: #e3e3e3;
+    -fx-text-fill: #06070e;
+    -fx-border-color: #a8b0ba;
+}
+
+.dialog-form .text-field:focused,
+.dialog-form .combo-box:focused,
+.dialog-form .spinner,
+.dialog-form .text-area:focused {
+    -fx-border-color: #38bdf8;
+}
+
+.btn-primary {
+    -fx-background-color: #4f46e5;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 22;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #4338ca;
+}
+
+.btn-secondary {
+    -fx-background-color: #64748b;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 22;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #475569;
+}
+
+.btn-danger-header {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 9 18;
+}
+
+.btn-danger-header:hover {
+    -fx-background-color: #dc2626;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #c7defa;
+}
