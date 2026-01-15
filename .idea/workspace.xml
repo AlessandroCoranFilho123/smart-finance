@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f4d52452-880c-4fa9-98b8-22a01e3e73ee" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ProjetoFinancas.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Projeto_Financas.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/javafx_controls.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/app.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/app.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/details.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/details.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/meta.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/meta.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/transaction.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/icons/transaction.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/Categoria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/Meta.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/TipoTransacao.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/Transacao.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/service/PersistenciaService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/service/TransacaoService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/style/app.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/view/TransacaoDetalheView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/MainController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/NovaTransacaoController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/RelatorioController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/metas.dat" beforeDir="false" afterPath="$PROJECT_DIR$/data/metas.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/transacoes.dat" beforeDir="false" afterPath="$PROJECT_DIR$/data/transacoes.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Transacao.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/main_view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/nova_transacao.fxml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;AlessandroCoranFilho123&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AlessandroCoranFilho123/Projeto_Financas.git&quot;,
+    &quot;accountId&quot;: &quot;45b8c0f4-beff-418f-95a8-c5d6fd6dcc11&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="31Tm3Y3vuJITs5doADksxF2wxJa" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.JavaFX.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Alessandro/Desktop/ProjetoFinancas&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Application.JavaFX">
+    <configuration name="JavaFX" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="23" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="app.Main" />
+      <module name="ProjetoFinancas" />
+      <option name="VM_PARAMETERS" value="--module-path C:\javafx-sdk-21.0.9\lib --add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="app.Main" />
+      <module name="ProjetoFinancas" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="app.model.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.JavaFX" />
+      <item itemvalue="Application.Main" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f4d52452-880c-4fa9-98b8-22a01e3e73ee" name="Changes" comment="" />
+      <created>1755556237145</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1755556237145</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="bffecbdb-a38c-4c20-ba34-cd08a6aef6fa" value="TOOL_WINDOW" />
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="bffecbdb-a38c-4c20-ba34-cd08a6aef6fa">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
