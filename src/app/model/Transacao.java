@@ -1,15 +1,17 @@
 package app.model;
 
 import java.io.Serial;
-import java.util.Set;
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Transacao implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private final app.model.TipoTransacao tipo;
-    private final app.model.Categoria categoria;
+    private final TipoTransacao tipo;
+    private final Categoria categoria;
     private final long valorCentavos;
     private final String metaNome;
     private String comentario;
@@ -25,13 +27,26 @@ public class Transacao implements Serializable {
             Set<String> tags,
             String nome
     ) {
-        this.tipo = tipo;
-        this.categoria = categoria;
+        this.tipo = Objects.requireNonNull(tipo, "tipo obrigatório");
+        this.categoria = Objects.requireNonNull(categoria, "categoria obrigatória");
+
+        if (valorCentavos <= 0)
+            throw new IllegalArgumentException("valor em centavos deve ser positivo");
+
         this.valorCentavos = valorCentavos;
-        this.metaNome = metaNome == null ? "" : metaNome;
-        this.comentario = comentario == null ? "" : comentario;
-        this.tags = tags == null ? Set.of() : tags;
-        this.nome = nome == null ? "" : nome;
+
+        this.metaNome = metaNome == null ? "" : metaNome.trim();
+
+        this.comentario = comentario == null ? "" : comentario.trim();
+        this.tags = tags == null
+                ? Set.of()
+                : tags.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toUnmodifiableSet());
+
+        this.nome = nome == null ? "" : nome.trim();
     }
 
     public TipoTransacao getTipo() {
@@ -67,7 +82,7 @@ public class Transacao implements Serializable {
     }
 
     public void setComentario(String comentario) {
-        this.comentario = comentario == null ? "" : comentario;
+        this.comentario = comentario == null ? "" : comentario.trim();
     }
 }
 
