@@ -1,48 +1,272 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="ProjetoFinancas:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f4d52452-880c-4fa9-98b8-22a01e3e73ee" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ProjetoFinancas.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Projeto_Financas.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/javafx_controls.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/app.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/app.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/details.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/details.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/meta.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/meta.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/transaction.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/icons/transaction.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/model/Categoria.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/model/Meta.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/model/TipoTransacao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/model/Transacao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/service/PersistenciaService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/service/TransacaoService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/style/app.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/view/TransacaoDetalheView.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/MainController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/NovaTransacaoController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/RelatorioController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/metas.dat" beforeDir="false" afterPath="$PROJECT_DIR$/data/metas.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/transacoes.dat" beforeDir="false" afterPath="$PROJECT_DIR$/data/transacoes.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Transacao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/main_view.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/nova_transacao.fxml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/ProjetoFinancas_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/lib.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ProjetoFinancas.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/app.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/app.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/details.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/details.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/meta.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/meta.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/transaction.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/icons/transaction.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/app/style/app.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjetoFinancas.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/Main$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/model/Categoria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/model/Meta.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/model/TipoTransacao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/model/Transacao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/service/PersistenciaService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/service/TransacaoService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/app.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/app.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/details.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/details.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/meta.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/meta.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/transaction.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/icons/transaction.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/app/style/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/app/style/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-console-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-console-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-datetime-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-debug-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-errorhandling-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-fibers-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-file-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-file-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-file-l2-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-handle-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-heap-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-interlocked-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-libraryloader-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-localization-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-memory-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-namedpipe-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-processenvironment-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-processthreads-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-processthreads-l1-1-1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-profile-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-rtlsupport-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-string-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-synch-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-synch-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-sysinfo-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-timezone-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-core-util-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-conio-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-convert-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-environment-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-filesystem-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-heap-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-locale-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-math-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-multibyte-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-private-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-process-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-runtime-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-stdio-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-string-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-time-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/api-ms-win-crt-utility-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/awt.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/fontmanager.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/freetype.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/java.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/java.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-console-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-console-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-datetime-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-debug-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-errorhandling-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-file-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-file-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-file-l2-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-handle-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-heap-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-interlocked-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-libraryloader-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-localization-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-memory-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-namedpipe-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-processenvironment-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-processthreads-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-processthreads-l1-1-1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-profile-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-rtlsupport-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-string-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-synch-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-synch-l1-2-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-sysinfo-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-timezone-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-core-util-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-conio-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-convert-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-environment-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-filesystem-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-heap-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-locale-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-math-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-multibyte-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-private-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-process-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-runtime-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-stdio-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-string-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-time-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/api-ms-win-crt-utility-l1-1-0.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/decora_sse.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/glass.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/javafx_font.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/javafx_iio.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/msvcp140.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/msvcp140_1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/msvcp140_2.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/prism_common.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/prism_d3d.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/prism_sw.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/ucrtbase.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/vcruntime140.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javafx/vcruntime140_1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javajpeg.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/javaw.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/jawt.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/jimage.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/jli.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/jrunscript.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/jsound.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/keytool.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/lcms.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/mlib_image.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/msvcp140.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/net.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/nio.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/prefs.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/server/jvm.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/splashscreen.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/syslookup.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/ucrtbase.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/vcruntime140.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/vcruntime140_1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/verify.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/bin/zip.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/jaxp-strict.properties.template" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/jaxp.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/net.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/java.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/java.security" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/policy/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/policy/limited/default_US_export.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/policy/limited/default_local.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/policy/limited/exempt_local.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/policy/unlimited/default_US_export.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/security/policy/unlimited/default_local.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/conf/sound.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/aes.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/asm.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/c-libutl.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/cldr.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/icu.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/public_suffix.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/siphash.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/unicode.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/wepoll.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.base/zlib.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.datatransfer/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.datatransfer/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/colorimaging.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/freetype.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/giflib.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/harfbuzz.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/jpeg.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/lcms.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/libpng.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.desktop/mesa3d.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.prefs/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.prefs/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.scripting/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.scripting/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/bcel.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/dom.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/jcup.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/xalan.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/java.xml/xerces.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.base/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.base/ASSEMBLY_EXCEPTION" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.base/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.controls/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.controls/ASSEMBLY_EXCEPTION" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.controls/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.fxml/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.fxml/ASSEMBLY_EXCEPTION" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.fxml/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.graphics/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.graphics/ASSEMBLY_EXCEPTION" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.graphics/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.graphics/jpeg_fx.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/javafx.graphics/mesa3d.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/jdk.unsupported/COPYRIGHT" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/legal/jdk.unsupported/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/classlist" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/fontconfig.bfc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/fontconfig.properties.src" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/javafx-swt.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/javafx.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/jawt.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/jrt-fs.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/jvm.cfg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/jvm.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/modules" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/psfont.properties.ja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/psfontj2d.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/security/blocked.certs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/security/cacerts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/security/default.policy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/security/public_suffix_list.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/tzdb.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/lib/tzmappings" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/release" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/model/Meta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/model/Meta.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/model/Transacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/model/Transacao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/service/PersistenciaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/service/PersistenciaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/service/TransacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/service/TransacaoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/view/TransacaoDetalheView.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="CoverageOptionsProvider">
+    <option name="myAddOrReplace" value="2" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -50,6 +274,9 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -66,6 +293,12 @@
     &quot;accountId&quot;: &quot;45b8c0f4-beff-418f-95a8-c5d6fd6dcc11&quot;
   }
 }</component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -79,29 +312,32 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;Application.JavaFX.executor&quot;: &quot;Run&quot;,
     &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Alessandro/Desktop/ProjetoFinancas&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/Alessandro/Desktop/ProjetoFinancas/untitled/src/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propCompiler&quot;
   }
 }</component>
   <component name="RunManager" selected="Application.JavaFX">
-    <configuration name="JavaFX" type="Application" factoryName="Application">
-      <option name="ALTERNATIVE_JRE_PATH" value="23" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <configuration name="JavaFX" type="Application" factoryName="Application" activateToolWindowBeforeRun="false">
+      <option name="ALTERNATIVE_JRE_PATH" value="21" />
       <option name="MAIN_CLASS_NAME" value="app.Main" />
       <module name="ProjetoFinancas" />
-      <option name="VM_PARAMETERS" value="--module-path C:\javafx-sdk-21.0.9\lib --add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics" />
+      <option name="VM_PARAMETERS" value="--module-path C:\javafx-sdk-21.0.9\lib --add-modules javafx.controls,javafx.fxml,javafx.graphics -Dprism.order=sw" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -167,5 +403,28 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/modulo1/src/Main.java</url>
+          <line>11</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/untitled/src/Main.java</url>
+          <line>11</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ProjetoFinancas$JavaFX.ic" NAME="JavaFX Coverage Results" MODIFIED="1768583554749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
   </component>
 </project>
