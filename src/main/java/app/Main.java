@@ -16,16 +16,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -69,7 +68,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-
         Thread.setDefaultUncaughtExceptionHandler(
                 (t, e) -> LOGGER.log(Level.SEVERE, "Erro não tratado", e)
         );
@@ -87,44 +85,20 @@ public class Main extends Application {
         root.setLeft(criarPainelMetas());
         root.setCenter(criarSecaoTransacoes());
 
-        Scene scene = new Scene(root, 1100, 650);
+        Scene scene = new Scene(root, 1600, 900);
         aplicarCss(scene);
 
         carregarIcone(stage, "/app/icons/app_64.png");
 
-        restaurarTema();
 
+        restaurarTema();
         atualizarUI();
 
-        stage.setTitle("Aplicativo de Finanças v1.1.4");
+        stage.setTitle("Aplicativo de Finanças v1.1.7");
         stage.setMaximized(true);
         stage.setScene(scene);
-        scene.getAccelerators().put(KeyCombination.keyCombination("ctrl+n"), this::novaTransacao);
         stage.setOnCloseRequest(e -> salvarDados());
         stage.show();
-    }
-
-    private void excluirTransacao() {
-        int index = listaTransacoes.getSelectionModel().getSelectedIndex();
-        if (index < 0) {
-            alerta("Selecione uma transação");
-            return;
-        }
-
-        Alert confirm = new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Deseja realmente excluir esta transação?",
-                ButtonType.YES,
-                ButtonType.NO
-        );
-
-        if (confirm.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
-            return;
-        }
-
-        service.excluirTransacao(index);
-        salvarDados();
-        atualizarUI();
     }
 
     private Node criarHeader() {
@@ -136,12 +110,14 @@ public class Main extends Application {
                 criarBotao("Nova Meta", "btn-secondary", this::novaMeta);
 
         Button btnExcluir =
-                criarBotao("Excluir", "danger", this::excluirTransacao);
+                criarBotao("Excluir", "btn-excluir", this::excluirTransacao);
 
-        HBox botoes = new HBox(10, btnNovaTransacao, btnNovaMeta, btnExcluir);
+        HBox botoes = new HBox(16, btnNovaTransacao, btnNovaMeta, btnExcluir);
+        botoes.getStyleClass().add("header-buttons");
         botoes.setAlignment(Pos.CENTER);
 
         lblSaldo.getStyleClass().add("saldo-label");
+
 
         themeIcon = new ImageView();
         themeIcon.setFitWidth(18);
@@ -151,15 +127,16 @@ public class Main extends Application {
         toggleTheme.getStyleClass().add("btn-icon");
         toggleTheme.setOnAction(e -> alternarTema());
 
-        HBox right = new HBox(toggleTheme);
-        right.setAlignment(Pos.CENTER_RIGHT);
-
-        HBox header = new HBox(20, lblSaldo, botoes, right);
+        BorderPane header = new BorderPane();
         header.getStyleClass().add("header");
-        header.setAlignment(Pos.CENTER_LEFT);
 
-        HBox.setHgrow(lblSaldo, Priority.ALWAYS);
-        HBox.setHgrow(right, Priority.ALWAYS);
+        header.setLeft(lblSaldo);
+        header.setCenter(botoes);
+        header.setRight(toggleTheme);
+
+        BorderPane.setAlignment(lblSaldo, Pos.CENTER_LEFT);
+        BorderPane.setAlignment(botoes, Pos.CENTER);
+        BorderPane.setAlignment(toggleTheme, Pos.CENTER_RIGHT);
 
         return header;
     }
@@ -209,7 +186,7 @@ public class Main extends Application {
         });
 
         Button salvar = new Button("Salvar");
-        salvar.getStyleClass().add("btn-primary");
+        salvar.getStyleClass().add("salvar-button");
         salvar.setOnAction(e -> {
             try {
                 if (cbTipo.getValue() == null || cbCategoria.getValue() == null) {
@@ -264,6 +241,9 @@ public class Main extends Application {
             }
         });
 
+        HBox actions = new HBox(salvar);
+        actions.setAlignment(Pos.CENTER);
+
         VBox layout = new VBox(10,
                 new Label("Tipo"), cbTipo,
                 new Label("Valor"), txtValor,
@@ -271,13 +251,18 @@ public class Main extends Application {
                 new Label("Meta"), cbMeta,
                 new Label("Comentário"), txtComentario,
                 new Label("Tags"), txtTags,
-                salvar
+                actions
         );
-        layout.getStyleClass().add("dialog-form");
 
-        Scene scene = new Scene(layout, 380, 520);
+        VBox wrapper = new VBox(layout);
+        wrapper.setPadding(new Insets(18));
+        wrapper.getStyleClass().add("dialog-root");
+        wrapper.getStyleClass().add(darkMode ? "dark" : "light");
+
+        Scene scene = new Scene(wrapper, 380, 520);
         aplicarCss(scene);
         carregarIcone(stage, "/app/icons/transaction_64.png");
+
 
         stage.setScene(scene);
         stage.setTitle("Nova Transação");
@@ -290,7 +275,7 @@ public class Main extends Application {
         TextField nome = new TextField();
         TextField alvo = new TextField();
         Button salvar = new Button("Salvar");
-        salvar.getStyleClass().add("btn-primary");
+        salvar.getStyleClass().add("salvar-button");
         salvar.setOnAction(e -> {
             try {
                 Long alvoCentavos = alvo.getText().isBlank() ? null : Math.round(Double.parseDouble(alvo.getText()) * 100);
@@ -302,11 +287,29 @@ public class Main extends Application {
                 alerta("Dados inválidos");
             }
         });
-        VBox layout = new VBox(10, new Label("Nome da Meta"), nome, new Label("Valor Alvo"), alvo, salvar);
-        layout.getStyleClass().add("dialog-form");
-        Scene scene = new Scene(layout, 300, 260);
+
+        HBox actions = new HBox(salvar);
+        actions.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(10,
+                new Label("Nome da Meta"),
+                nome,
+                new Label("Valor Alvo"),
+                alvo,
+                actions
+        );
+
+        VBox wrapper = new VBox(layout);
+        wrapper.setPadding(new Insets(18));
+        wrapper.getStyleClass().add("dialog-root");
+        wrapper.getStyleClass().add(darkMode ? "dark" : "light");
+
+        Scene scene = new Scene(wrapper, 300, 260);
+
         aplicarCss(scene);
         carregarIcone(stage, "/app/icons/meta_64.png");
+
+
         stage.setScene(scene);
         stage.setTitle("Nova Meta");
         stage.show();
@@ -319,7 +322,7 @@ public class Main extends Application {
         comentario.setWrapText(true);
 
         Button salvar = new Button("Salvar Comentário");
-        salvar.getStyleClass().add("btn-primary");
+        salvar.getStyleClass().add("salvar-button");
         salvar.setOnAction(e -> {
             t.setComentario(comentario.getText());
             salvarDados();
@@ -327,21 +330,33 @@ public class Main extends Application {
             stage.close();
         });
 
+        HBox actions = new HBox(salvar);
+        actions.setAlignment(Pos.CENTER);
+
         VBox layout = new VBox(10,
+                new Label("Tipo: " + t.getTipo()),
                 new Label("Categoria: " + t.getCategoria()),
                 new Label("Valor: " + nf.format(t.getValorCentavos() / 100.0)),
+                new Label("Tags: " + t.getTags()),
+                new Label("Meta: " + t.getMetaNome()),
                 new Label("Comentário"),
                 comentario,
-                salvar
+                actions
         );
-        layout.getStyleClass().add("dialog-form");
 
-        Scene scene = new Scene(layout, 420, 420);
+        VBox wrapper = new VBox(layout);
+        wrapper.setPadding(new Insets(18));
+        wrapper.getStyleClass().add("dialog-root");
+        wrapper.getStyleClass().add(darkMode ? "dark" : "light");
+
+        Scene scene = new Scene(wrapper, 420, 420);
+
         aplicarCss(scene);
         carregarIcone(stage, "/app/icons/details_64.png");
 
+
         stage.setScene(scene);
-        stage.setTitle("Editar Comentário");
+        stage.setTitle("Detalhes");
         stage.show();
     }
 
@@ -418,16 +433,15 @@ public class Main extends Application {
         scroll.setPrefWidth(300);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        return new VBox(
+        VBox container = new VBox(
                 14,
                 criarTituloSecao("Metas"),
                 scroll
         );
+        container.getStyleClass().add("section");
+        return container;
     }
 
-    /* =======================
-       UI UPDATE
-       ======================= */
     private void atualizarUI() {
 
         listaTransacoes.getItems().setAll(transacoes);
@@ -444,7 +458,7 @@ public class Main extends Application {
             ProgressBar pb = new ProgressBar(progresso);
 
             Button excluir = new Button("Excluir");
-            excluir.getStyleClass().add("danger");
+            excluir.getStyleClass().add("btn-excluir");
             excluir.setOnAction(e -> {
                 service.excluirMeta(m);
                 salvarDados();
@@ -453,19 +467,30 @@ public class Main extends Application {
 
             VBox card = new VBox(6, nome, valor, pb, excluir);
             card.getStyleClass().add("meta-card");
+            card.setPadding(new Insets(10));
+            card.setMaxWidth(Double.MAX_VALUE);
 
             painelMetas.getChildren().add(card);
         }
 
         lblSaldo.setText(
-                "Saldo disponível:\n" +
+                "Saldo disponível: " +
                         nf.format(service.calcularSaldoDisponivelCentavos() / 100.0)
         );
     }
 
-    /* =======================
-       TEMA
-       ======================= */
+    private void excluirTransacao() {
+        int index = listaTransacoes.getSelectionModel().getSelectedIndex();
+        if (index < 0) {
+            alerta("Selecione uma transação");
+            return;
+        }
+
+        service.excluirTransacao(index);
+        salvarDados();
+        atualizarUI();
+    }
+
     private void alternarTema() {
         darkMode = !darkMode;
         aplicarTema();
@@ -490,9 +515,6 @@ public class Main extends Application {
         );
     }
 
-    /* =======================
-       UTILITÁRIOS
-       ======================= */
     private Button criarBotao(String texto, String classe, Runnable acao) {
         Button b = new Button(texto);
         b.getStyleClass().add(classe);
@@ -509,11 +531,11 @@ public class Main extends Application {
     }
 
     private void aplicarCss(Scene scene) {
-        scene.getStylesheets().add(
-                Objects.requireNonNull(
-                        getClass().getResource("/app/style/app.css")
-                ).toExternalForm()
-        );
+        URL css = Main.class.getResource("/app/style/app.css");
+        if (css == null) {
+            throw new RuntimeException("CSS não encontrado");
+        }
+        scene.getStylesheets().add(css.toExternalForm());
     }
 
     private void salvarDados() {
@@ -541,17 +563,16 @@ public class Main extends Application {
     }
 
     private void carregarIcone(Stage stage, String path) {
-        InputStream is = getClass().getResourceAsStream(path);
-        if (is != null) stage.getIcons().add(new Image(is));
+        URL iconUrl = Main.class.getResource(path);
+        if (iconUrl != null) {
+            stage.getIcons().add(new Image(iconUrl.toExternalForm()));
+        }
     }
 
     private void alerta(String msg) {
         new Alert(Alert.AlertType.WARNING, msg).showAndWait();
     }
 
-    /* =======================
-       MAIN
-       ======================= */
     public static void main(String[] args) {
         launch(args);
     }
