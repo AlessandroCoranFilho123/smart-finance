@@ -1,0 +1,27 @@
+.root-pane.dark {
+    -fx-bg-app: #1E1C18;
+    -fx-background-color: -fx-bg-app;
+    -fx-bg-card: #2C2924;
+
+    -fx-border-light: #3A3630;
+    -fx-border-header: #444039;
+    -fx-header-bg: #25221D;
+
+    -fx-text-primary: #ECE2D0;
+    -fx-text-muted: #B5AD9F;
+    -salvar-button: #2F7FD1;
+
+    -btn-primary: #1D9817;
+    -btn-primary-hover: #468847;
+    -btn-primary-pressed: #294936;
+
+    -btn-secondary: #2F7FD1;
+    -btn-secondary-hover: #0257A3;
+    -btn-secondary-pressed: #01447E;
+
+    -btn-excluir: #D14B3A;
+    -btn-excluir-hover: #FF0035;
+    -btn-excluir-pressed: #69140E;
+
+    -fx-progress-accent: #63B6BB;
+}

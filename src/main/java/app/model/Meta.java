@@ -1,29 +1,39 @@
 package app.model;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.util.UUID;
 
-public class Meta implements Serializable {
+public class Meta {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+    private final UUID id;
     private final String nome;
     private final Long alvoCentavos;
     private long atualCentavos;
 
     public Meta(String nome, Long alvoCentavos) {
-        this.nome = nome == null ? "" : nome;
-        this.alvoCentavos = alvoCentavos;
-        this.atualCentavos = 0;
+        this(UUID.randomUUID(), nome, alvoCentavos, 0);
     }
 
-    @Override
-    public String toString() {
-        return nome;
+    public Meta(UUID id, String nome, Long alvoCentavos, long atualCentavos) {
+        this.id = id == null ? UUID.randomUUID() : id;
+        this.nome = nome == null ? "" : nome.trim();
+        this.alvoCentavos = alvoCentavos;
+        this.atualCentavos = atualCentavos;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getIdAsString() {
+        return id.toString();
     }
 
     public String getNome() {
         return nome;
+    }
+
+    public Long getAlvoCentavos() {
+        return alvoCentavos;
     }
 
     public long getAtualCentavos() {
@@ -40,9 +50,9 @@ public class Meta implements Serializable {
     }
 
     public void adicionar(long centavos) {
-        if (centavos > 0) {
-            atualCentavos += centavos;
-        }
+        if (centavos <= 0)
+            throw new IllegalArgumentException("valor deve ser positivo");
+        atualCentavos += centavos;
     }
 
     public long retirar(long centavos) {
@@ -55,5 +65,10 @@ public class Meta implements Serializable {
     public double progresso() {
         if (!possuiAlvo()) return 0.0;
         return Math.min((double) atualCentavos / alvoCentavos, 1.0);
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 }

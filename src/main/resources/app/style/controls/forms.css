@@ -1,0 +1,56 @@
+.text-field,
+.text-area,
+.combo-box-base {
+    -fx-background-color: -fx-bg-card;
+    -fx-border-color: -fx-border-light;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: -fx-text-primary;
+    -fx-prompt-text-fill: -fx-text-muted;
+}
+
+.text-area {
+    -fx-background-color: -fx-bg-card;
+    -fx-border-color: -fx-border-light;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.text-area .content {
+    -fx-background-color: -fx-bg-card;
+}
+
+.text-area:focused {
+    -fx-border-color: derive(-fx-border-light, -20%);
+}
+
+.text-area .scroll-pane,
+.text-area .viewport {
+    -fx-background-color: -fx-bg-card;
+}
+
+.text-field,
+.text-area {
+    -fx-background-color: -fx-bg-card;
+    -fx-border-color: -fx-border-light;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: -fx-text-primary;
+    -fx-prompt-text-fill: derive(-fx-text-primary, -30%);
+}
+
+.text-field .content,
+.text-area .content {
+    -fx-background-color: -fx-bg-card;
+}
+
+.text-area .scroll-pane,
+.text-area .viewport {
+    -fx-background-color: -fx-bg-card;
+}
+
+.text-field:focused,
+.text-area:focused {
+    -fx-border-color: derive(-fx-border-light, -20%);
+}

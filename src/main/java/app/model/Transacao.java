@@ -1,90 +1,54 @@
 package app.model;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.UUID;
 
-public class Transacao implements Serializable {
+public class Transacao {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private final TipoTransacao tipo;
-    private final Categoria categoria;
+    private final UUID id;
+    private final String descricao;
     private final long valorCentavos;
-    private final String metaNome;
-    private String comentario;
-    private final Set<String> tags;
-    private final String nome;
+    private final TipoTransacao tipo;
+    private final LocalDate data;
+    private final UUID metaId; // pode ser null
 
     public Transacao(
-            TipoTransacao tipo,
-            Categoria categoria,
+            UUID id,
+            String descricao,
             long valorCentavos,
-            String metaNome,
-            String comentario,
-            Set<String> tags,
-            String nome
+            TipoTransacao tipo,
+            LocalDate data,
+            UUID metaId
     ) {
-        this.tipo = Objects.requireNonNull(tipo, "tipo obrigatório");
-        this.categoria = Objects.requireNonNull(categoria, "categoria obrigatória");
-
-        if (valorCentavos <= 0)
-            throw new IllegalArgumentException("valor em centavos deve ser positivo");
-
+        this.id = id == null ? UUID.randomUUID() : id;
+        this.descricao = descricao;
         this.valorCentavos = valorCentavos;
-
-        this.metaNome = metaNome == null ? "" : metaNome.trim();
-
-        this.comentario = comentario == null ? "" : comentario.trim();
-        this.tags = tags == null
-                ? Set.of()
-                : tags.stream()
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toUnmodifiableSet());
-
-        this.nome = nome == null ? "" : nome.trim();
+        this.tipo = tipo;
+        this.data = data;
+        this.metaId = metaId;
     }
 
-    public TipoTransacao getTipo() {
-        return tipo;
+    public UUID getId() {
+        return id;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public String getDescricao() {
+        return descricao;
     }
 
     public long getValorCentavos() {
         return valorCentavos;
     }
 
-    public String getMetaNome() {
-        return metaNome;
+    public TipoTransacao getTipo() {
+        return tipo;
     }
 
-    public String getComentario() {
-        return comentario;
+    public LocalDate getData() {
+        return data;
     }
 
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public boolean temMeta() {
-        return !metaNome.isBlank();
-    }
-
-    public void setComentario(String comentario) {
-        this.comentario = comentario == null ? "" : comentario.trim();
+    public UUID getMetaId() {
+        return metaId;
     }
 }
-
-
-

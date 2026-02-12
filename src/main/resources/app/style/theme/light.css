@@ -1,0 +1,27 @@
+.root-pane.light {
+    -fx-bg-app: #ECE2D0;
+    -fx-background-color: -fx-bg-app;
+    -fx-bg-card: #FFFFFF;
+
+    -fx-border-light: #D6CCBA;
+    -fx-border-header: #CFC5B2;
+    -fx-header-bg: #F4EDDF;
+
+    -fx-text-primary: #5F5449;
+    -fx-text-muted: #8A8074;
+    -salvar-button: #2F7FD1;
+
+    -btn-primary: #1D9817;
+    -btn-primary-hover: #468847;
+    -btn-primary-pressed: #294936;
+
+    -btn-secondary: #2F7FD1;
+    -btn-secondary-hover: #0257A3;
+    -btn-secondary-pressed: #01447E;
+
+    -btn-excluir: #D14B3A;
+    -btn-excluir-hover: #FF0035;
+    -btn-excluir-pressed: #570000;
+
+    -fx-progress-accent: #50A2A7;
+}
