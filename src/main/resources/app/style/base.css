@@ -1,0 +1,30 @@
+.root {
+    -fx-background-color: #FFFFFF;
+}
+
+.root-pane {
+    -fx-padding: 16px;
+}
+
+.label {
+    -fx-font-size: 13px;
+}
+
+.section {
+    -fx-padding: 14px 12px;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.label {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: 13px;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}

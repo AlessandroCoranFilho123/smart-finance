@@ -1,7 +1,6 @@
 out/
-data/metas.dat
-data/transacoes.dat
-
+data/
+dist/
 /target/
 
 *.class
@@ -9,10 +8,9 @@ data/transacoes.dat
 *.exe
 *.msi
 *.bat
+*.iml
 
 .idea/
-.vscode/
-*.iml
 
 .DS_Store
 Thumbs.db

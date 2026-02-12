@@ -4,20 +4,21 @@ import app.model.Categoria;
 import app.model.Meta;
 import app.model.TipoTransacao;
 import app.model.Transacao;
+import app.repository.MetaDAO;
+import app.repository.TransacaoDAO;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class TransacaoService {
 
-    private final List<Transacao> transacoes;
-    private final List<Meta> metas;
+    private final TransacaoDAO transacaoDAO;
+    private final MetaDAO metaDAO;
 
-    public TransacaoService(List<Transacao> transacoes, List<Meta> metas) {
-        this.transacoes = Objects.requireNonNull(transacoes);
-        this.metas = Objects.requireNonNull(metas);
+    public TransacaoService(TransacaoDAO transacaoDAO, MetaDAO metaDAO) {
+        this.transacaoDAO = Objects.requireNonNull(transacaoDAO);
+        this.metaDAO = Objects.requireNonNull(metaDAO);
     }
 
     public void registrar(
@@ -25,24 +26,18 @@ public class TransacaoService {
             Categoria categoria,
             long valorCentavos,
             Meta meta,
-            String comentario,
-            Set<String> tags
+            String comentario
     ) {
-        Objects.requireNonNull(tipo, "tipo obrigatório");
-        Objects.requireNonNull(categoria, "categoria obrigatória");
+
+        Objects.requireNonNull(tipo, "tipo é obrigatório");
+        Objects.requireNonNull(categoria, "categoria é obrigatória");
 
         if (valorCentavos <= 0)
-            throw new IllegalArgumentException("Valor inválido");
-
-        Set<String> safeTags =
-                tags == null
-                        ? Set.of()
-                        : tags.stream()
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toUnmodifiableSet());
+            throw new IllegalArgumentException("Valores devem ser positivos");
 
         boolean exigeMeta =
-                categoria == Categoria.AdicionarMeta || categoria == Categoria.RetirarMeta;
+                categoria == Categoria.AdicionarMeta ||
+                        categoria == Categoria.RetirarMeta;
 
         if (exigeMeta && meta == null)
             throw new IllegalArgumentException("Selecione uma meta");
@@ -55,19 +50,22 @@ public class TransacaoService {
 
             long permitido = Math.min(valorCentavos, meta.restanteParaAlvo());
             if (permitido <= 0)
-                throw new IllegalArgumentException("Meta já concluída");
+                throw new IllegalArgumentException("Meta já alcançada");
 
             meta.adicionar(permitido);
+            metaDAO.atualizar(meta);
 
-            transacoes.add(new Transacao(
-                    TipoTransacao.Saida,
-                    categoria,
+            Transacao t = new Transacao(
+                    UUID.randomUUID(),
+                    "Aplicação em meta: " + meta.getNome(),
                     permitido,
-                    meta.getNome(),
-                    comentario,
-                    safeTags,
-                    "Aplicação em meta"
-            ));
+                    TipoTransacao.Saida,
+                    LocalDate.now(),
+                    meta.getId()
+            );
+
+
+            transacaoDAO.inserir(t);
             return;
         }
 
@@ -75,82 +73,61 @@ public class TransacaoService {
 
             long retirado = meta.retirar(valorCentavos);
             if (retirado <= 0)
-                throw new IllegalArgumentException("Valor inválido para retirada");
+                throw new IllegalArgumentException("Valor deve ser maior que 0");
 
-            transacoes.add(new Transacao(
-                    TipoTransacao.Entrada,
-                    categoria,
+            metaDAO.atualizar(meta);
+
+            Transacao t = new Transacao(
+                    UUID.randomUUID(),
+                    "Resgate de meta: " + meta.getNome(),
                     retirado,
-                    meta.getNome(),
-                    comentario,
-                    safeTags,
-                    "Resgate de meta"
-            ));
+                    TipoTransacao.Entrada,
+                    LocalDate.now(),
+                    meta.getId()
+            );
+
+            transacaoDAO.inserir(t);
             return;
         }
 
-        transacoes.add(new Transacao(
-                tipo,
-                categoria,
-                valorCentavos,
-                null,
+        Transacao t = new Transacao(
+                UUID.randomUUID(),
                 comentario,
-                safeTags,
-                categoria.name()
-        ));
-    }
+                valorCentavos,
+                tipo,
+                LocalDate.now(),
+                null
+        );
 
-    public void excluirTransacao(int index) {
-        if (index < 0 || index >= transacoes.size()) return;
-
-        Transacao t = transacoes.get(index);
-
-        if (t.temMeta()) {
-            Meta m = encontrarMeta(t.getMetaNome());
-            if (m != null) {
-                if (t.getCategoria() == Categoria.AdicionarMeta)
-                    m.retirar(t.getValorCentavos());
-                else if (t.getCategoria() == Categoria.RetirarMeta)
-                    m.adicionar(t.getValorCentavos());
-            }
-        }
-        transacoes.remove(index);
-    }
-
-    public void excluirMeta(Meta meta) {
-        if (meta == null)
-            throw new IllegalArgumentException("Meta inválida");
-
-        long devolvido = meta.getAtualCentavos();
-
-        if (devolvido > 0) {
-            transacoes.add(new Transacao(
-                    TipoTransacao.Entrada,
-                    Categoria.Outros,
-                    devolvido,
-                    null,
-                    "Exclusão da meta: " + meta.getNome(),
-                    Set.of("ajuste"),
-                    "Devolução de meta"
-            ));
-        }
-
-        metas.remove(meta);
+        transacaoDAO.inserir(t);
     }
 
     public long calcularSaldoDisponivelCentavos() {
-        return transacoes.stream()
-                .mapToLong(t ->
-                        t.getTipo() == TipoTransacao.Entrada
-                                ? t.getValorCentavos()
-                                : -t.getValorCentavos()
-                ).sum();
+        return transacaoDAO.calcularSaldo();
     }
 
-    private Meta encontrarMeta(String nome) {
-        return metas.stream()
-                .filter(m -> Objects.equals(m.getNome(), nome))
-                .findFirst()
-                .orElse(null);
+    public void excluirTransacao(UUID transacaoId, Categoria categoria) {
+
+        Transacao t = transacaoDAO.buscarPorId(transacaoId);
+        if (t == null) return;
+
+        if (categoria == Categoria.AdicionarMeta && t.getMetaId() != null) {
+            Meta meta = metaDAO.buscarPorId(t.getMetaId());
+            if (meta != null) {
+                meta.retirar(t.getValorCentavos());
+                metaDAO.atualizar(meta);
+            }
+        }
+
+        if (categoria == Categoria.RetirarMeta && t.getMetaId() != null) {
+            Meta meta = metaDAO.buscarPorId(t.getMetaId());
+            if (meta != null) {
+                meta.adicionar(t.getValorCentavos());
+                metaDAO.atualizar(meta);
+            }
+        }
+
+        transacaoDAO.excluir(transacaoId);
     }
+
 }
