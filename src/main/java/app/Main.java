@@ -16,8 +16,8 @@ public class Main extends Application {
 
         Scene scene = new Scene(loader.load());
         CssManager.aplicarCss(scene);
-        
-        stage.setTitle("Aplicativo de Finanças v1.2.0");
+
+        stage.setTitle("Smart Finance v1.2.0");
         stage.setScene(scene);
         stage.show();
     }
