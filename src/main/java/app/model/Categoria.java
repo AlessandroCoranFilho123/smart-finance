@@ -9,6 +9,8 @@ public enum Categoria {
     Agua,
     Luz,
     Compras,
+    Educacao,
+    Transporte,
     AdicionarMeta,
     RetirarMeta,
     Outros

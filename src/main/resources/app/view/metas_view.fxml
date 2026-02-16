@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.controller.MetasViewController"
+      styleClass="view-container"
+      spacing="20"
+      prefWidth="800"
+      prefHeight="600">
+
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="Minhas Metas"
+               styleClass="view-title"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnNova"
+                text="+ Nova Meta"
+                styleClass="button-primary"/>
+    </HBox>
+
+    <HBox spacing="20" styleClass="stats-bar">
+        <padding>
+            <Insets top="15" right="20" bottom="15" left="20"/>
+        </padding>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Total de Metas" styleClass="stat-label"/>
+            <Label fx:id="lblTotalMetas"
+                   text="0"
+                   styleClass="stat-value-large"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Metas Concluídas" styleClass="stat-label"/>
+            <Label fx:id="lblMetasConcluidas"
+                   text="0"
+                   styleClass="stat-value-large success"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Em Andamento" styleClass="stat-label"/>
+            <Label fx:id="lblMetasAndamento"
+                   text="0"
+                   styleClass="stat-value-large"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Total Acumulado" styleClass="stat-label"/>
+            <Label fx:id="lblTotalAcumulado"
+                   text="R$ 0,00"
+                   styleClass="stat-value-large"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label text="Buscar:" styleClass="filter-label"/>
+        <TextField fx:id="txtBusca"
+                   promptText="Digite o nome da meta..."
+                   prefWidth="300"
+                   styleClass="form-field"/>
+
+        <Button fx:id="btnLimparBusca"
+                text="Limpar"
+                styleClass="button-secondary"
+                visible="false"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="btnTodas"
+                text="Todas"
+                styleClass="button-tab, active"/>
+        <Button fx:id="btnAndamento"
+                text="Em Andamento"
+                styleClass="button-tab"/>
+        <Button fx:id="btnConcluidas"
+                text="Concluídas"
+                styleClass="button-tab"/>
+    </HBox>
+
+    <VBox spacing="10" VBox.vgrow="ALWAYS">
+        <Label fx:id="lblSecao"
+               text="Todas as Metas"
+               styleClass="section-subtitle"/>
+
+        <ListView fx:id="listMetas"
+                  VBox.vgrow="ALWAYS"
+                  styleClass="list-metas-full"/>
+    </VBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label fx:id="lblProgresso"
+               text="Progresso médio: 0%"
+               styleClass="footer-text"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="lblTotal"
+               text="Total: 0 metas"
+               styleClass="footer-text"/>
+
+        <Button fx:id="btnFechar"
+                text="Fechar"
+                styleClass="button-secondary"/>
+    </HBox>
+
+</VBox>

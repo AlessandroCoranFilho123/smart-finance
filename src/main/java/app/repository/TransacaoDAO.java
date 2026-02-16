@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class TransacaoDAO {
 
-    public void inserir(Transacao t) {
+    public void inserir(Transacao transacao) {
         String sql = """
                     INSERT INTO transacao (id, descricao, valor_centavos, tipo, data, meta_id)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -21,14 +21,14 @@ public class TransacaoDAO {
         try (Connection c = Database.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
-            ps.setString(1, t.getId().toString());
-            ps.setString(2, t.getDescricao());
-            ps.setLong(3, t.getValorCentavos());
-            ps.setString(4, t.getTipo().name());
-            ps.setString(5, t.getData().toString());
+            ps.setString(1, transacao.getId().toString());
+            ps.setString(2, transacao.getDescricao());
+            ps.setLong(3, transacao.getValorCentavos());
+            ps.setString(4, transacao.getTipo().name());
+            ps.setString(5, transacao.getData().toString());
 
-            if (t.getMetaId() != null) {
-                ps.setString(6, t.getMetaId().toString());
+            if (transacao.getMetaId() != null) {
+                ps.setString(6, transacao.getMetaId().toString());
             } else {
                 ps.setNull(6, Types.VARCHAR);
             }

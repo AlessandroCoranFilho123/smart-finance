@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.controller.TransacoesViewController"
+      styleClass="view-container"
+      spacing="20"
+      prefWidth="900"
+      prefHeight="600">
+
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="Todas as Transações"
+               styleClass="view-title"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnNova"
+                text="+ Nova Transação"
+                styleClass="button-primary"/>
+    </HBox>
+
+    <HBox spacing="15" styleClass="filter-bar">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+
+        <VBox spacing="6">
+            <Label text="Tipo" styleClass="filter-label"/>
+            <ComboBox fx:id="cmbTipo"
+                      promptText="Todos"
+                      prefWidth="150"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label text="Categoria" styleClass="filter-label"/>
+            <ComboBox fx:id="cmbCategoria"
+                      promptText="Todas"
+                      prefWidth="180"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label text="De" styleClass="filter-label"/>
+            <DatePicker fx:id="dateInicio"
+                        promptText="Data inicial"
+                        prefWidth="150"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label text="Até" styleClass="filter-label"/>
+            <DatePicker fx:id="dateFim"
+                        promptText="Data final"
+                        prefWidth="150"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <VBox spacing="6">
+            <Label text=" " styleClass="filter-label"/> <!-- Spacer -->
+            <Button fx:id="btnLimparFiltros"
+                    text="Limpar"
+                    styleClass="button-secondary"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="20" styleClass="stats-bar">
+        <padding>
+            <Insets top="15" right="20" bottom="15" left="20"/>
+        </padding>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Total de Entradas" styleClass="stat-label"/>
+            <Label fx:id="lblTotalEntradas"
+                   text="R$ 0,00"
+                   styleClass="stat-value entrada"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Total de Saídas" styleClass="stat-label"/>
+            <Label fx:id="lblTotalSaidas"
+                   text="R$ 0,00"
+                   styleClass="stat-value saida"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Saldo Período" styleClass="stat-label"/>
+            <Label fx:id="lblSaldoPeriodo"
+                   text="R$ 0,00"
+                   styleClass="stat-value"/>
+        </VBox>
+    </HBox>
+
+    <VBox spacing="10" VBox.vgrow="ALWAYS">
+        <Label text="Histórico" styleClass="section-subtitle"/>
+
+        <ListView fx:id="listTransacoes"
+                  VBox.vgrow="ALWAYS"
+                  styleClass="list-transacoes-full"/>
+    </VBox>
+
+    <HBox alignment="CENTER_RIGHT" spacing="10">
+        <Label fx:id="lblTotal"
+               text="Total: 0 transações"
+               styleClass="footer-text"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnFechar"
+                text="Fechar"
+                styleClass="button-secondary"/>
+    </HBox>
+
+</VBox>

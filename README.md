@@ -16,9 +16,9 @@ de estudo.
 Disponível somente para windows, instale a versão com extensão ".exe" ("AplicativoFinancas-1.1.7.exe"):
 
 <p align="center">
-    <img src="./src/main/resources/install/1.png" width="800" alt="parte 1">
-    <img src="./src/main/resources/install/2.png" width="800" alt="parte 2">
-    <img src="./src/main/resources/install/3.png" width="800" alt="parte 3">
+    <img src="./src/main/resources/instalação/parte%201.png" width="800" alt="parte 1">
+    <img src="./src/main/resources/instalação/parte%202.png" width="800" alt="parte 2">
+    <img src="./src/main/resources/instalação/parte%203.png" width="800" alt="parte 3">
 </p>
 
 ## Tecnologias utilizadas
