@@ -10,7 +10,7 @@ public class Transacao {
     private final long valorCentavos;
     private final TipoTransacao tipo;
     private final LocalDate data;
-    private final UUID metaId; // pode ser null
+    private final UUID metaId;
 
     public Transacao(
             UUID id,

@@ -4,13 +4,19 @@ module app {
     requires transitive javafx.graphics;
 
     requires java.sql;
-    requires java.logging;
     requires java.prefs;
 
     exports app;
     exports app.model;
     exports app.service;
+    exports app.controller;
+    exports app.database;
+    exports app.repository;
+    exports app.util;
+    exports app.view;
 
     opens app.controller to javafx.fxml;
     opens app to javafx.fxml;
+    opens app.view to javafx.fxml;
+    opens app.model to javafx.base;
 }

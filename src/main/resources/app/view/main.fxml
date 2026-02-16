@@ -9,34 +9,104 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import java.net.URL?>
+<?import javafx.scene.layout.Region?>
 
-<BorderPane prefHeight="700" prefWidth="1200" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="app.controller.MainController">
-
-    <stylesheets>
-        <URL value="@style.css"/>
-    </stylesheets>
+<BorderPane prefHeight="700" prefWidth="1200"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="app.controller.MainController"
+            styleClass="root-container">
 
     <left>
-        <VBox>
+        <VBox styleClass="sidebar-container">
             <padding>
                 <Insets top="20" left="20" right="10" bottom="20"/>
             </padding>
-            <VBox alignment="TOP_CENTER" prefWidth="220" spacing="20" styleClass="sidebar" VBox.vgrow="ALWAYS">
-                <children>
-                    <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                            <Image url="@../icons/app_256.png"/>
-                        </image>
-                        <VBox.margin>
-                            <Insets top="30" bottom="20"/>
-                        </VBox.margin>
-                    </ImageView>
-                    <Button fx:id="btnHome" maxWidth="Infinity" styleClass="button-sidebar" text="Tela inicial"/>
-                    <Button fx:id="btnTransacao" maxWidth="Infinity" styleClass="button-sidebar" text="Transações"/>
-                    <Button fx:id="btnMetas" maxWidth="Infinity" styleClass="button-sidebar" text="Metas"/>
-                </children>
+
+            <VBox alignment="TOP_CENTER"
+                  prefWidth="220"
+                  spacing="10"
+                  styleClass="sidebar"
+                  VBox.vgrow="ALWAYS">
+
+                <ImageView fitHeight="120"
+                           fitWidth="120"
+                           pickOnBounds="false"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../icons/app.png"/>
+                    </image>
+                    <VBox.margin>
+                        <Insets top="15" bottom="30"/>
+                    </VBox.margin>
+                </ImageView>
+
+                <Button fx:id="btnInicio"
+                        maxWidth="Infinity"
+                        styleClass="button-sidebar, active"
+                        graphicTextGap="12">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                <image>
+                                    <Image url="@../icons/inicio.png"/>
+                                </image>
+                            </ImageView>
+                            <Label text="Tela inicial" styleClass="sidebar-text"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnTransacao"
+                        maxWidth="Infinity"
+                        styleClass="button-sidebar"
+                        graphicTextGap="12">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="25" fitWidth="25" preserveRatio="true">
+                                <image>
+                                    <Image url="@../icons/transacao.png"/>
+                                </image>
+                            </ImageView>
+                            <Label text="Transações" styleClass="sidebar-text"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnMetas"
+                        maxWidth="Infinity"
+                        styleClass="button-sidebar"
+                        graphicTextGap="12">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                <image>
+                                    <Image url="@../icons/categoria/metas.png"/>
+                                </image>
+                            </ImageView>
+                            <Label text="Metas" styleClass="sidebar-text"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button fx:id="btnTema"
+                        maxWidth="Infinity"
+                        styleClass="button-sidebar"
+                        graphicTextGap="12">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                                <image>
+                                    <Image url="@../icons/tema/escuro.png"/>
+                                </image>
+                            </ImageView>
+                            <Label text="Tema" styleClass="sidebar-text"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
                 <padding>
                     <Insets left="20" right="20"/>
                 </padding>
@@ -45,33 +115,98 @@
     </left>
 
     <center>
-        <VBox spacing="20">
+        <VBox spacing="25" styleClass="main-content">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="10"/>
+                <Insets top="30" right="30" bottom="30" left="20"/>
             </padding>
 
-            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="saldo-banner">
+            <VBox spacing="8" styleClass="saldo-banner">
                 <padding>
-                    <Insets bottom="20" left="25" right="25" top="20"/>
+                    <Insets bottom="25" left="30" right="30" top="25"/>
                 </padding>
-                <children>
-                    <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Saldo disponível:"/>
-                    <Label fx:id="lblSaldo" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="R$ 1000,00"/>
-                </children>
-            </HBox>
 
-            <HBox spacing="30" VBox.vgrow="ALWAYS">
-                <children>
-                    <VBox spacing="15" HBox.hgrow="ALWAYS" alignment="TOP_CENTER">
-                        <Label styleClass="titulo" text="Transações recentes"/>
-                        <ListView fx:id="listTransacoes" VBox.vgrow="ALWAYS"/>
+                <Label text="Saldo disponível"
+                       styleClass="saldo-label"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label fx:id="lblSaldo"
+                           text="R$ 0,00"
+                           styleClass="saldo-valor"/>
+                </HBox>
+
+                <HBox spacing="30" styleClass="saldo-stats">
+                    <VBox spacing="4">
+                        <Label text="Receitas do mês" styleClass="stat-label"/>
+                        <Label fx:id="lblReceitasMes" text="R$ 0,00" styleClass="stat-valor receita"/>
                     </VBox>
 
-                    <VBox prefWidth="350" spacing="15" alignment="TOP_CENTER">
-                        <Label styleClass="titulo" text="Metas"/>
-                        <ListView fx:id="listMetas" VBox.vgrow="ALWAYS" style="-fx-control-inner-background: #D9D9D9;"/>
+                    <VBox spacing="4">
+                        <Label text="Despesas do mês" styleClass="stat-label"/>
+                        <Label fx:id="lblDespesasMes" text="R$ 0,00" styleClass="stat-valor despesa"/>
                     </VBox>
-                </children>
+                </HBox>
+            </VBox>
+
+            <HBox spacing="25" VBox.vgrow="ALWAYS">
+
+                <VBox spacing="15"
+                      HBox.hgrow="ALWAYS"
+                      styleClass="card">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Transações recentes"
+                               styleClass="section-title"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button fx:id="btnNovaTransacao"
+                                text="+ Nova"
+                                styleClass="button-primary, button-small"/>
+                    </HBox>
+
+                    <ListView fx:id="listTransacoes"
+                              VBox.vgrow="ALWAYS"
+                              styleClass="list-transacoes"/>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button fx:id="btnVerTodasTransacoes"
+                                text="Ver todas →"
+                                styleClass="button-link"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="15"
+                      prefWidth="400"
+                      styleClass="card">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Metas"
+                               styleClass="section-title"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button fx:id="btnNovaMeta"
+                                text="+ Nova"
+                                styleClass="button-primary, button-small"/>
+                    </HBox>
+
+                    <ListView fx:id="listMetas"
+                              VBox.vgrow="ALWAYS"
+                              styleClass="list-metas"/>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button fx:id="btnVerTodasMetas"
+                                text="Ver todas →"
+                                styleClass="button-link"/>
+                    </HBox>
+                </VBox>
+
             </HBox>
         </VBox>
     </center>
