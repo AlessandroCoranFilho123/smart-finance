@@ -12,9 +12,8 @@
       fx:controller="app.controller.MetaDialogController"
       styleClass="dialog-container"
       spacing="20"
-      prefWidth="450"
-      prefHeight="300">
-
+      prefWidth="900"
+      prefHeight="600">
     <padding>
         <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
@@ -28,7 +27,6 @@
         <VBox spacing="6">
             <Label text="Nome da Meta" styleClass="form-label"/>
             <TextField fx:id="txtNome"
-                       promptText="Ex: Viagem para Europa"
                        styleClass="form-field"/>
         </VBox>
 

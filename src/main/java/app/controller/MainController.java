@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 /* Gerencia a navegação entre telas,
-carrega e exibi os dados no dashboard,
+carrega os dados no dashboard,
 abre diálogos e alterna temas (claro/escuro) */
 
 public class MainController {
@@ -141,6 +141,7 @@ public class MainController {
 
             lblSaldo.setText(currencyFormatter.format(saldo));
 
+            // Futuramente vou implementar o cálculo de receitas/despesas do mês
         } catch (Exception e) {
             System.err.println("Erro ao carregar saldo: " + e.getMessage());
             lblSaldo.setText("R$ 0,00");
@@ -281,14 +282,12 @@ public class MainController {
 
         if (darkTheme) {
             rootContainer.getStyleClass().add("dark-theme");
-            System.out.println("Tema escuro ativado");
         } else {
             rootContainer.getStyleClass().remove("dark-theme");
-            System.out.println("Tema claro ativado");
         }
     }
 
-    private void abrirDialogNovaTransacao() {
+    private void abrirDialogNovaTransacao() { // Tela de Nova Transação
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/app/view/transacao_dialog.fxml")
@@ -316,7 +315,6 @@ public class MainController {
 
             if (controller.isConfirmado()) {
                 carregarDados();
-                System.out.println("Transação registrada com sucesso!");
             }
 
         } catch (Exception e) {
@@ -326,10 +324,41 @@ public class MainController {
     }
 
     private void abrirDetalhesTransacao(Transacao transacao) {
-        System.out.println("Abrindo detalhes da transação: " + transacao.getDescricao());
-        System.out.println("Valor: R$ " + (transacao.getValorCentavos() / 100.0));
-        System.out.println("Tipo: " + transacao.getTipo());
-        System.out.println("Data: " + transacao.getData());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/app/view/transacao_dialog.fxml")
+            );
+
+            VBox dialogRoot = loader.load();
+            TransacaoDialogController controller = loader.getController();
+
+            controller.configurarParaEditar(transacao);
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Detalhes da Transação");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initOwner(listTransacoes.getScene().getWindow());
+
+            Scene scene = new Scene(dialogRoot);
+            CssManager.aplicarCss(scene);
+
+            if (darkTheme) {
+                dialogRoot.getStyleClass().add("dark-theme");
+            }
+
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+
+            dialogStage.showAndWait();
+
+            if (controller.isConfirmado()) {
+                carregarDados();
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro ao abrir detalhes da transação: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void abrirDialogNovaMeta() {
@@ -362,7 +391,6 @@ public class MainController {
 
             if (controller.isConfirmado()) {
                 carregarDados();
-                System.out.println("Meta criada com sucesso!");
             }
 
         } catch (Exception e) {
@@ -401,7 +429,6 @@ public class MainController {
 
             if (controller.isConfirmado()) {
                 carregarDados();
-                System.out.println("Meta atualizada com sucesso!");
             }
 
         } catch (Exception e) {
