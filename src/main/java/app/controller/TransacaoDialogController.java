@@ -55,6 +55,8 @@ public class TransacaoDialogController {
     private MetaService metaService;
     private boolean confirmado = false;
 
+    private app.model.Transacao transacaoEmEdicao;
+
     private final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
@@ -68,13 +70,37 @@ public class TransacaoDialogController {
         cmbCategoria.setItems(FXCollections.observableArrayList(Categoria.values()));
 
         configurarMascaraMoeda();
-
         configurarListeners();
 
         btnEntrada.setSelected(true);
         atualizarEstadoFormulario();
 
         txtValor.requestFocus();
+    }
+
+    public void configurarParaEditar(app.model.Transacao transacao) {
+        transacaoEmEdicao = transacao;
+
+        if (transacao.getTipo() == TipoTransacao.Entrada) {
+            btnEntrada.setSelected(true);
+        } else {
+            btnSaida.setSelected(true);
+        }
+        atualizarEstadoFormulario();
+
+        txtValor.setText(formatarValor(transacao.getValorCentavos()));
+
+        if (transacao.getMetaId() != null) {
+            MetaDAO metaDAO = new MetaDAO();
+            Meta meta = metaDAO.buscarPorId(transacao.getMetaId());
+            cmbMeta.setValue(meta);
+        }
+
+        txtComentario.setText(transacao.getDescricao());
+
+        atualizarResumo();
+
+        btnSalvar.setText("Atualizar");
     }
 
     private void configurarListeners() {
@@ -152,7 +178,15 @@ public class TransacaoDialogController {
                 comentario = categoria.toString();
             }
 
-            transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario);
+            if (transacaoEmEdicao != null) {
+                System.out.println(">>> Editando transação: " + transacaoEmEdicao.getDescricao());
+
+                transacaoService.excluirTransacao(transacaoEmEdicao.getId(), categoria);
+                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario);
+
+            } else {
+                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario);
+            }
 
             confirmado = true;
             fecharDialog();
@@ -200,7 +234,10 @@ public class TransacaoDialogController {
         }
 
         cmbCategoria.setItems(FXCollections.observableArrayList(categorias));
-        cmbCategoria.setValue(null);
+
+        if (cmbCategoria.getValue() != null && !categorias.contains(cmbCategoria.getValue())) {
+            cmbCategoria.setValue(null);
+        }
 
         atualizarResumo();
     }
@@ -324,5 +361,9 @@ public class TransacaoDialogController {
 
     public boolean isConfirmado() {
         return confirmado;
+    }
+
+    public boolean isEdicao() {
+        return transacaoEmEdicao != null;
     }
 }

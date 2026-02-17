@@ -1,5 +1,5 @@
 .root-container {
-    -fx-background-color: #F4F7FE;
+    -fx-background-color: #F4F7FE; /* Branco levemente azulado */
     -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 14px;
 }
@@ -9,18 +9,18 @@
 }
 
 .sidebar {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #FFFFFF; /* Branco */
     -fx-background-radius: 16px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 10, 0, 0, 2);
 }
 
 .button-sidebar {
     -fx-background-color: transparent;
-    -fx-text-fill: #A3AED0;
     -fx-padding: 15 20;
     -fx-alignment: CENTER_LEFT;
-    -fx-border-width: 0 0 0 3;
+    -fx-border-width: 0 0 0 2;
     -fx-border-color: transparent;
+    -fx-border-radius: 5px;
     -fx-background-radius: 10px;
     -fx-cursor: hand;
     -fx-font-size: 14px;

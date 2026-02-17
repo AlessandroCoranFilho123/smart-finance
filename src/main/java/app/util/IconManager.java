@@ -21,14 +21,13 @@ public final class IconManager {
     private static final Map<String, Image> CACHE = new HashMap<>();
 
     // Ícone do aplicativo
-    private static final String APP_ICON = "/app/icons/app_64.png";
+    private static final String APP_ICON = "/app/icons/logo.png";
 
     // Ícones da sidebar
-    private static final String ICON_INICIO = "/app/icons/categoria/inicio.png";
-    private static final String ICON_TRANSACAO = "/app/icons/transaction_64.png";
-    private static final String ICON_META = "/app/icons/metas_64.png";
-    private static final String ICON_TEMA = "/app/icons/sun_24.png";
-    private static final String ICON_CARTEIRA = "/app/icons/carteira.png";
+    private static final String ICON_INICIO = "/app/icons/inicio.png";
+    private static final String ICON_TRANSACAO = "/app/icons/transacao.png";
+    private static final String ICON_META = "/app/icons/meta.png";
+    private static final String ICON_TEMA = "/app/icons/tema/claro.png";
 
     private static final Map<Categoria, String> CATEGORIA_ICONS = new HashMap<>();
 
@@ -39,18 +38,18 @@ public final class IconManager {
         CATEGORIA_ICONS.put(Categoria.RetirarMeta, "/app/icons/categoria/retirar-meta.png");
 
         // Despesas Fixas
-        CATEGORIA_ICONS.put(Categoria.Aluguel, "/app/icons/rent.png");
-        CATEGORIA_ICONS.put(Categoria.Internet, "/app/icons/internet.png");
-        CATEGORIA_ICONS.put(Categoria.Agua, "/app/icons/water.png");
-        CATEGORIA_ICONS.put(Categoria.Luz, "/app/icons/electricity.png");
+        CATEGORIA_ICONS.put(Categoria.Aluguel, "/app/icons/categoria/aluguel.png");
+        CATEGORIA_ICONS.put(Categoria.Internet, "/app/icons/categoria/internet.png");
+        CATEGORIA_ICONS.put(Categoria.Agua, "/app/icons/categoria/agua.png");
+        CATEGORIA_ICONS.put(Categoria.Luz, "/app/icons/categoria/luz.png");
 
         // Despesas Variáveis
-        CATEGORIA_ICONS.put(Categoria.Alimentacao, "/app/icons/food.png");
-        CATEGORIA_ICONS.put(Categoria.Transporte, "/app/icons/transport.png");
-        CATEGORIA_ICONS.put(Categoria.Compras, "/app/icons/shopping.png");
-        CATEGORIA_ICONS.put(Categoria.Educacao, "/app/icons/education.png");
-        CATEGORIA_ICONS.put(Categoria.AdicionarMeta, "/app/icons/add-goal.png");
-        CATEGORIA_ICONS.put(Categoria.Outros, "/app/icons/other.png");
+        CATEGORIA_ICONS.put(Categoria.Alimentacao, "/app/icons/categoria/alimentacao.png");
+        CATEGORIA_ICONS.put(Categoria.Transporte, "/app/icons/categoria/transporte.png");
+        CATEGORIA_ICONS.put(Categoria.Compras, "/app/icons/categoria/compras.png");
+        CATEGORIA_ICONS.put(Categoria.Educacao, "/app/icons/categoria/educacao.png");
+        CATEGORIA_ICONS.put(Categoria.AdicionarMeta, "/app/icons/adicionar-meta.png");
+        CATEGORIA_ICONS.put(Categoria.Outros, "/app/icons/outros.png");
     }
 
     public static void setAppIcon(Stage stage) {
@@ -59,7 +58,7 @@ public final class IconManager {
             if (icon != null) {
                 stage.getIcons().add(icon);
             } else {
-                System.err.println("Ícone do app não encontrado em: " + APP_ICON);
+                System.err.println("Ícone não encontrado em: " + APP_ICON);
             }
         } catch (Exception e) {
             System.err.println("Erro ao carregar ícone do app: " + e.getMessage());
@@ -80,10 +79,6 @@ public final class IconManager {
 
     public static Image getTemaIcon() {
         return getImage(ICON_TEMA);
-    }
-
-    public static Image getCarteiraIcon() {
-        return getImage(ICON_CARTEIRA);
     }
 
     public static Image getImage(String path) {
@@ -154,7 +149,6 @@ public final class IconManager {
         getImage(ICON_TRANSACAO);
         getImage(ICON_META);
         getImage(ICON_TEMA);
-        getImage(ICON_CARTEIRA);
 
         CATEGORIA_ICONS.values().forEach(IconManager::getImage);
 

@@ -34,7 +34,7 @@
                            pickOnBounds="false"
                            preserveRatio="true">
                     <image>
-                        <Image url="@../icons/app.png"/>
+                        <Image url="@../app/icons/logo.png"/>
                     </image>
                     <VBox.margin>
                         <Insets top="15" bottom="30"/>
@@ -81,7 +81,7 @@
                         <HBox spacing="12" alignment="CENTER_LEFT">
                             <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
                                 <image>
-                                    <Image url="@../icons/categoria/metas.png"/>
+                                    <Image url="@../icons/meta.png"/>
                                 </image>
                             </ImageView>
                             <Label text="Metas" styleClass="sidebar-text"/>

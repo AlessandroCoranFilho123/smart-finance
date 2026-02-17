@@ -57,14 +57,12 @@ public class MetaCell extends ListCell<Meta> {
                         "-fx-background-radius: 4px;"
         );
 
-        // Porcentagem
         percentLabel = new Label();
         percentLabel.setStyle(
                 "-fx-font-size: 12px; " +
                         "-fx-text-fill: #A3AED0;"
         );
 
-        // Montar container
         container.getChildren().addAll(headerBox, progressBar, percentLabel);
     }
 

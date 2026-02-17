@@ -39,10 +39,13 @@ public class MetaDAO {
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
+                Object alvoObj = rs.getObject("alvo_centavos");
+                Long alvoCentavos = alvoObj == null ? null : ((Number) alvoObj).longValue(); // Converter integer para long
+
                 metas.add(new Meta(
                         UUID.fromString(rs.getString("id")),
                         rs.getString("nome"),
-                        (Long) rs.getObject("alvo_centavos"),
+                        alvoCentavos,
                         rs.getLong("atual_centavos")
                 ));
             }
@@ -96,11 +99,12 @@ public class MetaDAO {
             ResultSet rs = ps.executeQuery();
 
             if (!rs.next()) return null;
-
+            Object alvoObj = rs.getObject("alvo_centavos");
+            Long alvoCentavos = alvoObj == null ? null : ((Number) alvoObj).longValue(); // Converter integer para long
             return new Meta(
                     UUID.fromString(rs.getString("id")),
                     rs.getString("nome"),
-                    (Long) rs.getObject("alvo_centavos"),
+                    alvoCentavos,
                     rs.getLong("atual_centavos")
             );
 
