@@ -248,3 +248,10 @@
 .dark-theme .form-field:focused {
     -fx-border-color: #7551FF;
 }
+
+.no-scroll .scroll-bar {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    visibility: hidden;
+    -fx-opacity: 0;
+}

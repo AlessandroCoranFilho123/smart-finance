@@ -43,13 +43,12 @@ public final class IconManager {
         CATEGORIA_ICONS.put(Categoria.Agua, "/app/icons/categoria/agua.png");
         CATEGORIA_ICONS.put(Categoria.Luz, "/app/icons/categoria/luz.png");
 
-        // Despesas Variáveis
+        // Despesas Variáveis, ícone para "outros" usa ícone das setas entrada e saída
         CATEGORIA_ICONS.put(Categoria.Alimentacao, "/app/icons/categoria/alimentacao.png");
         CATEGORIA_ICONS.put(Categoria.Transporte, "/app/icons/categoria/transporte.png");
         CATEGORIA_ICONS.put(Categoria.Compras, "/app/icons/categoria/compras.png");
         CATEGORIA_ICONS.put(Categoria.Educacao, "/app/icons/categoria/educacao.png");
         CATEGORIA_ICONS.put(Categoria.AdicionarMeta, "/app/icons/adicionar-meta.png");
-        CATEGORIA_ICONS.put(Categoria.Outros, "/app/icons/outros.png");
     }
 
     public static void setAppIcon(Stage stage) {
@@ -63,6 +62,22 @@ public final class IconManager {
         } catch (Exception e) {
             System.err.println("Erro ao carregar ícone do app: " + e.getMessage());
         }
+    }
+
+    public static void setTransacaoIcon(Stage stage) {
+        Image icon = getImage("/app/icons/transacao.png");
+        if (icon != null) stage.getIcons().add(icon);
+    }
+
+    public static void setMetaIcon(Stage stage) {
+        Image icon = getImage("/app/icons/meta.png");
+        if (icon != null) stage.getIcons().add(icon);
+    }
+
+    public static Image getCategoriaIcon(Categoria categoria) {
+        if (categoria == null) return null;
+        String path = CATEGORIA_ICONS.get(categoria);
+        return path != null ? getImage(path) : null;
     }
 
     public static Image getInicioIcon() {
@@ -81,7 +96,7 @@ public final class IconManager {
         return getImage(ICON_TEMA);
     }
 
-    public static Image getImage(String path) {
+    public static Image getImage(String path) { // Tamanho original
         if (CACHE.containsKey(path)) {
             return CACHE.get(path);
         }
@@ -104,7 +119,7 @@ public final class IconManager {
         }
     }
 
-    public static Image getImage(String path, double width, double height) {
+    public static Image getImage(String path, double width, double height) { // Redimensionado
         String cacheKey = path + "_" + width + "x" + height;
 
         if (CACHE.containsKey(cacheKey)) {
@@ -143,8 +158,6 @@ public final class IconManager {
     }
 
     public static void preloadCommonIcons() {
-        System.out.println("Pre-carregando ícones...");
-
         getImage(ICON_INICIO);
         getImage(ICON_TRANSACAO);
         getImage(ICON_META);

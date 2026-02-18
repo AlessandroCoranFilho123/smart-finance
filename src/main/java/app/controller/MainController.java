@@ -7,6 +7,7 @@ import app.repository.TransacaoDAO;
 import app.service.MetaService;
 import app.service.TransacaoService;
 import app.util.CssManager;
+import app.util.IconManager;
 import app.view.MetaCell;
 import app.view.TransacaoCell;
 import javafx.collections.FXCollections;
@@ -309,7 +310,11 @@ public class MainController {
             }
 
             dialogStage.setScene(scene);
-            dialogStage.setResizable(false);
+            dialogStage.setResizable(true);
+            dialogStage.setMinWidth(520);
+            dialogStage.setMinHeight(500);
+            dialogStage.setMaxWidth(600);
+            IconManager.setTransacaoIcon(dialogStage);
 
             dialogStage.showAndWait();
 
@@ -347,7 +352,11 @@ public class MainController {
             }
 
             dialogStage.setScene(scene);
-            dialogStage.setResizable(false);
+            dialogStage.setResizable(true);
+            dialogStage.setMinWidth(520);
+            dialogStage.setMinHeight(500);
+            dialogStage.setMaxWidth(600);
+            IconManager.setTransacaoIcon(dialogStage);
 
             dialogStage.showAndWait();
 
@@ -386,6 +395,9 @@ public class MainController {
 
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
+            dialogStage.setMinWidth(480);
+            dialogStage.setMinHeight(380);
+            IconManager.setMetaIcon(dialogStage);
 
             dialogStage.showAndWait();
 
@@ -424,6 +436,9 @@ public class MainController {
 
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
+            dialogStage.setMinWidth(480);
+            dialogStage.setMinHeight(380);
+            IconManager.setMetaIcon(dialogStage);
 
             dialogStage.showAndWait();
 

@@ -61,7 +61,8 @@ public class TransacaoService {
                     permitido,
                     TipoTransacao.Saida,
                     LocalDate.now(),
-                    meta.getId()
+                    meta.getId(),
+                    Categoria.AdicionarMeta
             );
 
 
@@ -83,7 +84,8 @@ public class TransacaoService {
                     retirado,
                     TipoTransacao.Entrada,
                     LocalDate.now(),
-                    meta.getId()
+                    meta.getId(),
+                    Categoria.RetirarMeta
             );
 
             transacaoDAO.inserir(t);
@@ -96,7 +98,8 @@ public class TransacaoService {
                 valorCentavos,
                 tipo,
                 LocalDate.now(),
-                null
+                null,
+                categoria
         );
 
         transacaoDAO.inserir(t);

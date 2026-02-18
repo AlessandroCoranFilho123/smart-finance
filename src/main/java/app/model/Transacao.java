@@ -11,6 +11,7 @@ public class Transacao {
     private final TipoTransacao tipo;
     private final LocalDate data;
     private final UUID metaId;
+    private final Categoria categoria;
 
     public Transacao(
             UUID id,
@@ -18,7 +19,8 @@ public class Transacao {
             long valorCentavos,
             TipoTransacao tipo,
             LocalDate data,
-            UUID metaId
+            UUID metaId,
+            Categoria categoria
     ) {
         this.id = id == null ? UUID.randomUUID() : id;
         this.descricao = descricao;
@@ -26,6 +28,7 @@ public class Transacao {
         this.tipo = tipo;
         this.data = data;
         this.metaId = metaId;
+        this.categoria = categoria;
     }
 
     public UUID getId() {
@@ -50,5 +53,9 @@ public class Transacao {
 
     public UUID getMetaId() {
         return metaId;
+    }
+    
+    public Categoria getCategoria() {
+        return categoria;
     }
 }

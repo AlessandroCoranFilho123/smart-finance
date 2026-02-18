@@ -10,25 +10,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f4d52452-880c-4fa9-98b8-22a01e3e73ee" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/app/icons/app.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/adicionar-meta.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/emprestimo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/retirar-meta.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/financas.db" beforeDir="false" afterPath="$PROJECT_DIR$/financas.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/repository/MetaDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/repository/MetaDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/view/MetaCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/MetaCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/app.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/app.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/detalhe.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/detalhe_64.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/inicio.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/inicio.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/metas.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/tema/claro.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/tema/claro.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/tema/escuro.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/tema/escuro.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/aluguel.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/aluguel.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/compras.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/compras.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/educacao.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/educacao.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/salario.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/salario.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/transacao.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/transacao.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/style/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/style/base.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/view/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/view/main.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/view/meta_dialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/view/meta_dialog.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/schema.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
