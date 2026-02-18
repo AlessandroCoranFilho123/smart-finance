@@ -16,5 +16,6 @@ CREATE TABLE IF NOT EXISTS transacao
     tipo           TEXT    NOT NULL,
     data           TEXT    NOT NULL,
     meta_id        TEXT,
+    categoria      TEXT,
     FOREIGN KEY (meta_id) REFERENCES meta (id) ON DELETE SET NULL
 );

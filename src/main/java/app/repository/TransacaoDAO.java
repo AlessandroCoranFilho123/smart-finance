@@ -1,6 +1,7 @@
 package app.repository;
 
 import app.database.Database;
+import app.model.Categoria;
 import app.model.TipoTransacao;
 import app.model.Transacao;
 
@@ -14,8 +15,8 @@ public class TransacaoDAO {
 
     public void inserir(Transacao transacao) {
         String sql = """
-                    INSERT INTO transacao (id, descricao, valor_centavos, tipo, data, meta_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO transacao (id, descricao, valor_centavos, tipo, data, meta_id, categoria)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection c = Database.getConnection();
@@ -31,6 +32,12 @@ public class TransacaoDAO {
                 ps.setString(6, transacao.getMetaId().toString());
             } else {
                 ps.setNull(6, Types.VARCHAR);
+            }
+
+            if (transacao.getCategoria() != null) {
+                ps.setString(7, transacao.getCategoria().name());
+            } else {
+                ps.setNull(7, Types.VARCHAR);
             }
 
             ps.executeUpdate();
@@ -61,13 +68,17 @@ public class TransacaoDAO {
                         ? null
                         : UUID.fromString(rs.getString("meta_id"));
 
+                String catStr = rs.getString("categoria");
+                Categoria categoria = catStr != null ? Categoria.valueOf(catStr) : null;
+
                 list.add(new Transacao(
                         UUID.fromString(rs.getString("id")),
                         rs.getString("descricao"),
                         rs.getLong("valor_centavos"),
                         TipoTransacao.valueOf(rs.getString("tipo")),
                         LocalDate.parse(rs.getString("data")),
-                        metaId
+                        metaId,
+                        categoria
                 ));
             }
 
@@ -116,13 +127,17 @@ public class TransacaoDAO {
                     ? null
                     : UUID.fromString(rs.getString("meta_id"));
 
+            String catStr = rs.getString("categoria");
+            Categoria categoria = catStr != null ? Categoria.valueOf(catStr) : null;
+
             return new Transacao(
                     UUID.fromString(rs.getString("id")),
                     rs.getString("descricao"),
                     rs.getLong("valor_centavos"),
                     TipoTransacao.valueOf(rs.getString("tipo")),
                     LocalDate.parse(rs.getString("data")),
-                    metaId
+                    metaId,
+                    categoria
             );
 
         } catch (SQLException e) {

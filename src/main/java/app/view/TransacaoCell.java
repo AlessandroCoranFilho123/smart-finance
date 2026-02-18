@@ -1,5 +1,6 @@
 package app.view;
 
+import app.model.Categoria;
 import app.model.TipoTransacao;
 import app.model.Transacao;
 import app.util.IconManager;
@@ -46,13 +47,13 @@ public class TransacaoCell extends ListCell<Transacao> {
         descricaoLabel.setStyle(
                 "-fx-font-weight: bold; " +
                         "-fx-font-size: 14px; " +
-                        "-fx-text-fill: #1B2559;"
+                        "-fx-text-fill: #1B2559;" // Tom de azul
         );
 
         dataLabel = new Label();
         dataLabel.setStyle(
                 "-fx-font-size: 12px; " +
-                        "-fx-text-fill: #A3AED0;"
+                        "-fx-text-fill: #A3AED0;" // Azul acinzentado
         );
 
         infoBox.getChildren().addAll(descricaoLabel, dataLabel);
@@ -69,6 +70,28 @@ public class TransacaoCell extends ListCell<Transacao> {
         container.getChildren().addAll(icon, infoBox, spacer, valorLabel);
     }
 
+    private javafx.scene.image.Image resolverIcone(Transacao transacao) {
+        Categoria categoria = transacao.getCategoria();
+        boolean isEntrada = transacao.getTipo() == TipoTransacao.Entrada;
+
+        if (categoria == null || categoria == Categoria.Outros) {
+            return isEntrada
+                    ? IconManager.getImage("/app/icons/categoria/entrada.png")
+                    : IconManager.getImage("/app/icons/categoria/saida.png");
+        }
+
+        javafx.scene.image.Image icone = IconManager.getCategoriaIcon(categoria);
+
+        // Fallback para seta se o arquivo de ícone não existir
+        if (icone == null) {
+            return isEntrada
+                    ? IconManager.getImage("/app/icons/categoria/entrada.png")
+                    : IconManager.getImage("/app/icons/categoria/saida.png");
+        }
+
+        return icone;
+    }
+
     @Override
     protected void updateItem(Transacao transacao, boolean empty) {
         super.updateItem(transacao, empty);
@@ -83,9 +106,10 @@ public class TransacaoCell extends ListCell<Transacao> {
 
             double valor = transacao.getValorCentavos() / 100.0;
             String valorTexto = String.format("R$ %.2f", valor);
+            boolean isEntrada = transacao.getTipo() == TipoTransacao.Entrada;
+            icon.setImage(resolverIcone(transacao));
 
-            if (transacao.getTipo() == TipoTransacao.Entrada) {
-                icon.setImage(IconManager.getImage("/app/icons/categoria/entrada.png"));
+            if (isEntrada) {
                 valorLabel.setText("+ " + valorTexto);
                 valorLabel.setStyle(
                         "-fx-font-size: 16px; " +
@@ -93,7 +117,6 @@ public class TransacaoCell extends ListCell<Transacao> {
                                 "-fx-text-fill: #4ADE80;" // Verde para entrada
                 );
             } else {
-                icon.setImage(IconManager.getImage("/app/icons/categoria/saida.png"));
                 valorLabel.setText("- " + valorTexto);
                 valorLabel.setStyle(
                         "-fx-font-size: 16px; " +
