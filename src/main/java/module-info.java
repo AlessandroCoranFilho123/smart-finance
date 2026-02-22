@@ -5,6 +5,7 @@ module app {
 
     requires java.sql;
     requires java.prefs;
+    requires org.slf4j;
 
     exports app;
     exports app.model;

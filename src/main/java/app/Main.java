@@ -11,18 +11,17 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader( // Carrega tela inicial do FXML
+        FXMLLoader loader = new FXMLLoader( // Prepara FXML da tela inicial
                 getClass().getResource("/app/view/main.fxml")
         );
-
-        Scene scene = new Scene(loader.load());
-        CssManager.aplicarCss(scene); // Carrega o CSS
-        IconManager.setAppIcon(stage); // Ícone do aplicativo
+        Scene scene = new Scene(loader.load()); // Carrega a interface do FXML
+        CssManager.aplicarCss(scene); // Carrega o CSS (package util CssManager.java)
+        IconManager.setAppIcon(stage); // Carrega Ícone do aplicativo (package util IconManager.java)
         stage.setTitle("Smart Finance v1.2.0"); // Título do aplicativo
-        stage.setMinWidth(1200);
-        stage.setMinHeight(700);
-        stage.setScene(scene);
-        stage.show();
+        stage.setMinWidth(1200); // Define a largura mínima
+        stage.setMinHeight(700); // Define a altura mínima
+        stage.setScene(scene); // Carrega a cena na janela
+        stage.show(); // Exibe a janela
     }
 
     public static void main(String[] args) {

@@ -99,10 +99,10 @@ public class MetaCell extends ListCell<Meta> {
                         "-fx-accent: #4ADE80; " + // Verde
                                 "-fx-background-radius: 4px;"
                 );
-                percentLabel.setText("✓ Meta concluída!");
+                percentLabel.setText("Meta concluída!");
                 percentLabel.setStyle(
                         "-fx-font-size: 12px; " +
-                                "-fx-text-fill: #4ADE80; " +
+                                "-fx-text-fill: #4ADE80; " + // Verde
                                 "-fx-font-weight: bold;"
                 );
             }
