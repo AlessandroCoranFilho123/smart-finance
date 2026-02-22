@@ -22,6 +22,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -30,10 +32,13 @@ import java.util.Locale;
 /* Gerencia a navegação entre telas,
 carrega os dados no dashboard,
 abre diálogos e alterna temas (claro/escuro) */
-
+@SuppressWarnings("unused")
 public class MainController {
-    private static final NumberFormat currencyFormatter =
+    private static final NumberFormat currencyFormatter = // Usado para formatar números padrão Brasil
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
+
+    // Registrar avisos e erros
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @FXML
     private BorderPane rootContainer;
@@ -66,25 +71,23 @@ public class MainController {
 
     private TransacaoService transacaoService;
     private MetaService metaService;
-    private ObservableList<Transacao> transacoes;
-    private ObservableList<Meta> metas;
     private boolean darkTheme = false;
 
     @FXML
     public void initialize() {
         try {
             inicializarServicos(); // Cria DAO, MetaService e TransacaoService
-            configurarCelulasCustomizadas(); // Inicializa as células Listview
+            configurarCelulasCustomizadas(); // Define o visual personalizado para os itens das listas
             configurarEventos(); // Configurar ações dos botões
             carregarDados(); // Carrega o DB
             marcarBotaoAtivo(btnInicio); // Botão início selecionado
 
         } catch (Exception e) {
-            System.err.println("Erro ao inicializar MainController: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao inicializar MainController: {}", e.getMessage());
         }
     }
 
+    // Cria TransacaoDAO, MetaDAO, MetaService e TransacaoService
     private void inicializarServicos() {
         TransacaoDAO transacaoDAO = new TransacaoDAO();
         MetaDAO metaDAO = new MetaDAO();
@@ -93,6 +96,7 @@ public class MainController {
         metaService = new MetaService(metaDAO);
     }
 
+    // Define o visual personalizado para os itens das listas.
     private void configurarCelulasCustomizadas() {
         listTransacoes.setCellFactory(lv -> new TransacaoCell());
         listMetas.setCellFactory(lv -> new MetaCell());
@@ -144,7 +148,7 @@ public class MainController {
 
             // Futuramente vou implementar o cálculo de receitas/despesas do mês
         } catch (Exception e) {
-            System.err.println("Erro ao carregar saldo: " + e.getMessage());
+            logger.error("Erro ao carregar saldo: {}", e.getMessage());
             lblSaldo.setText("R$ 0,00");
         }
     }
@@ -154,12 +158,11 @@ public class MainController {
             TransacaoDAO dao = new TransacaoDAO();
             List<Transacao> lista = dao.listarRecentes(10);
 
-            transacoes = FXCollections.observableArrayList(lista);
+            ObservableList<Transacao> transacoes = FXCollections.observableArrayList(lista);
             listTransacoes.setItems(transacoes);
 
         } catch (Exception e) {
-            System.err.println("Erro ao carregar transações: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao carregar transações: {}", e.getMessage());
         }
     }
 
@@ -167,12 +170,11 @@ public class MainController {
         try {
             List<Meta> lista = metaService.listarTodasMetas();
 
-            metas = FXCollections.observableArrayList(lista);
+            ObservableList<Meta> metas = FXCollections.observableArrayList(lista);
             listMetas.setItems(metas);
 
         } catch (Exception e) {
-            System.err.println("Erro ao carregar metas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao carregar metas: {}", e.getMessage());
         }
     }
 
@@ -224,8 +226,7 @@ public class MainController {
             carregarDados();
 
         } catch (Exception e) {
-            System.err.println("Erro ao abrir view de transações: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao abrir view de transações: {}", e.getMessage());
         }
     }
 
@@ -263,8 +264,8 @@ public class MainController {
             carregarDados();
 
         } catch (Exception e) {
-            System.err.println("Erro ao abrir view de metas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao abrir view de metas: {}", e.getMessage());
+
         }
     }
 
@@ -323,8 +324,7 @@ public class MainController {
             }
 
         } catch (Exception e) {
-            System.err.println("Erro ao abrir dialog de transação: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao abrir dialog de transação: {}", e.getMessage());
         }
     }
 
@@ -365,8 +365,7 @@ public class MainController {
             }
 
         } catch (Exception e) {
-            System.err.println("Erro ao abrir detalhes da transação: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao abrir detalhes da transação: {}", e.getMessage());
         }
     }
 
@@ -406,8 +405,7 @@ public class MainController {
             }
 
         } catch (Exception e) {
-            System.err.println("Erro ao abrir dialog de meta: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao abrir dialog de meta: {}", e.getMessage());
         }
     }
 
@@ -447,16 +445,7 @@ public class MainController {
             }
 
         } catch (Exception e) {
-            System.err.println("Erro ao abrir detalhes da meta: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao abrir detalhes da meta: {}", e.getMessage());
         }
-    }
-
-    public void atualizarDados() {
-        carregarDados();
-    }
-
-    public boolean isDarkTheme() {
-        return darkTheme;
     }
 }
