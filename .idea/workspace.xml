@@ -10,23 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f4d52452-880c-4fa9-98b8-22a01e3e73ee" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MetaDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MetaDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MetasViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MetasViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacoesViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacoesViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/database/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/database/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Meta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Meta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/service/MetaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/MetaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/detalhe.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/detalhe.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/view/transacoes_view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/view/transacoes_view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

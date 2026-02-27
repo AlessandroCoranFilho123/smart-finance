@@ -12,7 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Database.inicializar(); // Garante que o schema está atualizado antes de qualquer coisa
+        Database.inicializar(); // Garante que o schema está atualizado
         FXMLLoader loader = new FXMLLoader( // Prepara FXML da tela inicial
                 getClass().getResource("/app/view/main.fxml")
         );
