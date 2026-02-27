@@ -40,12 +40,12 @@ public class Meta {
         return atualCentavos;
     }
 
-    public boolean possuiAlvo() {
-        return alvoCentavos != null && alvoCentavos > 0;
+    public boolean semAlvo() {
+        return alvoCentavos == null || alvoCentavos <= 0;
     }
 
     public long restanteParaAlvo() {
-        if (!possuiAlvo()) return Long.MAX_VALUE;
+        if (semAlvo()) return Long.MAX_VALUE;
         return Math.max(0, alvoCentavos - atualCentavos);
     }
 
@@ -63,7 +63,7 @@ public class Meta {
     }
 
     public double progresso() {
-        if (!possuiAlvo()) return 0.0;
+        if (semAlvo()) return 0.0;
         return Math.min((double) atualCentavos / alvoCentavos, 1.0);
     }
 

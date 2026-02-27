@@ -1,5 +1,6 @@
 package app;
 
+import app.database.Database;
 import app.util.CssManager;
 import app.util.IconManager;
 import javafx.application.Application;
@@ -11,6 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Database.inicializar(); // Garante que o schema está atualizado antes de qualquer coisa
         FXMLLoader loader = new FXMLLoader( // Prepara FXML da tela inicial
                 getClass().getResource("/app/view/main.fxml")
         );

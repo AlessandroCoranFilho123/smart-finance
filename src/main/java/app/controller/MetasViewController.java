@@ -18,11 +18,10 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 /* Lista todas as metas,
-filtra por status (todas, em andamento, concluídas),
-buscar por nome,
-visualiza estatísticas,
-cria nova meta,
-edita meta existente (duplo clique) */
+   filtra por status (todas, em andamento, concluídas),
+   buscar por nome,
+   visualiza estatísticas, e
+   edita meta existente (duplo clique) */
 
 public class MetasViewController {
     @FXML
@@ -62,6 +61,7 @@ public class MetasViewController {
 
     private FiltroStatus filtroAtual = FiltroStatus.TODAS;
 
+    // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 

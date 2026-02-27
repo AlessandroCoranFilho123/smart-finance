@@ -26,15 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Locale;
 
 /* Gerencia a navegação entre telas,
-carrega os dados no dashboard,
-abre diálogos e alterna temas (claro/escuro) */
+   carrega os dados no dashboard,
+   abre diálogos e alterna temas (claro/escuro) */
 @SuppressWarnings("unused")
 public class MainController {
-    private static final NumberFormat currencyFormatter = // Usado para formatar números padrão Brasil
+    // Usado para formatar números padrão Brasil
+    private static final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
     // Registrar avisos e erros
@@ -114,7 +116,8 @@ public class MainController {
         btnNovaMeta.setOnAction(e -> abrirDialogNovaMeta());
         btnVerTodasMetas.setOnAction(e -> navegarParaMetas());
 
-        listTransacoes.setOnMouseClicked(e -> { // Duplo clique abre detalhes transações
+        // Duplo clique abre detalhes transações
+        listTransacoes.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 Transacao selecionada = listTransacoes.getSelectionModel().getSelectedItem();
                 if (selecionada != null) {
@@ -123,7 +126,8 @@ public class MainController {
             }
         });
 
-        listMetas.setOnMouseClicked(e -> { // Duplo clique abre detalhes metas
+        // Duplo clique abre detalhes metas
+        listMetas.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 Meta selecionada = listMetas.getSelectionModel().getSelectedItem();
                 if (selecionada != null) {
@@ -142,11 +146,15 @@ public class MainController {
     private void carregarSaldo() {
         try {
             long saldoCentavos = transacaoService.calcularSaldoDisponivelCentavos();
-            double saldo = saldoCentavos / 100.0;
+            lblSaldo.setText(currencyFormatter.format(saldoCentavos / 100.0));
 
-            lblSaldo.setText(currencyFormatter.format(saldo));
+            YearMonth mesAtual = YearMonth.now();
+            long receitasCentavos = transacaoService.calcularReceitasMes(mesAtual);
+            long despesasCentavos = transacaoService.calcularDespesasMes(mesAtual);
 
-            // Futuramente vou implementar o cálculo de receitas/despesas do mês
+            lblReceitasMes.setText(currencyFormatter.format(receitasCentavos / 100.0));
+            lblDespesasMes.setText(currencyFormatter.format(despesasCentavos / 100.0));
+
         } catch (Exception e) {
             logger.error("Erro ao carregar saldo: {}", e.getMessage());
             lblSaldo.setText("R$ 0,00");
@@ -178,17 +186,20 @@ public class MainController {
         }
     }
 
-    private void navegarParaInicio() { // Tela inicial (main.fxml)
+    // Tela inicial (main.fxml)
+    private void navegarParaInicio() {
         marcarBotaoAtivo(btnInicio);
         carregarDados();
     }
 
-    private void navegarParaTransacoes() { // Tela transações (transacoes_view.fxml)
+    // Tela transações (transacoes_view.fxml)
+    private void navegarParaTransacoes() {
         marcarBotaoAtivo(btnTransacao);
         abrirViewTransacoes();
     }
 
-    private void navegarParaMetas() { // Tela metas (metas_view.fxml)
+    // Tela metas (metas_view.fxml)
+    private void navegarParaMetas() {
         marcarBotaoAtivo(btnMetas);
         abrirViewMetas();
     }
@@ -289,7 +300,7 @@ public class MainController {
         }
     }
 
-    private void abrirDialogNovaTransacao() { // Tela de Nova Transação
+    private void abrirDialogNovaTransacao() {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/app/view/transacao_dialog.fxml")
