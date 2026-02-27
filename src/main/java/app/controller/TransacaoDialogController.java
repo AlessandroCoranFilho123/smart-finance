@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -54,7 +56,7 @@ public class TransacaoDialogController {
     private TransacaoService transacaoService;
     private MetaService metaService;
     private boolean confirmado = false;
-
+    private static final Logger logger = LoggerFactory.getLogger(TransacaoDialogController.class);
     private app.model.Transacao transacaoEmEdicao;
 
     private final NumberFormat currencyFormatter =
@@ -81,22 +83,22 @@ public class TransacaoDialogController {
     public void configurarParaEditar(app.model.Transacao transacao) {
         transacaoEmEdicao = transacao;
 
-        if (transacao.getTipo() == TipoTransacao.Entrada) {
+        if (transacao.tipo() == TipoTransacao.Entrada) {
             btnEntrada.setSelected(true);
         } else {
             btnSaida.setSelected(true);
         }
         atualizarEstadoFormulario();
 
-        txtValor.setText(formatarValor(transacao.getValorCentavos()));
+        txtValor.setText(formatarValor(transacao.valorCentavos()));
 
-        if (transacao.getMetaId() != null) {
+        if (transacao.metaId() != null) {
             MetaDAO metaDAO = new MetaDAO();
-            Meta meta = metaDAO.buscarPorId(transacao.getMetaId());
+            Meta meta = metaDAO.buscarPorId(transacao.metaId());
             cmbMeta.setValue(meta);
         }
 
-        txtComentario.setText(transacao.getDescricao());
+        txtComentario.setText(transacao.descricao());
 
         atualizarResumo();
 
@@ -104,21 +106,13 @@ public class TransacaoDialogController {
     }
 
     private void configurarListeners() {
-        tipoGroup.selectedToggleProperty().addListener((obs, old, newToggle) -> {
-            atualizarEstadoFormulario();
-        });
+        tipoGroup.selectedToggleProperty().addListener((obs, old, newToggle) -> atualizarEstadoFormulario());
 
-        cmbCategoria.valueProperty().addListener((obs, old, newCategoria) -> {
-            atualizarVisibilidadeMeta(newCategoria);
-        });
+        cmbCategoria.valueProperty().addListener((obs, old, newCategoria) -> atualizarVisibilidadeMeta(newCategoria));
 
-        txtValor.textProperty().addListener((obs, old, newValue) -> {
-            atualizarResumo();
-        });
+        txtValor.textProperty().addListener((obs, old, newValue) -> atualizarResumo());
 
-        cmbMeta.valueProperty().addListener((obs, old, newMeta) -> {
-            atualizarInfoMeta(newMeta);
-        });
+        cmbMeta.valueProperty().addListener((obs, old, newMeta) -> atualizarInfoMeta(newMeta));
     }
 
     private void configurarMascaraMoeda() {
@@ -134,6 +128,7 @@ public class TransacaoDialogController {
                     long centavos = parseValorCentavos(txtValor.getText());
                     txtValor.setText(formatarValor(centavos));
                 } catch (Exception e) {
+                    logger.debug("Formatação ignorada — valor ainda sendo digitado: {}", e.getMessage());
                 }
             }
         });
@@ -153,7 +148,7 @@ public class TransacaoDialogController {
             String comentario = txtComentario.getText().trim();
 
             if (valorCentavos <= 0) {
-                mostrarErroValor("Valor deve ser maior que zero");
+                mostrarErroValor();
                 txtValor.requestFocus();
                 return;
             }
@@ -179,9 +174,9 @@ public class TransacaoDialogController {
             }
 
             if (transacaoEmEdicao != null) {
-                System.out.println(">>> Editando transação: " + transacaoEmEdicao.getDescricao());
+                System.out.println(">>> Editando transação: " + transacaoEmEdicao.descricao());
 
-                transacaoService.excluirTransacao(transacaoEmEdicao.getId(), categoria);
+                transacaoService.excluirTransacao(transacaoEmEdicao.id(), categoria);
                 transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario);
 
             } else {
@@ -195,7 +190,6 @@ public class TransacaoDialogController {
             mostrarErro(e.getMessage());
         } catch (Exception e) {
             mostrarErro("Erro ao registrar transação: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -341,8 +335,8 @@ public class TransacaoDialogController {
         lblErroGeral.setManaged(true);
     }
 
-    private void mostrarErroValor(String mensagem) {
-        lblErroValor.setText(mensagem);
+    private void mostrarErroValor() {
+        lblErroValor.setText("Valor deve ser maior que zero");
         lblErroValor.setVisible(true);
         lblErroValor.setManaged(true);
     }
@@ -361,9 +355,5 @@ public class TransacaoDialogController {
 
     public boolean isConfirmado() {
         return confirmado;
-    }
-
-    public boolean isEdicao() {
-        return transacaoEmEdicao != null;
     }
 }

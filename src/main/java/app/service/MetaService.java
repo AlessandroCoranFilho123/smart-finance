@@ -36,7 +36,7 @@ public class MetaService {
     public void atualizarMeta(Meta meta) {
         Objects.requireNonNull(meta, "Meta é obrigatória");
 
-        if (!meta.possuiAlvo()) {
+        if (meta.semAlvo()) {
             throw new IllegalArgumentException("Meta deve ter valor alvo");
         }
 

@@ -22,20 +22,20 @@ public class TransacaoDAO {
         try (Connection c = Database.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
-            ps.setString(1, transacao.getId().toString());
-            ps.setString(2, transacao.getDescricao());
-            ps.setLong(3, transacao.getValorCentavos());
-            ps.setString(4, transacao.getTipo().name());
-            ps.setString(5, transacao.getData().toString());
+            ps.setString(1, transacao.id().toString());
+            ps.setString(2, transacao.descricao());
+            ps.setLong(3, transacao.valorCentavos());
+            ps.setString(4, transacao.tipo().name());
+            ps.setString(5, transacao.data().toString());
 
-            if (transacao.getMetaId() != null) {
-                ps.setString(6, transacao.getMetaId().toString());
+            if (transacao.metaId() != null) {
+                ps.setString(6, transacao.metaId().toString());
             } else {
                 ps.setNull(6, Types.VARCHAR);
             }
 
-            if (transacao.getCategoria() != null) {
-                ps.setString(7, transacao.getCategoria().name());
+            if (transacao.categoria() != null) {
+                ps.setString(7, transacao.categoria().name());
             } else {
                 ps.setNull(7, Types.VARCHAR);
             }
@@ -143,6 +143,32 @@ public class TransacaoDAO {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar transação", e);
         }
+    }
+
+    public long calcularTotalPorTipoEMes(TipoTransacao tipo, String anoMes) {
+        String sql = """
+                    SELECT SUM(valor_centavos)
+                    FROM transacao
+                    WHERE tipo = ? AND strftime('%Y-%m', data) = ?
+                """;
+
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, tipo.name());
+            ps.setString(2, anoMes);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getObject(1) != null ? rs.getLong(1) : 0L;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao calcular total por tipo e mês", e);
+        }
+
+        return 0L;
     }
 
     public void excluir(UUID id) {

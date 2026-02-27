@@ -8,10 +8,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
+/* Cria e edita metas,
+   exibe o progresso, e
+   valida e formata valor centavos */
+@SuppressWarnings("unused")
 public class MetaDialogController {
     @FXML
     private Label lblTitulo;
@@ -40,18 +46,21 @@ public class MetaDialogController {
     private Meta metaEmEdicao;
     private boolean confirmado = false;
 
+    // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
+
+    // Registrar avisos e erros
+    private static final Logger logger = LoggerFactory.getLogger(MetaDialogController.class);
 
     @FXML
     public void initialize() {
         metaService = new MetaService();
-
         configurarMascaraMoeda();
-
         txtNome.requestFocus();
     }
 
+    // Inicia o serviço e configura a máscara de moeda no campo de valor
     public void configurarParaCriar() {
         lblTitulo.setText("Nova Meta");
         metaEmEdicao = null;
@@ -59,6 +68,7 @@ public class MetaDialogController {
         boxProgresso.setManaged(false);
     }
 
+    // Preenche os campos com os dados da meta existente e exibe o progresso atual
     public void configurarParaEditar(Meta meta) {
         lblTitulo.setText("Editar Meta");
         metaEmEdicao = meta;
@@ -76,21 +86,21 @@ public class MetaDialogController {
     }
 
     @FXML
-    private void handleSalvar() {
+    private void handleSalvar() { // Valida os campos, salva ou atualiza a meta e fecha o dialog
         limparErros();
 
         try {
             String nome = txtNome.getText().trim();
             long valorAlvoCentavos = parseValorCentavos(txtValorAlvo.getText());
 
-            if (nome.isEmpty()) {
+            if (nome.isEmpty()) { // Nome da meta não pode ser nulo
                 mostrarErro("Nome é obrigatório");
                 txtNome.requestFocus();
                 return;
             }
 
-            if (valorAlvoCentavos <= 0) {
-                mostrarErroValor("Valor deve ser maior que zero");
+            if (valorAlvoCentavos <= 0) { // Valor alvo não pode ser menor ou igual a 0
+                mostrarErroValor();
                 txtValorAlvo.requestFocus();
                 return;
             }
@@ -113,17 +123,17 @@ public class MetaDialogController {
         } catch (IllegalArgumentException e) {
             mostrarErro(e.getMessage());
         } catch (Exception e) {
-            mostrarErro("Erro ao salvar meta: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Erro ao salvar meta: {}", e.getMessage());
         }
     }
 
     @FXML
-    private void handleCancelar() {
+    private void handleCancelar() {  // Cancela a operação e fecha o dialog sem salvar
         confirmado = false;
         fecharDialog();
     }
 
+    // Impede caracteres inválidos no campo de valor
     private void configurarMascaraMoeda() {
         txtValorAlvo.textProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue.matches("[0-9.,]*")) {
@@ -143,13 +153,13 @@ public class MetaDialogController {
         });
     }
 
+    // Converte texto digitado pelo usuário para valor em centavos
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
         if (texto == null || texto.trim().isEmpty()) {
             return 0;
         }
 
         try {
-            texto = texto.replace("R$", "").trim();
             texto = texto.replace(".", "").replace(",", ".");
 
             double valor = Double.parseDouble(texto);
@@ -160,11 +170,13 @@ public class MetaDialogController {
         }
     }
 
+    // Converte os centavos para String formatada com duas casas decimais
     private String formatarValor(long centavos) {
         double valor = centavos / 100.0;
         return String.format("%.2f", valor);
     }
 
+    // Atualiza os labels de valor atual, restante e porcentagem de progresso
     private void atualizarProgresso(Meta meta) {
         double atual = meta.getAtualCentavos() / 100.0;
         double restante = meta.restanteParaAlvo() / 100.0;
@@ -181,12 +193,14 @@ public class MetaDialogController {
         lblErroGeral.setManaged(true);
     }
 
-    private void mostrarErroValor(String mensagem) {
-        lblErroValor.setText(mensagem);
+    // Helper method para erros de valor
+    private void mostrarErroValor() {
+        lblErroValor.setText("Valor deve ser maior que zero");
         lblErroValor.setVisible(true);
         lblErroValor.setManaged(true);
     }
 
+    // Oculta todos os labels de erro
     private void limparErros() {
         lblErroGeral.setVisible(false);
         lblErroGeral.setManaged(false);
@@ -194,6 +208,7 @@ public class MetaDialogController {
         lblErroValor.setManaged(false);
     }
 
+    // Fecha a janela
     private void fecharDialog() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();

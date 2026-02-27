@@ -96,7 +96,7 @@ public final class IconManager {
         return getImage(ICON_TEMA);
     }
 
-    public static Image getImage(String path) { // Tamanho original
+    public static Image getImage(String path) {
         if (CACHE.containsKey(path)) {
             return CACHE.get(path);
         }

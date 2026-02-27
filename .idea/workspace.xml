@@ -13,10 +13,20 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Categoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Categoria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/TipoTransacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/TipoTransacao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/view/MetaCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/MetaCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MetaDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MetaDialogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MetasViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MetasViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacoesViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacoesViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/database/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/database/Database.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Meta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Meta.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/service/MetaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/MetaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/detalhe.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/icons/detalhe.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/app/view/transacoes_view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/view/transacoes_view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,39 +85,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.JavaFX.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Maven.ProjetoFinancas [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor": "Run",
-    "Maven.ProjetoFinancas [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
-    "Maven.SmartFinance [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
-    "Maven.app [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor": "Run",
-    "Maven.app [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Alessandro/Desktop/Meus Arquivos/Estudos Java/ProjetoFinancas",
-    "onboarding.tips.debug.path": "C:/Users/Alessandro/Desktop/ProjetoFinancas/untitled/src/Main.java",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "Errors"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Application.JavaFX.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ProjetoFinancas [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ProjetoFinancas [org.openjfx:javafx-maven-plugin:0.0.8:run].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SmartFinance [org.openjfx:javafx-maven-plugin:0.0.8:run].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.app [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.app [org.openjfx:javafx-maven-plugin:0.0.8:run].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Alessandro/Desktop/Meus Arquivos/Estudos Java/ProjetoFinancas&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/Alessandro/Desktop/ProjetoFinancas/untitled/src/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="C:\Users\Alessandro\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="5d208412-c97c-45f1-a4f2-041e4f2a9f5c" reportId="ProjetoFinancas/qodana/2026-01-30" />
@@ -231,7 +241,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
       </set>
     </attachedChunks>
   </component>

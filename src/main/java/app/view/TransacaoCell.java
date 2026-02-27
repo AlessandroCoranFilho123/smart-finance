@@ -71,8 +71,8 @@ public class TransacaoCell extends ListCell<Transacao> {
     }
 
     private javafx.scene.image.Image resolverIcone(Transacao transacao) {
-        Categoria categoria = transacao.getCategoria();
-        boolean isEntrada = transacao.getTipo() == TipoTransacao.Entrada;
+        Categoria categoria = transacao.categoria();
+        boolean isEntrada = transacao.tipo() == TipoTransacao.Entrada;
 
         if (categoria == null || categoria == Categoria.Outros) {
             return isEntrada
@@ -100,13 +100,13 @@ public class TransacaoCell extends ListCell<Transacao> {
             setGraphic(null);
             setText(null);
         } else {
-            descricaoLabel.setText(transacao.getDescricao());
+            descricaoLabel.setText(transacao.descricao());
 
-            dataLabel.setText(transacao.getData().format(DATE_FORMATTER));
+            dataLabel.setText(transacao.data().format(DATE_FORMATTER));
 
-            double valor = transacao.getValorCentavos() / 100.0;
+            double valor = transacao.valorCentavos() / 100.0;
             String valorTexto = String.format("R$ %.2f", valor);
-            boolean isEntrada = transacao.getTipo() == TipoTransacao.Entrada;
+            boolean isEntrada = transacao.tipo() == TipoTransacao.Entrada;
             icon.setImage(resolverIcone(transacao));
 
             if (isEntrada) {

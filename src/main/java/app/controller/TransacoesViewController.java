@@ -115,8 +115,8 @@ public class TransacoesViewController {
         String tipo = cmbTipo.getValue();
         if (tipo == null || tipo.equals("Todos")) return true;
 
-        return (tipo.equals("Entrada") && t.getTipo() == TipoTransacao.Entrada) ||
-                (tipo.equals("Saída") && t.getTipo() == TipoTransacao.Saida);
+        return (tipo.equals("Entrada") && t.tipo() == TipoTransacao.Entrada) ||
+                (tipo.equals("Saída") && t.tipo() == TipoTransacao.Saida);
     }
 
     private boolean passaFiltroCategoria(Transacao t) {
@@ -128,10 +128,8 @@ public class TransacoesViewController {
         LocalDate inicio = dateInicio.getValue();
         LocalDate fim = dateFim.getValue();
 
-        if (inicio != null && t.getData().isBefore(inicio)) return false;
-        if (fim != null && t.getData().isAfter(fim)) return false;
-
-        return true;
+        if (inicio != null && t.data().isBefore(inicio)) return false;
+        return fim == null || !t.data().isAfter(fim);
     }
 
     private void atualizarEstatisticas() {
@@ -139,10 +137,10 @@ public class TransacoesViewController {
         long totalSaidas = 0;
 
         for (Transacao t : transacoesFiltradas) {
-            if (t.getTipo() == TipoTransacao.Entrada) {
-                totalEntradas += t.getValorCentavos();
+            if (t.tipo() == TipoTransacao.Entrada) {
+                totalEntradas += t.valorCentavos();
             } else {
-                totalSaidas += t.getValorCentavos();
+                totalSaidas += t.valorCentavos();
             }
         }
 

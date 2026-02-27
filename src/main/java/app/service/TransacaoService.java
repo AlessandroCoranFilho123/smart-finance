@@ -8,6 +8,7 @@ import app.repository.MetaDAO;
 import app.repository.TransacaoDAO;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -109,28 +110,41 @@ public class TransacaoService {
         return transacaoDAO.calcularSaldo();
     }
 
+    public long calcularReceitasMes(YearMonth mes) {
+        return transacaoDAO.calcularTotalPorTipoEMes(
+                TipoTransacao.Entrada,
+                mes.toString()
+        );
+    }
+
+    public long calcularDespesasMes(YearMonth mes) {
+        return transacaoDAO.calcularTotalPorTipoEMes(
+                TipoTransacao.Saida,
+                mes.toString()
+        );
+    }
+
     public void excluirTransacao(UUID transacaoId, Categoria categoria) {
 
         Transacao t = transacaoDAO.buscarPorId(transacaoId);
         if (t == null) return;
 
-        if (categoria == Categoria.AdicionarMeta && t.getMetaId() != null) {
-            Meta meta = metaDAO.buscarPorId(t.getMetaId());
+        if (categoria == Categoria.AdicionarMeta && t.metaId() != null) {
+            Meta meta = metaDAO.buscarPorId(t.metaId());
             if (meta != null) {
-                meta.retirar(t.getValorCentavos());
+                meta.retirar(t.valorCentavos());
                 metaDAO.atualizar(meta);
             }
         }
 
-        if (categoria == Categoria.RetirarMeta && t.getMetaId() != null) {
-            Meta meta = metaDAO.buscarPorId(t.getMetaId());
+        if (categoria == Categoria.RetirarMeta && t.metaId() != null) {
+            Meta meta = metaDAO.buscarPorId(t.metaId());
             if (meta != null) {
-                meta.adicionar(t.getValorCentavos());
+                meta.adicionar(t.valorCentavos());
                 metaDAO.atualizar(meta);
             }
         }
 
         transacaoDAO.excluir(transacaoId);
     }
-
 }

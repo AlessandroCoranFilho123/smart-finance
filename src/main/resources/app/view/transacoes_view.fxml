@@ -70,7 +70,7 @@
         <Region HBox.hgrow="ALWAYS"/>
 
         <VBox spacing="6">
-            <Label text=" " styleClass="filter-label"/> <!-- Spacer -->
+            <Label text=" " styleClass="filter-label"/>
             <Button fx:id="btnLimparFiltros"
                     text="Limpar"
                     styleClass="button-secondary"/>
