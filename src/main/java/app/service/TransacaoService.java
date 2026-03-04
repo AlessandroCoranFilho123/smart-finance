@@ -27,8 +27,8 @@ public class TransacaoService {
             Categoria categoria,
             long valorCentavos,
             Meta meta,
-            String comentario
-    ) {
+            String comentario,
+            LocalDate data) {
 
         Objects.requireNonNull(tipo, "tipo é obrigatório");
         Objects.requireNonNull(categoria, "categoria é obrigatória");

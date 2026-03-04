@@ -13,14 +13,12 @@
       styleClass="dialog-container"
       spacing="20"
       prefWidth="500"
-      prefHeight="420">
+      prefHeight="380">
     <padding>
         <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
-    <Label fx:id="lblTitulo"
-           text="Nova Meta"
-           styleClass="dialog-title"/>
+    <!-- Titulo removido - a janela ja exibe o nome -->
 
     <VBox spacing="15">
 
@@ -73,6 +71,9 @@
         </VBox>
 
     </VBox>
+
+    <!-- Label titulo oculto mantido para o controller -->
+    <Label fx:id="lblTitulo" visible="false" managed="false"/>
 
     <Label fx:id="lblErroGeral"
            styleClass="error-label"

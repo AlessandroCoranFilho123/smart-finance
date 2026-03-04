@@ -13,39 +13,28 @@ import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class TransacoesViewController {
 
-    @FXML
-    private Button btnNova;
-    @FXML
-    private Button btnFechar;
-    @FXML
-    private Button btnLimparFiltros;
+    @FXML private Button btnNova;
+    @FXML private Button btnFechar;
+    @FXML private Button btnLimparFiltros;
 
-    @FXML
-    private ComboBox<String> cmbTipo;
-    @FXML
-    private ComboBox<Categoria> cmbCategoria;
-    @FXML
-    private DatePicker dateInicio;
-    @FXML
-    private DatePicker dateFim;
+    @FXML private ComboBox<String> cmbTipo;
+    @FXML private ComboBox<Categoria> cmbCategoria;
+    @FXML private DatePicker dateInicio;
+    @FXML private DatePicker dateFim;
 
-    @FXML
-    private Label lblTotalEntradas;
-    @FXML
-    private Label lblTotalSaidas;
-    @FXML
-    private Label lblSaldoPeriodo;
-    @FXML
-    private Label lblTotal;
+    @FXML private Label lblTotalEntradas;
+    @FXML private Label lblTotalSaidas;
+    @FXML private Label lblSaldoPeriodo;
+    @FXML private Label lblTotal;
 
-    @FXML
-    private ListView<Transacao> listTransacoes;
+    @FXML private ListView<Transacao> listTransacoes;
 
     private TransacaoDAO transacaoDAO;
     private ObservableList<Transacao> todasTransacoes;
@@ -62,12 +51,13 @@ public class TransacoesViewController {
 
         listTransacoes.setCellFactory(lv -> new TransacaoCell());
 
-        cmbTipo.setItems(FXCollections.observableArrayList(
-                "Todos", "Entrada", "Saída"
-        ));
+        cmbTipo.setItems(FXCollections.observableArrayList("Todos", "Entrada", "Saida"));
         cmbTipo.setValue("Todos");
 
-        cmbCategoria.setItems(FXCollections.observableArrayList(Categoria.values()));
+        // Popula categorias com opção "Todas" no topo
+        List<Categoria> cats = Arrays.asList(Categoria.values());
+        cmbCategoria.setItems(FXCollections.observableArrayList(cats));
+        cmbCategoria.setPromptText("Todas");
 
         btnNova.setOnAction(e -> {
             if (onNovaTransacao != null) {
@@ -92,10 +82,9 @@ public class TransacoesViewController {
     }
 
     private void carregarTransacoes() {
-        List<Transacao> lista = transacaoDAO.listarRecentes(1000); // Todas
+        List<Transacao> lista = transacaoDAO.listarRecentes(1000);
         todasTransacoes = FXCollections.observableArrayList(lista);
         transacoesFiltradas = FXCollections.observableArrayList(lista);
-
         listTransacoes.setItems(transacoesFiltradas);
         atualizarEstatisticas();
     }
@@ -114,20 +103,19 @@ public class TransacoesViewController {
     private boolean passaFiltroTipo(Transacao t) {
         String tipo = cmbTipo.getValue();
         if (tipo == null || tipo.equals("Todos")) return true;
-
         return (tipo.equals("Entrada") && t.tipo() == TipoTransacao.Entrada) ||
-                (tipo.equals("Saída") && t.tipo() == TipoTransacao.Saida);
+               (tipo.equals("Saida") && t.tipo() == TipoTransacao.Saida);
     }
 
     private boolean passaFiltroCategoria(Transacao t) {
         Categoria cat = cmbCategoria.getValue();
-        return cat == null; // Precisa adicionar campo categoria em Transacao
+        if (cat == null) return true; // Nenhuma categoria selecionada = mostrar todas
+        return cat.equals(t.categoria());
     }
 
     private boolean passaFiltroData(Transacao t) {
         LocalDate inicio = dateInicio.getValue();
         LocalDate fim = dateFim.getValue();
-
         if (inicio != null && t.data().isBefore(inicio)) return false;
         return fim == null || !t.data().isAfter(fim);
     }
@@ -149,9 +137,7 @@ public class TransacoesViewController {
         lblTotalEntradas.setText(currencyFormatter.format(totalEntradas / 100.0));
         lblTotalSaidas.setText(currencyFormatter.format(totalSaidas / 100.0));
         lblSaldoPeriodo.setText(currencyFormatter.format(saldoPeriodo / 100.0));
-
-        lblTotal.setText(String.format("Total: %d transações",
-                transacoesFiltradas.size()));
+        lblTotal.setText(String.format("Total: %d transacoes", transacoesFiltradas.size()));
     }
 
     private void limparFiltros() {

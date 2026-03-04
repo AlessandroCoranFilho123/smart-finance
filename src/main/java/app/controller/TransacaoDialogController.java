@@ -16,42 +16,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
 public class TransacaoDialogController {
-    @FXML
-    private ToggleButton btnEntrada;
-    @FXML
-    private ToggleButton btnSaida;
-    @FXML
-    private ToggleGroup tipoGroup;
-    @FXML
-    private TextField txtValor;
-    @FXML
-    private ComboBox<Categoria> cmbCategoria;
-    @FXML
-    private ComboBox<Meta> cmbMeta;
-    @FXML
-    private TextArea txtComentario;
-    @FXML
-    private VBox boxMeta;
-    @FXML
-    private Label lblInfoMeta;
-    @FXML
-    private VBox boxResumo;
-    @FXML
-    private Label lblSaldoAtual;
-    @FXML
-    private Label lblNovoSaldo;
-    @FXML
-    private Label lblErroValor;
-    @FXML
-    private Label lblErroGeral;
-    @FXML
-    private Button btnCancelar;
-    @FXML
-    private Button btnSalvar;
+
+    @FXML private ToggleButton btnEntrada;
+    @FXML private ToggleButton btnSaida;
+    @FXML private ToggleGroup tipoGroup;
+    @FXML private TextField txtValor;
+    @FXML private DatePicker dateTransacao;
+    @FXML private ComboBox<Categoria> cmbCategoria;
+    @FXML private ComboBox<Meta> cmbMeta;
+    @FXML private TextArea txtComentario;
+    @FXML private VBox boxMeta;
+    @FXML private Label lblInfoMeta;
+    @FXML private VBox boxResumo;
+    @FXML private Label lblSaldoAtual;
+    @FXML private Label lblNovoSaldo;
+    @FXML private Label lblErroValor;
+    @FXML private Label lblErroGeral;
+    @FXML private Button btnCancelar;
+    @FXML private Button btnSalvar;
 
     private TransacaoService transacaoService;
     private MetaService metaService;
@@ -70,6 +57,9 @@ public class TransacaoDialogController {
         metaService = new MetaService(metaDAO);
 
         cmbCategoria.setItems(FXCollections.observableArrayList(Categoria.values()));
+
+        // Data padrao = hoje
+        dateTransacao.setValue(LocalDate.now());
 
         configurarMascaraMoeda();
         configurarListeners();
@@ -92,6 +82,11 @@ public class TransacaoDialogController {
 
         txtValor.setText(formatarValor(transacao.valorCentavos()));
 
+        // Preenche data da transacao
+        if (transacao.data() != null) {
+            dateTransacao.setValue(transacao.data());
+        }
+
         if (transacao.metaId() != null) {
             MetaDAO metaDAO = new MetaDAO();
             Meta meta = metaDAO.buscarPorId(transacao.metaId());
@@ -99,19 +94,12 @@ public class TransacaoDialogController {
         }
 
         txtComentario.setText(transacao.descricao());
-
-        atualizarResumo();
-
         btnSalvar.setText("Atualizar");
     }
 
     private void configurarListeners() {
         tipoGroup.selectedToggleProperty().addListener((obs, old, newToggle) -> atualizarEstadoFormulario());
-
         cmbCategoria.valueProperty().addListener((obs, old, newCategoria) -> atualizarVisibilidadeMeta(newCategoria));
-
-        txtValor.textProperty().addListener((obs, old, newValue) -> atualizarResumo());
-
         cmbMeta.valueProperty().addListener((obs, old, newMeta) -> atualizarInfoMeta(newMeta));
     }
 
@@ -128,7 +116,7 @@ public class TransacaoDialogController {
                     long centavos = parseValorCentavos(txtValor.getText());
                     txtValor.setText(formatarValor(centavos));
                 } catch (Exception e) {
-                    logger.debug("Formatação ignorada — valor ainda sendo digitado: {}", e.getMessage());
+                    logger.debug("Formatacao ignorada: {}", e.getMessage());
                 }
             }
         });
@@ -143,6 +131,7 @@ public class TransacaoDialogController {
                     TipoTransacao.Entrada : TipoTransacao.Saida;
 
             long valorCentavos = parseValorCentavos(txtValor.getText());
+            LocalDate data = dateTransacao.getValue();
             Categoria categoria = cmbCategoria.getValue();
             Meta meta = cmbMeta.getValue();
             String comentario = txtComentario.getText().trim();
@@ -153,15 +142,20 @@ public class TransacaoDialogController {
                 return;
             }
 
+            if (data == null) {
+                mostrarErro("Selecione uma data");
+                dateTransacao.requestFocus();
+                return;
+            }
+
             if (categoria == null) {
                 mostrarErro("Selecione uma categoria");
                 cmbCategoria.requestFocus();
                 return;
             }
 
-            boolean exigeMeta =
-                    categoria == Categoria.AdicionarMeta ||
-                            categoria == Categoria.RetirarMeta;
+            boolean exigeMeta = categoria == Categoria.AdicionarMeta ||
+                                 categoria == Categoria.RetirarMeta;
 
             if (exigeMeta && meta == null) {
                 mostrarErro("Selecione uma meta");
@@ -174,13 +168,10 @@ public class TransacaoDialogController {
             }
 
             if (transacaoEmEdicao != null) {
-                System.out.println(">>> Editando transação: " + transacaoEmEdicao.descricao());
-
                 transacaoService.excluirTransacao(transacaoEmEdicao.id(), categoria);
-                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario);
-
+                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario, data);
             } else {
-                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario);
+                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario, data);
             }
 
             confirmado = true;
@@ -189,7 +180,7 @@ public class TransacaoDialogController {
         } catch (IllegalArgumentException e) {
             mostrarErro(e.getMessage());
         } catch (Exception e) {
-            mostrarErro("Erro ao registrar transação: " + e.getMessage());
+            mostrarErro("Erro ao registrar transacao: " + e.getMessage());
         }
     }
 
@@ -232,8 +223,6 @@ public class TransacaoDialogController {
         if (cmbCategoria.getValue() != null && !categorias.contains(cmbCategoria.getValue())) {
             cmbCategoria.setValue(null);
         }
-
-        atualizarResumo();
     }
 
     private void atualizarVisibilidadeMeta(Categoria categoria) {
@@ -243,9 +232,8 @@ public class TransacaoDialogController {
             return;
         }
 
-        boolean precisaMeta =
-                categoria == Categoria.AdicionarMeta ||
-                        categoria == Categoria.RetirarMeta;
+        boolean precisaMeta = categoria == Categoria.AdicionarMeta ||
+                              categoria == Categoria.RetirarMeta;
 
         boxMeta.setVisible(precisaMeta);
         boxMeta.setManaged(precisaMeta);
@@ -271,62 +259,32 @@ public class TransacaoDialogController {
 
         if (categoria == Categoria.AdicionarMeta) {
             long restante = meta.restanteParaAlvo();
-            double valor = restante / 100.0;
             lblInfoMeta.setText(
                     String.format("Faltam %s para atingir a meta",
-                            currencyFormatter.format(valor))
+                            currencyFormatter.format(restante / 100.0))
             );
         } else if (categoria == Categoria.RetirarMeta) {
-            double valor = meta.getAtualCentavos() / 100.0;
             lblInfoMeta.setText(
-                    String.format("Disponível: %s",
-                            currencyFormatter.format(valor))
+                    String.format("Disponivel: %s",
+                            currencyFormatter.format(meta.getAtualCentavos() / 100.0))
             );
-        }
-    }
-
-    private void atualizarResumo() {
-        try {
-            long saldoAtual = transacaoService.calcularSaldoDisponivelCentavos();
-            long valorTransacao = parseValorCentavos(txtValor.getText());
-
-            TipoTransacao tipo = btnEntrada.isSelected() ?
-                    TipoTransacao.Entrada : TipoTransacao.Saida;
-
-            long novoSaldo = tipo == TipoTransacao.Entrada ?
-                    saldoAtual + valorTransacao :
-                    saldoAtual - valorTransacao;
-
-            lblSaldoAtual.setText(currencyFormatter.format(saldoAtual / 100.0));
-            lblNovoSaldo.setText(currencyFormatter.format(novoSaldo / 100.0));
-
-            boxResumo.setVisible(true);
-            boxResumo.setManaged(true);
-
-        } catch (Exception e) {
-            boxResumo.setVisible(false);
-            boxResumo.setManaged(false);
         }
     }
 
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
-        if (texto == null || texto.trim().isEmpty()) {
-            return 0;
-        }
-
+        if (texto == null || texto.trim().isEmpty()) return 0;
         try {
             texto = texto.replace("R$", "").trim();
             texto = texto.replace(".", "").replace(",", ".");
             double valor = Double.parseDouble(texto);
             return Math.round(valor * 100);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Valor inválido");
+            throw new IllegalArgumentException("Valor invalido");
         }
     }
 
     private String formatarValor(long centavos) {
-        double valor = centavos / 100.0;
-        return String.format("%.2f", valor);
+        return String.format("%.2f", centavos / 100.0);
     }
 
     private void mostrarErro(String mensagem) {

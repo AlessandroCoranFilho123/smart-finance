@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -15,118 +16,107 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="app.controller.TransacaoDialogController"
       styleClass="dialog-container"
-      spacing="20"
+      spacing="16"
       prefWidth="500"
-      prefHeight="550">
+      prefHeight="540">
 
     <padding>
         <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
-    <Label text="Nova Transação"
-           styleClass="dialog-title"/>
-
-    <VBox spacing="15">
-
-        <VBox spacing="8">
-            <Label text="Tipo" styleClass="form-label"/>
-            <HBox spacing="10">
-                <fx:define>
-                    <ToggleGroup fx:id="tipoGroup"/>
-                </fx:define>
-
-                <ToggleButton fx:id="btnEntrada"
-                              text="Entrada"
-                              toggleGroup="$tipoGroup"
-                              styleClass="toggle-type, toggle-entrada"
-                              selected="true"
-                              HBox.hgrow="ALWAYS"
-                              maxWidth="Infinity"/>
-
-                <ToggleButton fx:id="btnSaida"
-                              text="Saída"
-                              toggleGroup="$tipoGroup"
-                              styleClass="toggle-type, toggle-saida"
-                              HBox.hgrow="ALWAYS"
-                              maxWidth="Infinity"/>
-            </HBox>
-        </VBox>
-
-        <VBox spacing="6">
-            <Label text="Valor" styleClass="form-label"/>
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="R$" styleClass="currency-symbol"/>
-                <TextField fx:id="txtValor"
-                           promptText="0,00"
-                           styleClass="form-field, field-currency"
-                           HBox.hgrow="ALWAYS"/>
-            </HBox>
-            <Label fx:id="lblErroValor"
-                   styleClass="error-label"
-                   visible="false"
-                   managed="false"/>
-        </VBox>
-
-        <VBox spacing="6">
-            <Label text="Categoria" styleClass="form-label"/>
-            <ComboBox fx:id="cmbCategoria"
-                      promptText="Selecione uma categoria"
-                      styleClass="form-combo"
-                      maxWidth="Infinity"/>
-        </VBox>
-
-        <VBox fx:id="boxMeta"
-              spacing="6"
-              visible="false"
-              managed="false">
-            <Label text="Meta" styleClass="form-label"/>
-            <ComboBox fx:id="cmbMeta"
-                      promptText="Selecione uma meta"
-                      styleClass="form-combo"
-                      maxWidth="Infinity"/>
-            <Label fx:id="lblInfoMeta"
-                   styleClass="info-label-small"
-                   wrapText="true"/>
-        </VBox>
-
-        <VBox spacing="6">
-            <Label text="Comentário" styleClass="form-label"/>
-            <TextArea fx:id="txtComentario"
-                      promptText="Adicione uma descrição (opcional)"
-                      styleClass="form-field, field-textarea"
-                      prefRowCount="3"
-                      wrapText="true"/>
-        </VBox>
-
-    </VBox>
-
-    <VBox spacing="8"
-          styleClass="transaction-summary"
-          fx:id="boxResumo"
-          visible="false"
-          managed="false">
-        <Label text="Resumo" styleClass="summary-title"/>
+    <!-- Tipo -->
+    <VBox spacing="8">
+        <Label text="Tipo" styleClass="form-label"/>
         <HBox spacing="10">
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
-                <Label text="Saldo Atual" styleClass="summary-label"/>
-                <Label fx:id="lblSaldoAtual"
-                       text="R$ 0,00"
-                       styleClass="summary-value"/>
-            </VBox>
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
-                <Label text="Novo Saldo" styleClass="summary-label"/>
-                <Label fx:id="lblNovoSaldo"
-                       text="R$ 0,00"
-                       styleClass="summary-value"/>
-            </VBox>
+            <fx:define>
+                <ToggleGroup fx:id="tipoGroup"/>
+            </fx:define>
+            <ToggleButton fx:id="btnEntrada"
+                          text="Entrada"
+                          toggleGroup="$tipoGroup"
+                          styleClass="toggle-type, toggle-entrada"
+                          selected="true"
+                          HBox.hgrow="ALWAYS"
+                          maxWidth="Infinity"/>
+            <ToggleButton fx:id="btnSaida"
+                          text="Saida"
+                          toggleGroup="$tipoGroup"
+                          styleClass="toggle-type, toggle-saida"
+                          HBox.hgrow="ALWAYS"
+                          maxWidth="Infinity"/>
         </HBox>
     </VBox>
 
+    <!-- Valor -->
+    <VBox spacing="6">
+        <Label text="Valor" styleClass="form-label"/>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="R$" styleClass="currency-symbol"/>
+            <TextField fx:id="txtValor"
+                       promptText="0,00"
+                       styleClass="form-field, field-currency"
+                       HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <Label fx:id="lblErroValor"
+               styleClass="error-label"
+               visible="false"
+               managed="false"/>
+    </VBox>
+
+    <!-- Data -->
+    <VBox spacing="6">
+        <Label text="Data" styleClass="form-label"/>
+        <DatePicker fx:id="dateTransacao"
+                    promptText="Selecione a data"
+                    styleClass="form-combo"
+                    maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Categoria -->
+    <VBox spacing="6">
+        <Label text="Categoria" styleClass="form-label"/>
+        <ComboBox fx:id="cmbCategoria"
+                  promptText="Selecione uma categoria"
+                  styleClass="form-combo"
+                  maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Meta (condicional) -->
+    <VBox fx:id="boxMeta"
+          spacing="6"
+          visible="false"
+          managed="false">
+        <Label text="Meta" styleClass="form-label"/>
+        <ComboBox fx:id="cmbMeta"
+                  promptText="Selecione uma meta"
+                  styleClass="form-combo"
+                  maxWidth="Infinity"/>
+        <Label fx:id="lblInfoMeta"
+               styleClass="info-label-small"
+               wrapText="true"/>
+    </VBox>
+
+    <!-- Comentario -->
+    <VBox spacing="6">
+        <Label text="Comentario" styleClass="form-label"/>
+        <TextArea fx:id="txtComentario"
+                  promptText="Adicione uma descricao (opcional)"
+                  styleClass="form-field, field-textarea"
+                  prefRowCount="2"
+                  wrapText="true"/>
+    </VBox>
+
+    <!-- Erro geral -->
     <Label fx:id="lblErroGeral"
            styleClass="error-label"
            wrapText="true"
            visible="false"
            managed="false"/>
+
+    <!-- Nodes ocultos necessarios para o controller -->
+    <Label fx:id="lblSaldoAtual" visible="false" managed="false"/>
+    <Label fx:id="lblNovoSaldo" visible="false" managed="false"/>
+    <VBox fx:id="boxResumo" visible="false" managed="false"/>
 
     <VBox VBox.vgrow="ALWAYS"/>
 
