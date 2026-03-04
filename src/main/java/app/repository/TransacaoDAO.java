@@ -15,8 +15,8 @@ public class TransacaoDAO {
 
     public void inserir(Transacao transacao) {
         String sql = """
-                    INSERT INTO transacao (id, descricao, valor_centavos, tipo, data, meta_id, categoria)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO transacao (id, descricao, valor_centavos, tipo, data, meta_id, categoria)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection c = Database.getConnection();
@@ -43,7 +43,64 @@ public class TransacaoDAO {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir transação", e);
+            throw new RuntimeException("Erro ao inserir transacao", e);
+        }
+    }
+
+    /**
+     * Atualiza todos os campos editaveis de uma transacao existente.
+     * Usado quando o usuario edita uma transacao (incluindo a data).
+     */
+    public void atualizar(Transacao transacao) {
+        String sql = """
+                UPDATE transacao
+                SET descricao = ?, valor_centavos = ?, tipo = ?, data = ?, meta_id = ?, categoria = ?
+                WHERE id = ?
+                """;
+
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, transacao.descricao());
+            ps.setLong(2, transacao.valorCentavos());
+            ps.setString(3, transacao.tipo().name());
+            ps.setString(4, transacao.data().toString());
+
+            if (transacao.metaId() != null) {
+                ps.setString(5, transacao.metaId().toString());
+            } else {
+                ps.setNull(5, Types.VARCHAR);
+            }
+
+            if (transacao.categoria() != null) {
+                ps.setString(6, transacao.categoria().name());
+            } else {
+                ps.setNull(6, Types.VARCHAR);
+            }
+
+            ps.setString(7, transacao.id().toString());
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar transacao", e);
+        }
+    }
+
+    /**
+     * Atualiza apenas a data de uma transacao.
+     */
+    public void atualizarData(UUID id, LocalDate novaData) {
+        String sql = "UPDATE transacao SET data = ? WHERE id = ?";
+
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, novaData.toString());
+            ps.setString(2, id.toString());
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar data da transacao", e);
         }
     }
 
@@ -51,19 +108,18 @@ public class TransacaoDAO {
         List<Transacao> list = new ArrayList<>();
 
         String sql = """
-                    SELECT * FROM transacao
-                    ORDER BY data DESC
-                    LIMIT ?
+                SELECT * FROM transacao
+                ORDER BY data DESC
+                LIMIT ?
                 """;
 
         try (Connection c = Database.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setInt(1, limite);
-
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
 
+            while (rs.next()) {
                 UUID metaId = rs.getString("meta_id") == null
                         ? null
                         : UUID.fromString(rs.getString("meta_id"));
@@ -83,7 +139,7 @@ public class TransacaoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar transações", e);
+            throw new RuntimeException("Erro ao listar transacoes", e);
         }
 
         return list;
@@ -91,14 +147,13 @@ public class TransacaoDAO {
 
     public long calcularSaldo() {
         String sql = """
-                    SELECT
-                        SUM(
-                            CASE tipo
-                                WHEN 'Entrada' THEN valor_centavos
-                                ELSE -valor_centavos
-                            END
-                        ) AS saldo
-                    FROM transacao
+                SELECT SUM(
+                    CASE tipo
+                        WHEN 'Entrada' THEN valor_centavos
+                        ELSE -valor_centavos
+                    END
+                ) AS saldo
+                FROM transacao
                 """;
 
         try (Connection c = Database.getConnection();
@@ -141,15 +196,15 @@ public class TransacaoDAO {
             );
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar transação", e);
+            throw new RuntimeException("Erro ao buscar transacao", e);
         }
     }
 
     public long calcularTotalPorTipoEMes(TipoTransacao tipo, String anoMes) {
         String sql = """
-                    SELECT SUM(valor_centavos)
-                    FROM transacao
-                    WHERE tipo = ? AND strftime('%Y-%m', data) = ?
+                SELECT SUM(valor_centavos)
+                FROM transacao
+                WHERE tipo = ? AND strftime('%Y-%m', data) = ?
                 """;
 
         try (Connection c = Database.getConnection();
@@ -165,7 +220,7 @@ public class TransacaoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao calcular total por tipo e mês", e);
+            throw new RuntimeException("Erro ao calcular total por tipo e mes", e);
         }
 
         return 0L;
@@ -180,8 +235,7 @@ public class TransacaoDAO {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir transação", e);
+            throw new RuntimeException("Erro ao excluir transacao", e);
         }
     }
-
 }
