@@ -204,6 +204,7 @@ public class MainController {
         abrirViewMetas();
     }
 
+    // Janela de transações acessada pela sidebar
     private void abrirViewTransacoes() {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -231,6 +232,7 @@ public class MainController {
             stage.setResizable(true);
             stage.setMinWidth(900);
             stage.setMinHeight(600);
+            IconManager.setTransacaoIcon(stage);
 
             stage.showAndWait();
 
@@ -241,6 +243,7 @@ public class MainController {
         }
     }
 
+    // Janela de metas acessada pela sidebar
     private void abrirViewMetas() {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -269,6 +272,7 @@ public class MainController {
             stage.setResizable(true);
             stage.setMinWidth(900);
             stage.setMinHeight(600);
+            IconManager.setMetaIcon(stage);
 
             stage.showAndWait();
 
@@ -324,7 +328,7 @@ public class MainController {
             dialogStage.setScene(scene);
             dialogStage.setResizable(true);
             dialogStage.setMinWidth(520);
-            dialogStage.setMinHeight(500);
+            dialogStage.setMinHeight(650);
             dialogStage.setMaxWidth(600);
             IconManager.setTransacaoIcon(dialogStage);
 
@@ -367,7 +371,7 @@ public class MainController {
             dialogStage.setMinWidth(520);
             dialogStage.setMinHeight(500);
             dialogStage.setMaxWidth(600);
-            IconManager.setTransacaoIcon(dialogStage);
+            IconManager.setDetalheIcon(dialogStage);
 
             dialogStage.showAndWait();
 

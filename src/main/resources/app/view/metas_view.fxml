@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.Region?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="app.controller.MetasViewController"
@@ -21,14 +15,12 @@
         <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
-    <!-- Header -->
     <HBox alignment="CENTER_LEFT" spacing="15">
         <Label text="Minhas Metas" styleClass="view-title"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="btnNova" text="+ Nova Meta" styleClass="button-primary"/>
     </HBox>
 
-    <!-- Stats bar -->
     <HBox spacing="20" styleClass="stats-bar">
         <padding>
             <Insets top="15" right="20" bottom="15" left="20"/>
@@ -41,8 +33,7 @@
 
         <VBox spacing="5" HBox.hgrow="ALWAYS">
             <Label text="Metas Concluidas" styleClass="stat-label"/>
-            <!-- Mesma styleClass dos outros para fonte igual -->
-            <Label fx:id="lblMetasConcluidas" text="0" styleClass="stat-value-large success"/>
+            <Label fx:id="lblMetasConcluidas" text="0" styleClass="stat-value-large"/>
         </VBox>
 
         <VBox spacing="5" HBox.hgrow="ALWAYS">
@@ -83,16 +74,15 @@
         <!-- ScrollBarPolicy horizontal desativado via CSS: -fx-hbar-policy: never -->
         <ListView fx:id="listMetas"
                   VBox.vgrow="ALWAYS"
-                  styleClass="list-metas-full"/>
+                  styleClass="list-metas-full"
+                  style="-fx-hbar-policy: never;"/>
     </VBox>
-
-    <!-- Footer - sem lblProgresso -->
+    
     <HBox alignment="CENTER_RIGHT" spacing="10">
         <Label fx:id="lblTotal" text="Total: 0 metas" styleClass="footer-text"/>
         <Button fx:id="btnFechar" text="Fechar" styleClass="button-secondary"/>
     </HBox>
 
-    <!-- Label oculto mantido caso o controller referencie lblProgresso -->
     <Label fx:id="lblProgresso" visible="false" managed="false"/>
 
 </VBox>

@@ -83,3 +83,10 @@
 .scroll-bar:vertical .thumb:hover {
     -fx-background-color: #A3AED0;
 }
+
+.saldo-banner .stat-label,
+.saldo-banner .stat-valor,
+.saldo-banner .stat-valor.receita,
+.saldo-banner .stat-valor.despesa {
+    -fx-text-fill: #FFFFFF;
+}
