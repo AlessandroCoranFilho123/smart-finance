@@ -44,8 +44,8 @@ public class MetaCell extends ListCell<Meta> {
         nomeLabel = new Label();
         nomeLabel.setStyle(
                 "-fx-font-weight: bold; " +
-                "-fx-font-size: 14px; " +
-                "-fx-text-fill: #1B2559;"
+                        "-fx-font-size: 14px; " +
+                        "-fx-text-fill: #1B2559;"
         );
 
         spacer = new Region();
@@ -54,7 +54,7 @@ public class MetaCell extends ListCell<Meta> {
         valorLabel = new Label();
         valorLabel.setStyle(
                 "-fx-font-size: 12px; " +
-                "-fx-text-fill: #A3AED0;"
+                        "-fx-text-fill: #A3AED0;"
         );
 
         headerBox.getChildren().addAll(nomeLabel, spacer, valorLabel);
@@ -99,7 +99,7 @@ public class MetaCell extends ListCell<Meta> {
             progressBar.setProgress(progresso);
 
             // Tenta carregar icone da meta, usa fallback se nao existir
-            Image iconeImg = IconManager.getImage("/app/icons/meta.png");
+            Image iconeImg = IconManager.getImage("/app/icons/categoria/meta.png");
             if (iconeImg != null) icon.setImage(iconeImg);
 
             if (progresso >= 1.0) {
@@ -107,8 +107,8 @@ public class MetaCell extends ListCell<Meta> {
                 percentLabel.setText("Meta concluida!");
                 percentLabel.setStyle(
                         "-fx-font-size: 12px; " +
-                        "-fx-text-fill: #4ADE80; " +
-                        "-fx-font-weight: bold;"
+                                "-fx-text-fill: #4ADE80; " +
+                                "-fx-font-weight: bold;"
                 );
             } else {
                 progressBar.setStyle("-fx-accent: #4318FF; -fx-background-radius: 4px;");

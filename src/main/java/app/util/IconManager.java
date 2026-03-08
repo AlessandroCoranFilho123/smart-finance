@@ -48,7 +48,7 @@ public final class IconManager {
         CATEGORIA_ICONS.put(Categoria.Transporte, "/app/icons/categoria/transporte.png");
         CATEGORIA_ICONS.put(Categoria.Compras, "/app/icons/categoria/compras.png");
         CATEGORIA_ICONS.put(Categoria.Educacao, "/app/icons/categoria/educacao.png");
-        CATEGORIA_ICONS.put(Categoria.AdicionarMeta, "/app/icons/adicionar-meta.png");
+        CATEGORIA_ICONS.put(Categoria.AdicionarMeta, "/app/icons/categoria/adicionar-meta.png");
     }
 
     public static void setAppIcon(Stage stage) {
@@ -71,6 +71,11 @@ public final class IconManager {
 
     public static void setMetaIcon(Stage stage) {
         Image icon = getImage("/app/icons/meta.png");
+        if (icon != null) stage.getIcons().add(icon);
+    }
+
+    public static void setDetalheIcon(Stage stage) {
+        Image icon = getImage("/app/icons/detalhe.png");
         if (icon != null) stage.getIcons().add(icon);
     }
 

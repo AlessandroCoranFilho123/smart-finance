@@ -122,6 +122,7 @@ public class TransacaoService {
                 TipoTransacao.Saida,
                 mes.toString()
         );
+
     }
 
     public void excluirTransacao(UUID transacaoId, Categoria categoria) {

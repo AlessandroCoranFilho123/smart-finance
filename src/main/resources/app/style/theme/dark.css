@@ -83,3 +83,10 @@
 .dark-theme .scroll-bar:vertical .thumb:hover {
     -fx-background-color: #A3AED0;
 }
+
+.dark-theme .saldo-banner .stat-label,
+.dark-theme .saldo-banner .stat-valor,
+.dark-theme .saldo-banner .stat-valor.receita,
+.dark-theme .saldo-banner .stat-valor.despesa {
+    -fx-text-fill: #FFFFFF;
+}

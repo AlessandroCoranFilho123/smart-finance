@@ -76,22 +76,23 @@
     -fx-border-width: 1 0 0 0;
 }
 
-.stat-label {
-    -fx-text-fill: rgba(255, 255, 255, 0.85);
+.saldo-banner .stat-label {
+    -fx-text-fill: #FFFFFF;
     -fx-font-size: 12px;
 }
 
-.stat-valor {
+.saldo-banner .stat-valor {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
 }
 
-.stat-valor.receita {
-    -fx-text-fill: #4ADE80;
+.saldo-banner .stat-valor.receita {
+    -fx-text-fill: #FFFFFF;
 }
 
-.stat-valor.despesa {
-    -fx-text-fill: #F87171;
+.saldo-banner .stat-valor.despesa {
+    -fx-text-fill: #FFFFFF;
 }
 
 .section-title {

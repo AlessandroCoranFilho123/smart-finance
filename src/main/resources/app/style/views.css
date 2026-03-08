@@ -32,7 +32,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 10, 0, 0, 2);
 }
 
-.stat-label {
+.stats-bar .stat-label {
     -fx-font-size: 12px;
     -fx-text-fill: #A3AED0;
 }
@@ -52,6 +52,8 @@
 .stat-value.entrada,
 .stat-value-large.success {
     -fx-text-fill: #4ADE80;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
 }
 
 .stat-value.saida,
@@ -86,6 +88,18 @@
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 12px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 10, 0, 0, 2);
+}
+
+.list-metas-full .scroll-bar:horizontal,
+.list-metas-full .scroll-bar:horizontal .track,
+.list-metas-full .scroll-bar:horizontal .thumb,
+.list-metas-full .scroll-bar:horizontal .increment-button,
+.list-metas-full .scroll-bar:horizontal .decrement-button {
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+    -fx-max-height: 0;
+    -fx-opacity: 0;
+    -fx-padding: 0;
 }
 
 .list-transacoes-full .list-cell,
