@@ -30,6 +30,7 @@ import java.text.NumberFormat;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Locale;
+import java.util.prefs.Preferences;
 
 /* Gerencia a navegação entre telas,
    carrega os dados no dashboard,
@@ -79,6 +80,7 @@ public class MainController {
     private TransacaoService transacaoService;
     private MetaService metaService;
     private boolean darkTheme = false;
+    private static final Preferences PREFS = Preferences.userNodeForPackage(MainController.class);
 
     @FXML
     public void initialize() {
@@ -88,6 +90,7 @@ public class MainController {
             configurarEventos(); // Configurar ações dos botões
             carregarDados(); // Carrega o DB
             marcarBotaoAtivo(btnInicio); // Botão início selecionado
+            aplicarTemaSalvo(); // Restaura tema da sessão anterior
 
         } catch (Exception e) {
             logger.error("Erro ao inicializar MainController: {}", e.getMessage());
@@ -302,8 +305,23 @@ public class MainController {
     }
 
     @FXML
+    private void aplicarTemaSalvo() {
+        darkTheme = PREFS.getBoolean("darkTheme", false);
+        if (darkTheme) {
+            if (rootContainer != null) {
+                rootContainer.getStyleClass().add("dark-theme");
+            }
+            if (imgTema != null) {
+                javafx.scene.image.Image icone = IconManager.getImage("/app/icons/tema/claro.png");
+                if (icone != null) imgTema.setImage(icone);
+            }
+            if (lblTema != null) lblTema.setText("Tema claro");
+        }
+    }
+
     private void alternarTema() {
         darkTheme = !darkTheme;
+        PREFS.putBoolean("darkTheme", darkTheme); // salva preferência
 
         if (rootContainer != null) {
             if (darkTheme) {

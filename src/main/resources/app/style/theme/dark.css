@@ -269,6 +269,7 @@
 
 .dark-theme .cell-valor-entrada {
     -fx-text-fill: #4ADE80;  /* Verde */
+}
 
 .dark-theme .cell-valor-saida {
     -fx-text-fill: #F87171;  /* Vermelho */

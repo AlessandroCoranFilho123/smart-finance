@@ -4,7 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="rootContainer" prefHeight="800" prefWidth="1300" styleClass="root-container" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane fx:id="rootContainer" prefHeight="800" prefWidth="1300" styleClass="root-container"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="app.controller.MainController">
 
     <left>
@@ -57,8 +58,7 @@
 
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <Button fx:id="btnTema" graphicTextGap="12" maxWidth="Infinity" styleClass="button-sidebar"
-                        onAction="#alternarTema">
+                <Button fx:id="btnTema" graphicTextGap="12" maxWidth="Infinity" styleClass="button-sidebar">
                     <VBox.margin>
                         <Insets bottom="25"/>
                     </VBox.margin>
@@ -100,13 +100,15 @@
                     <VBox spacing="4">
                         <Label styleClass="stat-label" text="Receitas do mês"/>
                         <Label fx:id="lblReceitasMes" styleClass="stat-value,entrada"
-                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;" text="R$ 0,00"/>
+                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;"
+                               text="R$ 0,00"/>
                     </VBox>
 
                     <VBox spacing="4">
                         <Label styleClass="stat-label" text="Despesas do mês"/>
                         <Label fx:id="lblDespesasMes" styleClass="stat-value,saida"
-                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;" text="R$ 0,00"/>
+                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;"
+                               text="R$ 0,00"/>
                     </VBox>
                 </HBox>
             </VBox>

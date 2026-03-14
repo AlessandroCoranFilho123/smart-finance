@@ -6,8 +6,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public final class Database {
-    // Define a URL de conexão para o banco de dados SQLite 'financas.db'
-    private static final String URL = "jdbc:sqlite:financas.db";
+
+    // Em produção (instalado): %APPDATA%\SmartFinance\financas.db
+    // Em desenvolvimento (IDE): ./financas.db (fallback)
+    private static final String URL;
+
+    static {
+        String appData = System.getenv("APPDATA");
+        if (appData != null) {
+            java.io.File dir = new java.io.File(appData, "SmartFinance");
+            dir.mkdirs(); // cria a pasta se não existir
+            URL = "jdbc:sqlite:" + new java.io.File(dir, "financas.db").getAbsolutePath();
+        } else {
+            // Fallback para desenvolvimento sem APPDATA (Linux/Mac)
+            URL = "jdbc:sqlite:financas.db";
+        }
+    }
 
     private Database() {
     }

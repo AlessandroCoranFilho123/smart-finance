@@ -2,6 +2,8 @@ out/
 data/
 dist/
 /target/
+installer/
+target/
 
 *.class
 *.jar
