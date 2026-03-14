@@ -6,12 +6,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public final class Database {
-
+    // Define a URL de conexão para o banco de dados SQLite 'financas.db'
     private static final String URL = "jdbc:sqlite:financas.db";
 
     private Database() {
     }
-    
+
     public static void inicializar() {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {

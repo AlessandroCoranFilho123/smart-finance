@@ -24,11 +24,9 @@ public class TransacaoCell extends ListCell<Transacao> {
 
     private final HBox container;
     private final ImageView icon;
-    private final VBox infoBox;
     private final Label descricaoLabel;
     private final Label dataLabel;
     private final Label valorLabel;
-    private final Region spacer;
 
     public TransacaoCell() {
         container = new HBox(15);
@@ -40,32 +38,22 @@ public class TransacaoCell extends ListCell<Transacao> {
         icon.setFitHeight(40);
         icon.setPreserveRatio(true);
 
-        infoBox = new VBox(5);
+        VBox infoBox = new VBox(5);
         infoBox.setAlignment(Pos.CENTER_LEFT);
 
         descricaoLabel = new Label();
-        descricaoLabel.setStyle(
-                "-fx-font-weight: bold; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-text-fill: #1B2559;" // Tom de azul
-        );
+        descricaoLabel.getStyleClass().add("cell-title");
 
         dataLabel = new Label();
-        dataLabel.setStyle(
-                "-fx-font-size: 12px; " +
-                        "-fx-text-fill: #A3AED0;" // Azul acinzentado
-        );
+        dataLabel.getStyleClass().add("cell-subtitle");
 
         infoBox.getChildren().addAll(descricaoLabel, dataLabel);
 
-        spacer = new Region();
+        Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         valorLabel = new Label();
-        valorLabel.setStyle(
-                "-fx-font-size: 16px; " +
-                        "-fx-font-weight: bold;"
-        );
+        valorLabel.getStyleClass().add("cell-valor");
 
         container.getChildren().addAll(icon, infoBox, spacer, valorLabel);
     }
@@ -102,7 +90,13 @@ public class TransacaoCell extends ListCell<Transacao> {
         } else {
             descricaoLabel.setText(transacao.descricao());
 
-            dataLabel.setText(transacao.data().format(DATE_FORMATTER));
+            String data = transacao.data().format(DATE_FORMATTER);
+            String comentario = transacao.comentario();
+            if (comentario != null && !comentario.isBlank()) {
+                dataLabel.setText(data + " · " + comentario);
+            } else {
+                dataLabel.setText(data);
+            }
 
             double valor = transacao.valorCentavos() / 100.0;
             String valorTexto = String.format("R$ %.2f", valor);
@@ -111,18 +105,12 @@ public class TransacaoCell extends ListCell<Transacao> {
 
             if (isEntrada) {
                 valorLabel.setText("+ " + valorTexto);
-                valorLabel.setStyle(
-                        "-fx-font-size: 16px; " +
-                                "-fx-font-weight: bold; " +
-                                "-fx-text-fill: #4ADE80;" // Verde para entrada
-                );
+                valorLabel.getStyleClass().removeAll("cell-valor-saida");
+                valorLabel.getStyleClass().add("cell-valor-entrada");
             } else {
                 valorLabel.setText("- " + valorTexto);
-                valorLabel.setStyle(
-                        "-fx-font-size: 16px; " +
-                                "-fx-font-weight: bold; " +
-                                "-fx-text-fill: #F87171;" // Vermelho para saída
-                );
+                valorLabel.getStyleClass().removeAll("cell-valor-entrada");
+                valorLabel.getStyleClass().add("cell-valor-saida");
             }
 
             setGraphic(container);

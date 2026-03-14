@@ -44,8 +44,9 @@ public class Meta {
         return alvoCentavos == null || alvoCentavos <= 0;
     }
 
+    // Calcula quanto falta para alcançar meta
     public long restanteParaAlvo() {
-        if (semAlvo()) return Long.MAX_VALUE;
+        if (semAlvo()) return Long.MAX_VALUE; // Se não for definido valor alvo
         return Math.max(0, alvoCentavos - atualCentavos);
     }
 

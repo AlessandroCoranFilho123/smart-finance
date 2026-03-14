@@ -10,13 +10,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f4d52452-880c-4fa9-98b8-22a01e3e73ee" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/financas.db" beforeDir="false" afterPath="$PROJECT_DIR$/financas.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MetaDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MetaDialogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/MetasViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/MetasViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacaoDialogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/controller/TransacoesViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/controller/TransacoesViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/database/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/database/Database.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Meta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Meta.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/model/Transacao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/repository/TransacaoDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/service/MetaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/MetaService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/service/TransacaoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/util/IconManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/view/MetaCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/MetaCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/app/icons/categoria/outros.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/view/TransacaoCell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/style/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/style/base.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/style/theme/dark.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/style/theme/dark.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/app/style/theme/light.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/app/style/theme/light.css" afterDir="false" />
@@ -34,6 +46,9 @@
   </component>
   <component name="CoverageOptionsProvider">
     <option name="myAddOrReplace" value="2" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="82" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -67,6 +82,10 @@
     <option name="jreName" value="21" />
     <option name="vmOptions" value="--module-path &quot;C:\javafx-sdk-21.0.9\lib&quot; --add-modules javafx.controls,javafx.graphics,javafx.fxml -Dprism.order=sw" />
   </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
   <component name="OptimizeOnSaveOptions">
     <option name="myRunOnSave" value="true" />
   </component>
@@ -96,20 +115,24 @@
     &quot;Maven.app [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor&quot;: &quot;Run&quot;,
     &quot;Maven.app [org.openjfx:javafx-maven-plugin:0.0.8:run].executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Alessandro/Desktop/Meus Arquivos/Estudos Java/ProjetoFinancas&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Alessandro/Desktop/Meus Arquivos/Estudos Java/SmartFinance&quot;,
     &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/Alessandro/Desktop/ProjetoFinancas/untitled/src/Main.java&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.externalResources&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;DatabaseDriversLRU&quot;: [
@@ -149,7 +172,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Maven.ProjetoFinancas [org.openjfx:javafx-maven-plugin:0.0.8:run]">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="app.Main" />
       <module name="ProjetoFinancas" />

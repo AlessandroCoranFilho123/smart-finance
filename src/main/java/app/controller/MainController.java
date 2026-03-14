@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -52,6 +53,10 @@ public class MainController {
     private Button btnMetas;
     @FXML
     private Button btnTema;
+    @FXML
+    private ImageView imgTema;
+    @FXML
+    private Label lblTema;
     @FXML
     private Label lblSaldo;
     @FXML
@@ -104,6 +109,7 @@ public class MainController {
         listMetas.setCellFactory(lv -> new MetaCell());
     }
 
+    //  Configura todos os botões
     private void configurarEventos() {
         btnInicio.setOnAction(e -> navegarParaInicio());
         btnTema.setOnAction(e -> alternarTema());
@@ -284,6 +290,7 @@ public class MainController {
         }
     }
 
+    // Quando botão for clicado, fica destacado
     private void marcarBotaoAtivo(Button botaoAtivo) {
         btnInicio.getStyleClass().remove("active");
         btnTransacao.getStyleClass().remove("active");
@@ -294,16 +301,31 @@ public class MainController {
         }
     }
 
+    @FXML
     private void alternarTema() {
         darkTheme = !darkTheme;
 
-        if (darkTheme) {
-            rootContainer.getStyleClass().add("dark-theme");
-        } else {
-            rootContainer.getStyleClass().remove("dark-theme");
+        if (rootContainer != null) {
+            if (darkTheme) {
+                rootContainer.getStyleClass().add("dark-theme");
+            } else {
+                rootContainer.getStyleClass().remove("dark-theme");
+                rootContainer.setStyle("");
+            }
+        }
+
+        if (imgTema != null) { // Altera entre img do sol e da lua
+            String path = darkTheme ? "/app/icons/tema/claro.png" : "/app/icons/tema/escuro.png";
+            javafx.scene.image.Image icone = IconManager.getImage(path);
+            if (icone != null) imgTema.setImage(icone);
+        }
+
+        if (lblTema != null) {
+            lblTema.setText(darkTheme ? "Tema claro" : "Tema escuro");
         }
     }
 
+    // Janela aberta a partir de botão "Nota Transação"
     private void abrirDialogNovaTransacao() {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -343,6 +365,7 @@ public class MainController {
         }
     }
 
+    // Janela duplo clique em uma transação
     private void abrirDetalhesTransacao(Transacao transacao) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -384,6 +407,7 @@ public class MainController {
         }
     }
 
+    // Janela aberta a partir de botão "Nota Meta"
     private void abrirDialogNovaMeta() {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -406,7 +430,6 @@ public class MainController {
             if (darkTheme) {
                 dialogRoot.getStyleClass().add("dark-theme");
             }
-
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
             dialogStage.setMinWidth(480);
@@ -424,6 +447,7 @@ public class MainController {
         }
     }
 
+    // Janela duplo clique em uma meta
     private void abrirDetalhesMeta(Meta meta) {
         try {
             FXMLLoader loader = new FXMLLoader(

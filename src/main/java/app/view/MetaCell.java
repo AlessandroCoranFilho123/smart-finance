@@ -18,44 +18,33 @@ public class MetaCell extends ListCell<Meta> {
 
     private final HBox root;
     private final ImageView icon;
-    private final VBox container;
-    private final HBox headerBox;
     private final Label nomeLabel;
     private final Label valorLabel;
     private final ProgressBar progressBar;
     private final Label percentLabel;
-    private final Region spacer;
 
     public MetaCell() {
-        // Icone da meta
         icon = new ImageView();
         icon.setFitWidth(40);
         icon.setFitHeight(40);
         icon.setPreserveRatio(true);
 
         // Container de conteudo
-        container = new VBox(10);
+        VBox container = new VBox(10);
         container.setPadding(new Insets(12, 0, 12, 0));
         VBox.setVgrow(container, Priority.ALWAYS);
 
-        headerBox = new HBox();
+        HBox headerBox = new HBox();
         headerBox.setAlignment(Pos.CENTER_LEFT);
 
         nomeLabel = new Label();
-        nomeLabel.setStyle(
-                "-fx-font-weight: bold; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-text-fill: #1B2559;"
-        );
+        nomeLabel.getStyleClass().add("cell-title");
 
-        spacer = new Region();
+        Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         valorLabel = new Label();
-        valorLabel.setStyle(
-                "-fx-font-size: 12px; " +
-                        "-fx-text-fill: #A3AED0;"
-        );
+        valorLabel.getStyleClass().add("cell-subtitle");
 
         headerBox.getChildren().addAll(nomeLabel, spacer, valorLabel);
 
@@ -105,15 +94,13 @@ public class MetaCell extends ListCell<Meta> {
             if (progresso >= 1.0) {
                 progressBar.setStyle("-fx-accent: #4ADE80; -fx-background-radius: 4px;");
                 percentLabel.setText("Meta concluida!");
-                percentLabel.setStyle(
-                        "-fx-font-size: 12px; " +
-                                "-fx-text-fill: #4ADE80; " +
-                                "-fx-font-weight: bold;"
-                );
+                percentLabel.getStyleClass().removeAll("cell-subtitle");
+                percentLabel.getStyleClass().add("cell-meta-concluida");
             } else {
                 progressBar.setStyle("-fx-accent: #4318FF; -fx-background-radius: 4px;");
                 percentLabel.setText(String.format("%.1f%% concluido", progresso * 100));
-                percentLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #A3AED0;");
+                percentLabel.getStyleClass().removeAll("cell-meta-concluida");
+                percentLabel.getStyleClass().add("cell-subtitle");
             }
 
             setGraphic(root);

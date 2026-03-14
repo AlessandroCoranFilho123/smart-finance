@@ -23,12 +23,6 @@ public final class IconManager {
     // Ícone do aplicativo
     private static final String APP_ICON = "/app/icons/logo.png";
 
-    // Ícones da sidebar
-    private static final String ICON_INICIO = "/app/icons/inicio.png";
-    private static final String ICON_TRANSACAO = "/app/icons/transacao.png";
-    private static final String ICON_META = "/app/icons/meta.png";
-    private static final String ICON_TEMA = "/app/icons/tema/claro.png";
-
     private static final Map<Categoria, String> CATEGORIA_ICONS = new HashMap<>();
 
     static {
@@ -85,30 +79,12 @@ public final class IconManager {
         return path != null ? getImage(path) : null;
     }
 
-    public static Image getInicioIcon() {
-        return getImage(ICON_INICIO);
-    }
-
-    public static Image getTransacaoIcon() {
-        return getImage(ICON_TRANSACAO);
-    }
-
-    public static Image getMetaIcon() {
-        return getImage(ICON_META);
-    }
-
-    public static Image getTemaIcon() {
-        return getImage(ICON_TEMA);
-    }
-
     public static Image getImage(String path) {
         if (CACHE.containsKey(path)) {
             return CACHE.get(path);
         }
 
-        try {
-            var resourceStream = IconManager.class.getResourceAsStream(path);
-
+        try (var resourceStream = IconManager.class.getResourceAsStream(path)) {
             if (resourceStream != null) {
                 Image image = new Image(resourceStream);
                 CACHE.put(path, image);
@@ -117,59 +93,9 @@ public final class IconManager {
                 System.err.println("Recurso não encontrado: " + path);
                 return null;
             }
-
         } catch (Exception e) {
             System.err.println("Erro ao carregar ícone " + path + ": " + e.getMessage());
             return null;
         }
-    }
-
-    public static Image getImage(String path, double width, double height) { // Redimensionado
-        String cacheKey = path + "_" + width + "x" + height;
-
-        if (CACHE.containsKey(cacheKey)) {
-            return CACHE.get(cacheKey);
-        }
-
-        try {
-            var resourceStream = IconManager.class.getResourceAsStream(path);
-
-            if (resourceStream != null) {
-                Image image = new Image(resourceStream, width, height, true, true);
-                CACHE.put(cacheKey, image);
-                return image;
-            } else {
-                System.err.println("Recurso não encontrado: " + path);
-                return null;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Erro ao carregar ícone " + path + ": " + e.getMessage());
-            return null;
-        }
-    }
-
-    public static boolean iconExists(String path) {
-        return IconManager.class.getResourceAsStream(path) != null;
-    }
-
-    public static void clearCache() {
-        CACHE.clear();
-        System.out.println("Cache de ícones limpo");
-    }
-
-    public static int getCacheSize() {
-        return CACHE.size();
-    }
-
-    public static void preloadCommonIcons() {
-        getImage(ICON_INICIO);
-        getImage(ICON_TRANSACAO);
-        getImage(ICON_META);
-        getImage(ICON_TEMA);
-
-        CATEGORIA_ICONS.values().forEach(IconManager::getImage);
-
-        System.out.println("Ícones pre-carregados: " + getCacheSize());
     }
 }

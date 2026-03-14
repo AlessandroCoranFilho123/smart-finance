@@ -22,30 +22,56 @@ import java.util.Locale;
 
 public class TransacaoDialogController {
 
-    @FXML private ToggleButton btnEntrada;
-    @FXML private ToggleButton btnSaida;
-    @FXML private ToggleGroup tipoGroup;
-    @FXML private TextField txtValor;
-    @FXML private DatePicker dateTransacao;
-    @FXML private ComboBox<Categoria> cmbCategoria;
-    @FXML private ComboBox<Meta> cmbMeta;
-    @FXML private TextArea txtComentario;
-    @FXML private VBox boxMeta;
-    @FXML private Label lblInfoMeta;
-    @FXML private VBox boxResumo;
-    @FXML private Label lblSaldoAtual;
-    @FXML private Label lblNovoSaldo;
-    @FXML private Label lblErroValor;
-    @FXML private Label lblErroGeral;
-    @FXML private Button btnCancelar;
-    @FXML private Button btnSalvar;
+    @FXML
+    private ToggleButton btnEntrada;
+    @FXML
+    private ToggleButton btnSaida;
+    @FXML
+    private ToggleGroup tipoGroup;
+    @FXML
+    private TextField txtValor;
+    @FXML
+    private DatePicker dateTransacao;
+    @FXML
+    private ComboBox<Categoria> cmbCategoria;
+    @FXML
+    private ComboBox<Meta> cmbMeta;
+    @FXML
+    private TextArea txtComentario;
+    @FXML
+    private VBox boxMeta;
+    @FXML
+    private Label lblInfoMeta;
+    @FXML
+    @SuppressWarnings("unused")
+    private VBox boxResumo;
+    @FXML
+    @SuppressWarnings("unused")
+    private Label lblSaldoAtual;
+    @FXML
+    @SuppressWarnings("unused")
+    private Label lblNovoSaldo;
+    @FXML
+    private Label lblErroValor;
+    @FXML
+    private Label lblErroGeral;
+    @FXML
+    private Button btnCancelar;
+    @FXML
+    private Button btnSalvar;
+    @FXML
+    private Button btnExcluir;
 
     private TransacaoService transacaoService;
     private MetaService metaService;
     private boolean confirmado = false;
+
+    // Registrar avisos e erros
     private static final Logger logger = LoggerFactory.getLogger(TransacaoDialogController.class);
+
     private app.model.Transacao transacaoEmEdicao;
 
+    // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
@@ -58,7 +84,7 @@ public class TransacaoDialogController {
 
         cmbCategoria.setItems(FXCollections.observableArrayList(Categoria.values()));
 
-        // Data padrao = hoje
+        // Data padrão = dia criada transação
         dateTransacao.setValue(LocalDate.now());
 
         configurarMascaraMoeda();
@@ -80,6 +106,10 @@ public class TransacaoDialogController {
         }
         atualizarEstadoFormulario();
 
+        if (transacao.categoria() != null) {
+            cmbCategoria.setValue(transacao.categoria());
+        }
+
         txtValor.setText(formatarValor(transacao.valorCentavos()));
 
         // Preenche data da transacao
@@ -93,8 +123,10 @@ public class TransacaoDialogController {
             cmbMeta.setValue(meta);
         }
 
-        txtComentario.setText(transacao.descricao());
+        txtComentario.setText(transacao.comentario());
         btnSalvar.setText("Atualizar");
+        btnExcluir.setVisible(true);
+        btnExcluir.setManaged(true);
     }
 
     private void configurarListeners() {
@@ -136,40 +168,48 @@ public class TransacaoDialogController {
             Meta meta = cmbMeta.getValue();
             String comentario = txtComentario.getText().trim();
 
-            if (valorCentavos <= 0) {
+            if (valorCentavos <= 0) { // Valor deve ser maior que zero
                 mostrarErroValor();
                 txtValor.requestFocus();
                 return;
             }
 
-            if (data == null) {
+            if (data == null) { // Data não pode ser nulo
                 mostrarErro("Selecione uma data");
                 dateTransacao.requestFocus();
                 return;
             }
 
-            if (categoria == null) {
+            if (categoria == null) { // Categoria não pode ser nulo
                 mostrarErro("Selecione uma categoria");
                 cmbCategoria.requestFocus();
                 return;
             }
 
+            // Opção de meta só aparece se selecionar categoria de adicionar ou retirar da meta
             boolean exigeMeta = categoria == Categoria.AdicionarMeta ||
-                                 categoria == Categoria.RetirarMeta;
+                    categoria == Categoria.RetirarMeta;
 
-            if (exigeMeta && meta == null) {
+            if (exigeMeta && meta == null) { // Meta não pode ser nulo se categoria = adicionar ou retirar da meta
                 mostrarErro("Selecione uma meta");
                 cmbMeta.requestFocus();
                 return;
             }
 
-            if (comentario.isEmpty()) {
+            if (comentario.isEmpty()) { // Se comentário vazio, ele recebe nome da categoria
                 comentario = categoria.toString();
             }
 
             if (transacaoEmEdicao != null) {
-                transacaoService.excluirTransacao(transacaoEmEdicao.id(), categoria);
-                transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario, data);
+                transacaoService.atualizar(
+                        transacaoEmEdicao.id(),
+                        tipo,
+                        categoria,
+                        valorCentavos,
+                        meta,
+                        comentario,
+                        data
+                );
             } else {
                 transacaoService.registrar(tipo, categoria, valorCentavos, meta, comentario, data);
             }
@@ -182,6 +222,31 @@ public class TransacaoDialogController {
         } catch (Exception e) {
             mostrarErro("Erro ao registrar transacao: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void handleExcluir() { // Botão de excluir transação em detalhes da transação
+        if (transacaoEmEdicao == null) return;
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Excluir Transação");
+        confirm.setHeaderText(null);
+        confirm.setContentText("Tem certeza que deseja excluir esta transação?");
+
+        confirm.showAndWait().ifPresent(resposta -> {
+            if (resposta == ButtonType.OK) {
+                try {
+                    transacaoService.excluirTransacao(
+                            transacaoEmEdicao.id(),
+                            transacaoEmEdicao.categoria()
+                    );
+                    confirmado = true;
+                    fecharDialog();
+                } catch (Exception e) {
+                    mostrarErro("Erro ao excluir: " + e.getMessage());
+                }
+            }
+        });
     }
 
     @FXML
@@ -233,7 +298,7 @@ public class TransacaoDialogController {
         }
 
         boolean precisaMeta = categoria == Categoria.AdicionarMeta ||
-                              categoria == Categoria.RetirarMeta;
+                categoria == Categoria.RetirarMeta;
 
         boxMeta.setVisible(precisaMeta);
         boxMeta.setManaged(precisaMeta);
@@ -271,6 +336,7 @@ public class TransacaoDialogController {
         }
     }
 
+    // Converte texto digitado pelo usuário para valor em centavos
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
         if (texto == null || texto.trim().isEmpty()) return 0;
         try {
@@ -283,22 +349,26 @@ public class TransacaoDialogController {
         }
     }
 
+    // Converte os centavos para String formatada com duas casas decimais
     private String formatarValor(long centavos) {
         return String.format("%.2f", centavos / 100.0);
     }
 
+    // Exibe mensagem de erro
     private void mostrarErro(String mensagem) {
         lblErroGeral.setText(mensagem);
         lblErroGeral.setVisible(true);
         lblErroGeral.setManaged(true);
     }
 
+    // Helper method para erros de valor
     private void mostrarErroValor() {
         lblErroValor.setText("Valor deve ser maior que zero");
         lblErroValor.setVisible(true);
         lblErroValor.setManaged(true);
     }
 
+    // Oculta todos os labels de erro
     private void limparErros() {
         lblErroGeral.setVisible(false);
         lblErroGeral.setManaged(false);
@@ -306,6 +376,7 @@ public class TransacaoDialogController {
         lblErroValor.setManaged(false);
     }
 
+    // Fecha a janela
     private void fecharDialog() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();

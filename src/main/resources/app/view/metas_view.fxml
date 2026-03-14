@@ -47,7 +47,6 @@
         </VBox>
     </HBox>
 
-    <!-- Busca -->
     <HBox spacing="15" alignment="CENTER_LEFT">
         <Label text="Buscar:" styleClass="filter-label"/>
         <TextField fx:id="txtBusca"
@@ -60,24 +59,21 @@
                 visible="false"/>
     </HBox>
 
-    <!-- Abas de filtro -->
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Button fx:id="btnTodas" text="Todas" styleClass="button-tab, active"/>
         <Button fx:id="btnAndamento" text="Em Andamento" styleClass="button-tab"/>
         <Button fx:id="btnConcluidas" text="Concluidas" styleClass="button-tab"/>
     </HBox>
 
-    <!-- Lista de metas -->
     <VBox spacing="10" VBox.vgrow="ALWAYS">
         <Label fx:id="lblSecao" text="Todas as Metas" styleClass="section-subtitle"/>
 
-        <!-- ScrollBarPolicy horizontal desativado via CSS: -fx-hbar-policy: never -->
         <ListView fx:id="listMetas"
                   VBox.vgrow="ALWAYS"
                   styleClass="list-metas-full"
                   style="-fx-hbar-policy: never;"/>
     </VBox>
-    
+
     <HBox alignment="CENTER_RIGHT" spacing="10">
         <Label fx:id="lblTotal" text="Total: 0 metas" styleClass="footer-text"/>
         <Button fx:id="btnFechar" text="Fechar" styleClass="button-secondary"/>

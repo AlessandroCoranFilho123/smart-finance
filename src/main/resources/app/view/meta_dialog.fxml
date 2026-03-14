@@ -65,8 +65,7 @@
         </VBox>
 
     </VBox>
-
-    <!-- Label titulo oculto mantido para o controller -->
+    
     <Label fx:id="lblTitulo" visible="false" managed="false"/>
 
     <Label fx:id="lblErroGeral"

@@ -49,16 +49,16 @@
     -fx-text-fill: #1B2559;
 }
 
-.stat-value.entrada,
-.stat-value-large.success {
-    -fx-text-fill: #4ADE80;
-    -fx-font-size: 28px;
+.stat-value.entrada {
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
+    -fx-text-fill: #16a34a;
 }
 
-.stat-value.saida,
-.stat-value-large.danger {
-    -fx-text-fill: #F87171;
+.stat-value.saida {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #dc2626;
 }
 
 .button-tab {
@@ -129,58 +129,4 @@
 .footer-text {
     -fx-font-size: 13px;
     -fx-text-fill: #A3AED0;
-}
-
-.dark-theme .view-container {
-    -fx-background-color: #0B1437;
-}
-
-.dark-theme .view-title,
-.dark-theme .section-subtitle {
-    -fx-text-fill: #FFFFFF;
-}
-
-.dark-theme .filter-bar,
-.dark-theme .stats-bar {
-    -fx-background-color: #111C44;
-}
-
-.dark-theme .stat-value,
-.dark-theme .stat-value-large {
-    -fx-text-fill: #FFFFFF;
-}
-
-.dark-theme .button-tab {
-    -fx-text-fill: #A3AED0;
-}
-
-.dark-theme .button-tab:hover {
-    -fx-background-color: rgba(117, 81, 255, 0.10);
-    -fx-text-fill: #7551FF;
-}
-
-.dark-theme .button-tab.active {
-    -fx-text-fill: #7551FF;
-    -fx-border-color: #7551FF;
-    -fx-background-color: rgba(117, 81, 255, 0.15);
-}
-
-.dark-theme .list-transacoes-full,
-.dark-theme .list-metas-full {
-    -fx-background-color: #111C44;
-}
-
-.dark-theme .list-transacoes-full .list-cell,
-.dark-theme .list-metas-full .list-cell {
-    -fx-border-color: #1B2559;
-}
-
-.dark-theme .list-transacoes-full .list-cell:hover,
-.dark-theme .list-metas-full .list-cell:hover {
-    -fx-background-color: rgba(117, 81, 255, 0.10);
-}
-
-.dark-theme .list-transacoes-full .list-cell:selected,
-.dark-theme .list-metas-full .list-cell:selected {
-    -fx-background-color: rgba(117, 81, 255, 0.20);
 }

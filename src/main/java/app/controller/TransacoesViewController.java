@@ -20,26 +20,39 @@ import java.util.stream.Collectors;
 
 public class TransacoesViewController {
 
-    @FXML private Button btnNova;
-    @FXML private Button btnFechar;
-    @FXML private Button btnLimparFiltros;
+    @FXML
+    private Button btnNova;
+    @FXML
+    private Button btnFechar;
+    @FXML
+    private Button btnLimparFiltros;
 
-    @FXML private ComboBox<String> cmbTipo;
-    @FXML private ComboBox<Categoria> cmbCategoria;
-    @FXML private DatePicker dateInicio;
-    @FXML private DatePicker dateFim;
+    @FXML
+    private ComboBox<String> cmbTipo;
+    @FXML
+    private ComboBox<Categoria> cmbCategoria;
+    @FXML
+    private DatePicker dateInicio;
+    @FXML
+    private DatePicker dateFim;
 
-    @FXML private Label lblTotalEntradas;
-    @FXML private Label lblTotalSaidas;
-    @FXML private Label lblSaldoPeriodo;
-    @FXML private Label lblTotal;
+    @FXML
+    private Label lblTotalEntradas;
+    @FXML
+    private Label lblTotalSaidas;
+    @FXML
+    private Label lblSaldoPeriodo;
+    @FXML
+    private Label lblTotal;
 
-    @FXML private ListView<Transacao> listTransacoes;
+    @FXML
+    private ListView<Transacao> listTransacoes;
 
     private TransacaoDAO transacaoDAO;
     private ObservableList<Transacao> todasTransacoes;
     private ObservableList<Transacao> transacoesFiltradas;
 
+    // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
@@ -54,7 +67,6 @@ public class TransacoesViewController {
         cmbTipo.setItems(FXCollections.observableArrayList("Todos", "Entrada", "Saida"));
         cmbTipo.setValue("Todos");
 
-        // Popula categorias com opção "Todas" no topo
         List<Categoria> cats = Arrays.asList(Categoria.values());
         cmbCategoria.setItems(FXCollections.observableArrayList(cats));
         cmbCategoria.setPromptText("Todas");
@@ -82,7 +94,8 @@ public class TransacoesViewController {
     }
 
     private void carregarTransacoes() {
-        List<Transacao> lista = transacaoDAO.listarRecentes(1000);
+        // Carrega todas as transações registradas
+        List<Transacao> lista = transacaoDAO.listarTodas();
         todasTransacoes = FXCollections.observableArrayList(lista);
         transacoesFiltradas = FXCollections.observableArrayList(lista);
         listTransacoes.setItems(transacoesFiltradas);
@@ -104,7 +117,7 @@ public class TransacoesViewController {
         String tipo = cmbTipo.getValue();
         if (tipo == null || tipo.equals("Todos")) return true;
         return (tipo.equals("Entrada") && t.tipo() == TipoTransacao.Entrada) ||
-               (tipo.equals("Saida") && t.tipo() == TipoTransacao.Saida);
+                (tipo.equals("Saida") && t.tipo() == TipoTransacao.Saida);
     }
 
     private boolean passaFiltroCategoria(Transacao t) {
@@ -140,6 +153,7 @@ public class TransacoesViewController {
         lblTotal.setText(String.format("Total: %d transacoes", transacoesFiltradas.size()));
     }
 
+    // Reseta todos os filtros de data ou tipo/categoria setados
     private void limparFiltros() {
         cmbTipo.setValue("Todos");
         cmbCategoria.setValue(null);
@@ -147,6 +161,7 @@ public class TransacoesViewController {
         dateFim.setValue(null);
     }
 
+    // Botão para fechar tela de todas as transações
     private void fechar() {
         Stage stage = (Stage) btnFechar.getScene().getWindow();
         stage.close();
