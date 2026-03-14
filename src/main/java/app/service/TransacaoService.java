@@ -59,9 +59,10 @@ public class TransacaoService {
             Transacao t = new Transacao(
                     UUID.randomUUID(),
                     "Aplicação em meta: " + meta.getNome(),
+                    "",
                     permitido,
                     TipoTransacao.Saida,
-                    LocalDate.now(),
+                    data,
                     meta.getId(),
                     Categoria.AdicionarMeta
             );
@@ -82,9 +83,10 @@ public class TransacaoService {
             Transacao t = new Transacao(
                     UUID.randomUUID(),
                     "Resgate de meta: " + meta.getNome(),
+                    "",
                     retirado,
                     TipoTransacao.Entrada,
-                    LocalDate.now(),
+                    data,
                     meta.getId(),
                     Categoria.RetirarMeta
             );
@@ -93,16 +95,35 @@ public class TransacaoService {
             return;
         }
 
+        String nome = categoria.toString();
         Transacao t = new Transacao(
                 UUID.randomUUID(),
+                nome,
                 comentario,
                 valorCentavos,
                 tipo,
-                LocalDate.now(),
+                data,
                 null,
                 categoria
         );
 
+        transacaoDAO.inserir(t);
+    }
+
+    public void atualizar(
+            UUID idOriginal,
+            TipoTransacao tipo,
+            Categoria categoria,
+            long valorCentavos,
+            Meta meta,
+            String comentario,
+            LocalDate data) {
+
+        excluirTransacao(idOriginal, categoria);
+
+        String nome = categoria != null ? categoria.toString() : "";
+        Transacao t = new Transacao(idOriginal, nome, comentario, valorCentavos, tipo, data,
+                meta != null ? meta.getId() : null, categoria);
         transacaoDAO.inserir(t);
     }
 

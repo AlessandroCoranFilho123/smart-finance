@@ -74,12 +74,9 @@ public class MetasViewController {
 
         listMetas.setCellFactory(lv -> new MetaCell());
         configurarEventos();
-
         configurarListeners();
-
         carregarMetas();
-
-        marcarAbaAtiva(btnTodas);
+        marcarAbaAtiva(btnTodas); // Inicia janela na aba filtro todas
     }
 
     private void configurarEventos() {
@@ -93,24 +90,28 @@ public class MetasViewController {
         btnFechar.setOnAction(e -> fechar());
         btnLimparBusca.setOnAction(e -> limparBusca());
 
+        // Aba de todas as metas
         btnTodas.setOnAction(e -> {
             filtroAtual = FiltroStatus.TODAS;
             marcarAbaAtiva(btnTodas);
             aplicarFiltros();
         });
 
+        // Aba de metas em andamento
         btnAndamento.setOnAction(e -> {
             filtroAtual = FiltroStatus.EM_ANDAMENTO;
             marcarAbaAtiva(btnAndamento);
             aplicarFiltros();
         });
 
+        // Aba de metas concluídas
         btnConcluidas.setOnAction(e -> {
             filtroAtual = FiltroStatus.CONCLUIDAS;
             marcarAbaAtiva(btnConcluidas);
             aplicarFiltros();
         });
 
+        // Duplo clique para editar meta
         listMetas.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 Meta selecionada = listMetas.getSelectionModel().getSelectedItem();
@@ -225,6 +226,7 @@ public class MetasViewController {
         );
     }
 
+    // Quando aba for clicada, fica destacada
     private void marcarAbaAtiva(Button botaoAtivo) {
         btnTodas.getStyleClass().remove("active");
         btnAndamento.getStyleClass().remove("active");
@@ -240,6 +242,7 @@ public class MetasViewController {
         stage.close();
     }
 
+    // Filtro metas janela acessada pela sidebar
     private enum FiltroStatus {
         TODAS,
         EM_ANDAMENTO,

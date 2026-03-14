@@ -35,28 +35,32 @@
             <Label text="Tipo" styleClass="filter-label"/>
             <ComboBox fx:id="cmbTipo"
                       promptText="Todos"
-                      prefWidth="150"/>
+                      prefWidth="150"
+                      styleClass="form-combo"/>
         </VBox>
 
         <VBox spacing="6">
             <Label text="Categoria" styleClass="filter-label"/>
             <ComboBox fx:id="cmbCategoria"
                       promptText="Todas"
-                      prefWidth="180"/>
+                      prefWidth="180"
+                      styleClass="form-combo"/>
         </VBox>
 
         <VBox spacing="6">
             <Label text="De" styleClass="filter-label"/>
             <DatePicker fx:id="dateInicio"
                         promptText="Data inicial"
-                        prefWidth="150"/>
+                        prefWidth="150"
+                        styleClass="form-combo"/>
         </VBox>
 
         <VBox spacing="6">
             <Label text="Até" styleClass="filter-label"/>
             <DatePicker fx:id="dateFim"
                         promptText="Data final"
-                        prefWidth="150"/>
+                        prefWidth="150"
+                        styleClass="form-combo"/>
         </VBox>
 
         <Region HBox.hgrow="ALWAYS"/>
@@ -78,18 +82,18 @@
             <Label text="Total de Entradas" styleClass="stat-label"/>
             <Label fx:id="lblTotalEntradas"
                    text="R$ 0,00"
-                   styleClass="stat-value entrada"/>
+                   styleClass="stat-value,entrada"/>
         </VBox>
 
         <VBox spacing="5" HBox.hgrow="ALWAYS">
             <Label text="Total de Saídas" styleClass="stat-label"/>
             <Label fx:id="lblTotalSaidas"
                    text="R$ 0,00"
-                   styleClass="stat-value saida"/>
+                   styleClass="stat-value,saida"/>
         </VBox>
 
         <VBox spacing="5" HBox.hgrow="ALWAYS">
-            <Label text="Saldo Período" styleClass="stat-label"/>
+            <Label text="Saldo Disponível" styleClass="stat-label"/>
             <Label fx:id="lblSaldoPeriodo"
                    text="R$ 0,00"
                    styleClass="stat-value"/>

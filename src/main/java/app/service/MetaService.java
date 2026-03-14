@@ -43,6 +43,7 @@ public class MetaService {
         metaDAO.atualizar(meta);
     }
 
+    @SuppressWarnings("unused")
     public void deletarMeta(UUID id) {
         Objects.requireNonNull(id, "ID é obrigatório");
 
@@ -53,6 +54,7 @@ public class MetaService {
         return metaDAO.listarTodas();
     }
 
+    @SuppressWarnings("unused")
     public Meta buscarPorId(UUID id) {
         Objects.requireNonNull(id, "ID é obrigatório");
         return metaDAO.buscarPorId(id);
@@ -63,69 +65,20 @@ public class MetaService {
         return meta.progresso() * 100.0;
     }
 
-    public String formatarProgresso(Meta meta) {
-        return String.format("%.1f%%", calcularProgresso(meta));
-    }
-
     public boolean metaConcluida(Meta meta) {
         Objects.requireNonNull(meta, "Meta é obrigatória");
         return meta.getAtualCentavos() >= meta.getAlvoCentavos();
     }
 
+    @SuppressWarnings("unused")
     public long calcularRestante(Meta meta) {
         Objects.requireNonNull(meta, "Meta é obrigatória");
         return meta.restanteParaAlvo();
-    }
-
-    public String formatarRestante(Meta meta) {
-        double valor = calcularRestante(meta) / 100.0;
-        return String.format("R$ %.2f", valor);
-    }
-
-    public String formatarValores(Meta meta) {
-        Objects.requireNonNull(meta, "Meta é obrigatória");
-
-        double atual = meta.getAtualCentavos() / 100.0;
-        double alvo = meta.getAlvoCentavos() / 100.0;
-
-        return String.format("R$ %.2f / R$ %.2f", atual, alvo);
-    }
-
-    public boolean podeAdicionar(Meta meta, long valorCentavos) {
-        Objects.requireNonNull(meta, "Meta é obrigatória");
-
-        if (valorCentavos <= 0) {
-            return false;
-        }
-
-        return meta.restanteParaAlvo() > 0;
-    }
-
-    public boolean podeRetirar(Meta meta, long valorCentavos) {
-        Objects.requireNonNull(meta, "Meta é obrigatória");
-
-        if (valorCentavos <= 0) {
-            return false;
-        }
-
-        return meta.getAtualCentavos() >= valorCentavos;
     }
 
     public long contarMetasConcluidas() {
         return listarTodasMetas().stream()
                 .filter(this::metaConcluida)
                 .count();
-    }
-
-    public List<Meta> listarMetasEmAndamento() {
-        return listarTodasMetas().stream()
-                .filter(meta -> !metaConcluida(meta))
-                .toList();
-    }
-
-    public List<Meta> listarMetasConcluidas() {
-        return listarTodasMetas().stream()
-                .filter(this::metaConcluida)
-                .toList();
     }
 }

@@ -13,31 +13,53 @@ import java.util.UUID;
 
 public class TransacaoDAO {
 
+    private static volatile boolean migrationDone = false;
+
+    // Garante que a coluna comentario existe
+    private static void garantirColunaComentario() {
+        if (migrationDone) return;
+        synchronized (TransacaoDAO.class) {
+            if (migrationDone) return;
+            try (Connection c = Database.getConnection();
+                 var rs = c.getMetaData().getColumns(null, null, "transacao", "comentario")) {
+                if (!rs.next()) {
+                    c.createStatement().execute(
+                            "ALTER TABLE transacao ADD COLUMN comentario TEXT NOT NULL DEFAULT ''");
+                }
+                migrationDone = true;
+            } catch (SQLException e) {
+                throw new RuntimeException("Erro na migration comentario", e);
+            }
+        }
+    }
+
     public void inserir(Transacao transacao) {
         String sql = """
-                INSERT INTO transacao (id, descricao, valor_centavos, tipo, data, meta_id, categoria)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO transacao (id, descricao, comentario, valor_centavos, tipo, data, meta_id, categoria)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
+        garantirColunaComentario();
         try (Connection c = Database.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, transacao.id().toString());
             ps.setString(2, transacao.descricao());
-            ps.setLong(3, transacao.valorCentavos());
-            ps.setString(4, transacao.tipo().name());
-            ps.setString(5, transacao.data().toString());
+            ps.setString(3, transacao.comentario() != null ? transacao.comentario() : "");
+            ps.setLong(4, transacao.valorCentavos());
+            ps.setString(5, transacao.tipo().name());
+            ps.setString(6, transacao.data().toString());
 
             if (transacao.metaId() != null) {
-                ps.setString(6, transacao.metaId().toString());
+                ps.setString(7, transacao.metaId().toString());
             } else {
-                ps.setNull(6, Types.VARCHAR);
+                ps.setNull(7, Types.VARCHAR);
             }
 
             if (transacao.categoria() != null) {
-                ps.setString(7, transacao.categoria().name());
+                ps.setString(8, transacao.categoria().name());
             } else {
-                ps.setNull(7, Types.VARCHAR);
+                ps.setNull(8, Types.VARCHAR);
             }
 
             ps.executeUpdate();
@@ -47,64 +69,8 @@ public class TransacaoDAO {
         }
     }
 
-    /**
-     * Atualiza todos os campos editaveis de uma transacao existente.
-     * Usado quando o usuario edita uma transacao (incluindo a data).
-     */
-    public void atualizar(Transacao transacao) {
-        String sql = """
-                UPDATE transacao
-                SET descricao = ?, valor_centavos = ?, tipo = ?, data = ?, meta_id = ?, categoria = ?
-                WHERE id = ?
-                """;
-
-        try (Connection c = Database.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-
-            ps.setString(1, transacao.descricao());
-            ps.setLong(2, transacao.valorCentavos());
-            ps.setString(3, transacao.tipo().name());
-            ps.setString(4, transacao.data().toString());
-
-            if (transacao.metaId() != null) {
-                ps.setString(5, transacao.metaId().toString());
-            } else {
-                ps.setNull(5, Types.VARCHAR);
-            }
-
-            if (transacao.categoria() != null) {
-                ps.setString(6, transacao.categoria().name());
-            } else {
-                ps.setNull(6, Types.VARCHAR);
-            }
-
-            ps.setString(7, transacao.id().toString());
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar transacao", e);
-        }
-    }
-
-    /**
-     * Atualiza apenas a data de uma transacao.
-     */
-    public void atualizarData(UUID id, LocalDate novaData) {
-        String sql = "UPDATE transacao SET data = ? WHERE id = ?";
-
-        try (Connection c = Database.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-
-            ps.setString(1, novaData.toString());
-            ps.setString(2, id.toString());
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar data da transacao", e);
-        }
-    }
-
     public List<Transacao> listarRecentes(int limite) {
+        garantirColunaComentario();
         List<Transacao> list = new ArrayList<>();
 
         String sql = """
@@ -130,6 +96,7 @@ public class TransacaoDAO {
                 list.add(new Transacao(
                         UUID.fromString(rs.getString("id")),
                         rs.getString("descricao"),
+                        rs.getString("comentario") != null ? rs.getString("comentario") : "",
                         rs.getLong("valor_centavos"),
                         TipoTransacao.valueOf(rs.getString("tipo")),
                         LocalDate.parse(rs.getString("data")),
@@ -140,6 +107,46 @@ public class TransacaoDAO {
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar transacoes", e);
+        }
+
+        return list;
+    }
+
+    public List<Transacao> listarTodas() {
+        garantirColunaComentario();
+        List<Transacao> list = new ArrayList<>();
+
+        String sql = """
+                SELECT * FROM transacao
+                ORDER BY data DESC, rowid DESC
+                """;
+
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                UUID metaId = rs.getString("meta_id") == null
+                        ? null
+                        : UUID.fromString(rs.getString("meta_id"));
+
+                String catStr = rs.getString("categoria");
+                Categoria categoria = catStr != null ? Categoria.valueOf(catStr) : null;
+
+                list.add(new Transacao(
+                        UUID.fromString(rs.getString("id")),
+                        rs.getString("descricao"),
+                        rs.getString("comentario") != null ? rs.getString("comentario") : "",
+                        rs.getLong("valor_centavos"),
+                        TipoTransacao.valueOf(rs.getString("tipo")),
+                        LocalDate.parse(rs.getString("data")),
+                        metaId,
+                        categoria
+                ));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar todas as transacoes", e);
         }
 
         return list;
@@ -168,6 +175,7 @@ public class TransacaoDAO {
     }
 
     public Transacao buscarPorId(UUID id) {
+        garantirColunaComentario();
         String sql = "SELECT * FROM transacao WHERE id = ?";
 
         try (Connection c = Database.getConnection();
@@ -188,6 +196,7 @@ public class TransacaoDAO {
             return new Transacao(
                     UUID.fromString(rs.getString("id")),
                     rs.getString("descricao"),
+                    rs.getString("comentario") != null ? rs.getString("comentario") : "",
                     rs.getLong("valor_centavos"),
                     TipoTransacao.valueOf(rs.getString("tipo")),
                     LocalDate.parse(rs.getString("data")),

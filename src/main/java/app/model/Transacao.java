@@ -6,6 +6,7 @@ import java.util.UUID;
 public record Transacao(
         UUID id,
         String descricao,
+        String comentario,
         long valorCentavos,
         TipoTransacao tipo,
         LocalDate data,
@@ -13,7 +14,8 @@ public record Transacao(
         Categoria categoria
 ) {
     public Transacao {
-        if (id == null) id = UUID.randomUUID();
+        if (id == null) id = UUID.randomUUID(); // Garante que toda transação tenha id
+        if (comentario == null) comentario = ""; // Permite comentário em branco
     }
 
 }

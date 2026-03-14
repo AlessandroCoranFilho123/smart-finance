@@ -187,6 +187,7 @@ public class MetaDialogController {
         lblProgresso.setText(String.format("%.1f%%", progresso));
     }
 
+    // Exibe mensagem de erro
     private void mostrarErro(String mensagem) {
         lblErroGeral.setText(mensagem);
         lblErroGeral.setVisible(true);

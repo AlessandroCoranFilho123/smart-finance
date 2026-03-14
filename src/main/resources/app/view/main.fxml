@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane prefHeight="800" prefWidth="1300" styleClass="root-container" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane fx:id="rootContainer" prefHeight="800" prefWidth="1300" styleClass="root-container" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="app.controller.MainController">
 
     <left>
@@ -15,22 +15,18 @@
 
             <VBox alignment="TOP_CENTER" prefWidth="220" spacing="10" styleClass="sidebar" VBox.vgrow="ALWAYS">
 
-                <ImageView fitHeight="120" fitWidth="120" pickOnBounds="false" preserveRatio="true">
-                    <image>
-                        <Image url="@../icons/app.png"/>
-                    </image>
+                <ImageView fitHeight="120" fitWidth="120" preserveRatio="true">
                     <VBox.margin>
                         <Insets bottom="30" top="15"/>
                     </VBox.margin>
+                    <Image url="@../icons/app.png"/>
                 </ImageView>
 
                 <Button fx:id="btnInicio" graphicTextGap="12" maxWidth="Infinity" styleClass="button-sidebar, active">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="12">
                             <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
-                                <image>
-                                    <Image url="@../icons/inicio.png"/>
-                                </image>
+                                <Image url="@../icons/inicio.png"/>
                             </ImageView>
                             <Label styleClass="sidebar-text" text="Tela inicial"/>
                         </HBox>
@@ -41,9 +37,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="12">
                             <ImageView fitHeight="25" fitWidth="25" preserveRatio="true">
-                                <image>
-                                    <Image url="@../icons/transacao.png"/>
-                                </image>
+                                <Image url="@../icons/transacao.png"/>
                             </ImageView>
                             <Label styleClass="sidebar-text" text="Transações"/>
                         </HBox>
@@ -54,9 +48,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="12">
                             <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
-                                <image>
-                                    <Image url="@../icons/meta.png"/>
-                                </image>
+                                <Image url="@../icons/meta.png"/>
                             </ImageView>
                             <Label styleClass="sidebar-text" text="Metas"/>
                         </HBox>
@@ -65,15 +57,17 @@
 
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <Button fx:id="btnTema" graphicTextGap="12" maxWidth="Infinity" styleClass="button-sidebar">
+                <Button fx:id="btnTema" graphicTextGap="12" maxWidth="Infinity" styleClass="button-sidebar"
+                        onAction="#alternarTema">
+                    <VBox.margin>
+                        <Insets bottom="25"/>
+                    </VBox.margin>
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="12">
-                            <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
-                                <image>
-                                    <Image url="@../icons/tema/escuro.png"/>
-                                </image>
+                            <ImageView fx:id="imgTema" fitHeight="20" fitWidth="20" preserveRatio="true">
+                                <Image url="@../icons/tema/escuro.png"/>
                             </ImageView>
-                            <Label styleClass="sidebar-text" text="Tema"/>
+                            <Label fx:id="lblTema" styleClass="sidebar-text" text="Tema escuro"/>
                         </HBox>
                     </graphic>
                 </Button>
@@ -104,37 +98,31 @@
 
                 <HBox spacing="30" styleClass="saldo-stats">
                     <VBox spacing="4">
-                        <Label styleClass="stat-label" text="Receitas do mês" style="-fx-text-fill: #FFFFFF;"/>
-                        <Label fx:id="lblReceitasMes" styleClass="stat-valor receita" text="R$ 0,00"
-                               style="-fx-text-fill: #FFFFFF;"/>
+                        <Label styleClass="stat-label" text="Receitas do mês"/>
+                        <Label fx:id="lblReceitasMes" styleClass="stat-value,entrada"
+                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;" text="R$ 0,00"/>
                     </VBox>
 
                     <VBox spacing="4">
-                        <Label styleClass="stat-label" text="Despesas do mês" style="-fx-text-fill: #FFFFFF;"/>
-                        <Label fx:id="lblDespesasMes" styleClass="stat-valor despesa" text="R$ 0,00"
-                               style="-fx-text-fill: #FFFFFF;"/>
+                        <Label styleClass="stat-label" text="Despesas do mês"/>
+                        <Label fx:id="lblDespesasMes" styleClass="stat-value,saida"
+                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;" text="R$ 0,00"/>
                     </VBox>
                 </HBox>
             </VBox>
 
             <HBox spacing="25" VBox.vgrow="ALWAYS">
-
                 <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS">
                     <padding>
                         <Insets bottom="20" left="20" right="20" top="20"/>
                     </padding>
-
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Label styleClass="section-title" text="Transações recentes"/>
-
                         <Region HBox.hgrow="ALWAYS"/>
-
                         <Button fx:id="btnNovaTransacao" styleClass="button-primary, button-small"
                                 text="+ Nova Transação"/>
                     </HBox>
-
                     <ListView fx:id="listTransacoes" styleClass="list-transacoes" VBox.vgrow="ALWAYS"/>
-
                     <HBox alignment="CENTER_RIGHT">
                         <Button fx:id="btnVerTodasTransacoes" styleClass="button-link" text="Ver todas →"/>
                     </HBox>
@@ -144,24 +132,17 @@
                     <padding>
                         <Insets bottom="20" left="20" right="20" top="20"/>
                     </padding>
-
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Label styleClass="section-title" text="Metas"/>
-
                         <Region HBox.hgrow="ALWAYS"/>
-
                         <Button fx:id="btnNovaMeta" styleClass="button-primary, button-small" text="+ Nova Meta"/>
                     </HBox>
-
                     <ListView fx:id="listMetas" styleClass="list-metas, no-scroll" VBox.vgrow="ALWAYS"/>
-
                     <HBox alignment="CENTER_RIGHT">
                         <Button fx:id="btnVerTodasMetas" styleClass="button-link" text="Ver todas →"/>
                     </HBox>
                 </VBox>
-
             </HBox>
         </VBox>
     </center>
-
 </BorderPane>

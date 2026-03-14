@@ -9,7 +9,7 @@
 
     <groupId>app</groupId>
     <artifactId>app</artifactId>
-    <version>1.2.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -62,7 +62,17 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
         </dependency>
-
+        
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.14.0</version>
+        </dependency>
 
     </dependencies>
     <build>
@@ -79,27 +89,91 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dependency</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-
                     <mainClass>app/app.Main</mainClass>
-
-
                     <launcher>SmartFinance</launcher>
-
                     <jlinkImageName>SmartFinance</jlinkImageName>
-
                     <stripDebug>true</stripDebug>
                     <noManPages>true</noManPages>
                     <noHeaderFiles>true</noHeaderFiles>
-
                     <options>
                         <option>-Dprism.order=sw</option>
                     </options>
-
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <arguments>
+                                <argument>--type</argument>
+                                <argument>exe</argument>
+
+                                <argument>--name</argument>
+                                <argument>SmartFinance</argument>
+                                <argument>--app-version</argument>
+                                <argument>2.0.0</argument>
+
+                                <argument>--input</argument>
+                                <argument>${project.build.directory}/dependency</argument>
+
+                                <argument>--dest</argument>
+                                <argument>${project.build.directory}/installer</argument>
+
+                                <argument>--main-jar</argument>
+                                <argument>app-2.0.0.jar</argument>
+
+                                <argument>--main-class</argument>
+                                <argument>app.Main</argument>
+
+                                <argument>--add-modules</argument>
+                                <argument>javafx.controls,javafx.fxml,javafx.graphics</argument>
+
+                                <argument>--java-options</argument>
+                                <argument>-Dprism.order=sw</argument>
+                                <argument>--java-options</argument>
+                                <argument>--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</argument>
+                                <argument>--java-options</argument>
+                                <argument>--add-opens=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</argument>
+
+                                <argument>--win-menu</argument>
+                                <argument>--win-shortcut</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

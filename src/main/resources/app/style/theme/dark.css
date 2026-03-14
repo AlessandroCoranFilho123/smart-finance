@@ -1,12 +1,38 @@
-.root-container.dark-theme {
+.root-container.dark-theme,
+.dark-theme,
+.dark-theme .main-content,
+.dark-theme .view-container,
+.dark-theme .sidebar-container {
+    -fx-background-color: #0B1437 !important;
+}
+
+.dark-theme .main-content {
     -fx-background-color: #0B1437;
 }
 
+.dark-theme .sidebar-container {
+    -fx-background-color: #0B1437;
+}
+
+/* Dialogs */
+.dark-theme.dialog-container,
+.dark-theme .dialog-container {
+    -fx-background-color: #0B1437;
+}
+
+/* Views abertas em Stage separado */
+.dark-theme.view-container,
+.dark-theme .view-container {
+    -fx-background-color: #0B1437;
+}
+
+/* Sidebar */
 .dark-theme .sidebar {
-    -fx-background-color: #111C44;
+    -fx-background-color: #111C44 !important;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0, 0, 2);
 }
 
+/* Botões da sidebar */
 .dark-theme .button-sidebar {
     -fx-text-fill: #A3AED0;
 }
@@ -16,26 +42,41 @@
     -fx-text-fill: #7551FF;
 }
 
+/* Botão da tela atual */
 .dark-theme .button-sidebar.active {
     -fx-background-color: rgba(117, 81, 255, 0.25);
     -fx-text-fill: #7551FF;
     -fx-border-color: #7551FF;
 }
 
+/* Cards */
 .dark-theme .card {
-    -fx-background-color: #111C44;
+    -fx-background-color: #111C44 !important;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 12, 0, 0, 2);
 }
 
+/* Banner de saldo (gradiente roxo) */
 .dark-theme .saldo-banner {
     -fx-background-color: linear-gradient(to right, #7551FF, #9D7FFF);
     -fx-effect: dropshadow(three-pass-box, rgba(117, 81, 255, 0.4), 15, 0, 0, 5);
 }
 
+.dark-theme .saldo-banner .stat-label,
+.dark-theme .saldo-banner .stat-valor,
+.dark-theme .saldo-banner .stat-valor.receita,
+.dark-theme .saldo-banner .stat-valor.despesa,
+.dark-theme .saldo-banner .stat-value,
+.dark-theme .saldo-banner .stat-value.entrada,
+.dark-theme .saldo-banner .stat-value.saida {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Títulos de seção */
 .dark-theme .section-title {
     -fx-text-fill: #FFFFFF;
 }
 
+/* Botões primários */
 .dark-theme .button-primary {
     -fx-background-color: #7551FF;
 }
@@ -48,6 +89,24 @@
     -fx-background-color: #4F34BB;
 }
 
+/* Botões secundários - "Cancelar" e "Fechar" */
+.dark-theme .button-secondary {
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #4A5568;
+    -fx-background-color: transparent;
+}
+
+.dark-theme .button-secondary:hover {
+    -fx-background-color: rgba(117, 81, 255, 0.15);
+    -fx-border-color: #7551FF;
+    -fx-text-fill: #FFFFFF;
+}
+
+.dark-theme .button-secondary:pressed {
+    -fx-background-color: rgba(117, 81, 255, 0.25);
+}
+
+/* Botões de link */
 .dark-theme .button-link {
     -fx-text-fill: #7551FF;
 }
@@ -56,6 +115,7 @@
     -fx-text-fill: #9D7FFF;
 }
 
+/* Listas do dashboard (home) */
 .dark-theme .list-transacoes .list-cell,
 .dark-theme .list-metas .list-cell {
     -fx-border-color: #1B2559;
@@ -76,17 +136,393 @@
     -fx-background-color: rgba(117, 81, 255, 0.25);
 }
 
+/* Scrollbar */
 .dark-theme .scroll-bar:vertical .thumb {
     -fx-background-color: #1B2559;
+    -fx-background-radius: 4px;
 }
 
 .dark-theme .scroll-bar:vertical .thumb:hover {
     -fx-background-color: #A3AED0;
 }
 
-.dark-theme .saldo-banner .stat-label,
-.dark-theme .saldo-banner .stat-valor,
-.dark-theme .saldo-banner .stat-valor.receita,
-.dark-theme .saldo-banner .stat-valor.despesa {
+/* Barra de filtros */
+.dark-theme .filter-bar {
+    -fx-background-color: #111C44;
+}
+
+.dark-theme .filter-bar .filter-label,
+.dark-theme.view-container .filter-label,
+.dark-theme .filter-label {
+    -fx-text-fill: #A3AED0;
+}
+
+/* Barra de estatísticas */
+.dark-theme .stats-bar {
+    -fx-background-color: #111C44;
+}
+
+.dark-theme .stats-bar .stat-label,
+.dark-theme .stat-label {
+    -fx-text-fill: #A3AED0;
+}
+
+/* Valores de stat (Total Entradas / Saídas / Saldo) */
+.dark-theme .stat-value {
     -fx-text-fill: #FFFFFF;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Verde para entradas */
+.dark-theme .stat-value.entrada,
+.dark-theme .saldo-banner .stat-value.entrada {
+    -fx-text-fill: #16a34a;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Vermelho para saídas */
+.dark-theme .stat-value.saida,
+.dark-theme .saldo-banner .stat-value.saida {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Títulos das views e subtítulos */
+.dark-theme .view-title,
+.dark-theme .section-subtitle {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Valor grande */
+.dark-theme .stat-value-large {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Abas de filtro (Todas / Em andamento / Concluídas) */
+.dark-theme .button-tab {
+    -fx-text-fill: #A3AED0;
+}
+
+.dark-theme .button-tab:hover {
+    -fx-background-color: rgba(117, 81, 255, 0.10);
+    -fx-text-fill: #7551FF;
+}
+
+.dark-theme .button-tab.active {
+    -fx-text-fill: #7551FF;
+    -fx-border-color: #7551FF;
+    -fx-background-color: rgba(117, 81, 255, 0.15);
+}
+
+/* Listas completas */
+.dark-theme .list-transacoes-full,
+.dark-theme .list-metas-full {
+    -fx-background-color: #111C44;
+}
+
+.dark-theme .list-transacoes-full .list-cell,
+.dark-theme .list-metas-full .list-cell {
+    -fx-border-color: #1B2559;
+}
+
+.dark-theme .list-transacoes-full .list-cell:hover,
+.dark-theme .list-metas-full .list-cell:hover {
+    -fx-background-color: rgba(117, 81, 255, 0.10);
+}
+
+.dark-theme .list-transacoes-full .list-cell:selected,
+.dark-theme .list-metas-full .list-cell:selected {
+    -fx-background-color: rgba(117, 81, 255, 0.20);
+}
+
+.dark-theme .list-transacoes-full .scroll-bar:vertical .thumb,
+.dark-theme .list-metas-full .scroll-bar:vertical .thumb {
+    -fx-background-color: #1B2559;
+    -fx-background-radius: 4px;
+}
+
+.dark-theme .list-transacoes-full .scroll-bar:vertical .thumb:hover,
+.dark-theme .list-metas-full .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #A3AED0;
+}
+
+.dark-theme .list-transacoes-full .scroll-bar:vertical .track,
+.dark-theme .list-metas-full .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+/* Células customizadas (TransacaoCell / MetaCell) */
+.dark-theme .cell-title {
+    -fx-text-fill: #FFFFFF;
+}
+
+.dark-theme .cell-subtitle {
+    -fx-text-fill: #A3AED0;
+}
+
+.dark-theme .cell-valor {
+    -fx-text-fill: #FFFFFF;
+}
+
+.dark-theme .cell-valor-entrada {
+    -fx-text-fill: #4ADE80;  /* Verde */
+
+.dark-theme .cell-valor-saida {
+    -fx-text-fill: #F87171;  /* Vermelho */
+}
+
+.dark-theme .cell-meta-concluida {
+    -fx-text-fill: #4ADE80;
+}
+
+/* Rodapé */
+.dark-theme .footer-text {
+    -fx-text-fill: #A3AED0;
+}
+
+/* Formulários (dialogs) */
+.dark-theme .form-label {
+    -fx-text-fill: #A3AED0;
+}
+
+.dark-theme .currency-symbol {
+    -fx-text-fill: #A3AED0;
+}
+
+/* TextField e TextArea genéricos */
+.dark-theme .form-field {
+    -fx-background-color: #111C44;
+    -fx-border-color: #1B2559;
+    -fx-text-fill: #FFFFFF;
+}
+
+.dark-theme .form-field:focused {
+    -fx-border-color: #7551FF;
+    -fx-border-width: 2px;
+}
+
+/* Placeholder text */
+.dark-theme .text-field,
+.dark-theme .text-area {
+    -fx-prompt-text-fill: #4A5568;
+}
+
+/* TextArea (comentário) */
+.dark-theme .field-textarea,
+.dark-theme .text-area {
+    -fx-background-color: #111C44;
+    -fx-border-color: #1B2559;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* Área interna de texto do TextArea */
+.dark-theme .text-area .content {
+    -fx-background-color: #111C44;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 8px;
+}
+
+/* ScrollPane interno do TextArea */
+.dark-theme .text-area .scroll-pane {
+    -fx-background-color: #111C44;
+    -fx-background-radius: 8px;
+}
+
+.dark-theme .text-area .scroll-pane .viewport {
+    -fx-background-color: #111C44;
+    -fx-background-radius: 8px;
+}
+
+/* Canto do scrollpane (evita pontinhos brancos no comentário) */
+.dark-theme .text-area .scroll-pane .corner {
+    -fx-background-color: #111C44;
+}
+
+.dark-theme .text-area:focused,
+.dark-theme .field-textarea:focused {
+    -fx-border-color: #7551FF;
+}
+
+/* ComboBox e DatePicker */
+.dark-theme .form-combo,
+.dark-theme .combo-box,
+.dark-theme .date-picker {
+    -fx-background-color: #111C44;
+    -fx-border-color: #1B2559;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+}
+
+.dark-theme .combo-box .combo-box-base,
+.dark-theme .form-combo .combo-box-base,
+.dark-theme .date-picker .combo-box-base {
+    -fx-background-color: #111C44;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Item selecionado visível dentro do combo */
+.dark-theme .combo-box .list-cell,
+.dark-theme .form-combo .list-cell {
+    -fx-background-color: #111C44;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Dropdown do ComboBox */
+.dark-theme .combo-box-popup .list-view {
+    -fx-background-color: #111C44;
+    -fx-border-color: #1B2559;
+    -fx-border-width: 1px;
+}
+
+.dark-theme .combo-box-popup .list-view .list-cell {
+    -fx-background-color: #111C44;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 8 12;
+}
+
+.dark-theme .combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: rgba(117, 81, 255, 0.15);
+}
+
+.dark-theme .combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: rgba(117, 81, 255, 0.30);
+}
+
+/* Seta do combo/datepicker */
+.dark-theme .combo-box .arrow-button,
+.dark-theme .form-combo .arrow-button,
+.dark-theme .date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.dark-theme .combo-box .arrow,
+.dark-theme .form-combo .arrow,
+.dark-theme .date-picker .arrow {
+    -fx-background-color: #A3AED0;
+}
+
+/* Campo de texto do DatePicker */
+.dark-theme .date-picker .date-picker-display-node,
+.dark-theme .date-picker > .combo-box-base > .date-picker-display-node {
+    -fx-background-color: #111C44;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #6B7FA3;
+    -fx-padding: 6 10;
+}
+
+.dark-theme .date-picker-popup {
+    -fx-background-color: #111C44;
+    -fx-border-color: #1B2559;
+}
+
+/* Cabeçalho com mês/ano */
+.dark-theme .date-picker-popup .month-year-pane {
+    -fx-background-color: #0B1437;
+}
+
+.dark-theme .date-picker-popup .spinner .button {
+    -fx-background-color: transparent;
+}
+
+.dark-theme .date-picker-popup .spinner .label {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Nomes dos dias da semana e células de dia */
+.dark-theme .date-picker-popup .day-name-cell,
+.dark-theme .date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A3AED0;
+}
+
+.dark-theme .date-picker-popup .day-cell:hover {
+    -fx-background-color: rgba(117, 81, 255, 0.20);
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Dia selecionado */
+.dark-theme .date-picker-popup .selected {
+    -fx-background-color: #7551FF;
+    -fx-text-fill: #FFFFFF;
+}
+
+.dark-theme .date-picker-popup .today {
+    -fx-border-color: #7551FF;
+    -fx-text-fill: #7551FF;
+}
+
+.dark-theme .date-picker-popup > * {
+    -fx-background-color: #111C44;
+}
+
+.dark-theme .date-picker-popup .calendar-grid {
+    -fx-background-color: #111C44;
+}
+
+.dark-theme .date-picker-popup .week-number-cell {
+    -fx-background-color: #0B1437;
+    -fx-text-fill: #A3AED0;
+}
+
+/* Toggle Entrada / Saída */
+.dark-theme .toggle-type {
+    -fx-background-color: #111C44;
+    -fx-text-fill: #A3AED0;
+    -fx-border-color: #1B2559;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.dark-theme .toggle-type:hover {
+    -fx-background-color: rgba(117, 81, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Entrada selecionada - destaque verde */
+.dark-theme .toggle-entrada:selected {
+    -fx-background-color: rgba(74, 222, 128, 0.20);
+    -fx-text-fill: #4ADE80;
+    -fx-border-color: #4ADE80;
+}
+
+/* Saída selecionada - destaque vermelho */
+.dark-theme .toggle-saida:selected {
+    -fx-background-color: rgba(248, 113, 113, 0.20);
+    -fx-text-fill: #F87171;
+    -fx-border-color: #F87171;
+}
+
+/* Labels informativos */
+.dark-theme .info-label-small {
+    -fx-text-fill: #A3AED0;
+}
+
+.dark-theme .info-value {
+    -fx-text-fill: #FFFFFF;
+}
+
+.dark-theme .progress-text {
+    -fx-text-fill: #7551FF;
+}
+
+/* Mensagens de erro nos formulários */
+.dark-theme .error-label {
+    -fx-text-fill: #F87171;
+}
+
+/* Botão Excluir (detalhe de transação) */
+.dark-theme .button-excluir {
+    -fx-text-fill: #F87171;
+    -fx-border-color: #F87171;
+}
+
+.dark-theme .button-excluir:hover {
+    -fx-background-color: rgba(248, 113, 113, 0.15);
 }
