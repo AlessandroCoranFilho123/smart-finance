@@ -13,14 +13,23 @@ import java.util.UUID;
 
 public class TransacaoDAO {
 
-    private static volatile boolean migrationDone = false;
+    private volatile boolean migrationDone = false;
+
+
+    /**
+     * Ponto de extensão para testes: subclasses podem injetar
+     * uma Connection de banco em memória sem alterar o código de produção.
+     */
+    protected Connection getConn() throws SQLException {
+        return Database.getConnection();
+    }
 
     // Garante que a coluna comentario existe
-    private static void garantirColunaComentario() {
+    protected void garantirColunaComentario() {
         if (migrationDone) return;
-        synchronized (TransacaoDAO.class) {
+        synchronized (this) {
             if (migrationDone) return;
-            try (Connection c = Database.getConnection();
+            try (Connection c = getConn();
                  var rs = c.getMetaData().getColumns(null, null, "transacao", "comentario")) {
                 if (!rs.next()) {
                     c.createStatement().execute(
@@ -40,7 +49,7 @@ public class TransacaoDAO {
                 """;
 
         garantirColunaComentario();
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, transacao.id().toString());
@@ -79,7 +88,7 @@ public class TransacaoDAO {
                 LIMIT ?
                 """;
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setInt(1, limite);
@@ -121,7 +130,7 @@ public class TransacaoDAO {
                 ORDER BY data DESC, rowid DESC
                 """;
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -163,7 +172,7 @@ public class TransacaoDAO {
                 FROM transacao
                 """;
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
@@ -178,7 +187,7 @@ public class TransacaoDAO {
         garantirColunaComentario();
         String sql = "SELECT * FROM transacao WHERE id = ?";
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, id.toString());
@@ -216,7 +225,7 @@ public class TransacaoDAO {
                 WHERE tipo = ? AND strftime('%Y-%m', data) = ?
                 """;
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, tipo.name());
@@ -236,7 +245,7 @@ public class TransacaoDAO {
     }
 
     public void excluir(UUID id) {
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps =
                      c.prepareStatement("DELETE FROM transacao WHERE id = ?")) {
 

@@ -10,13 +10,21 @@ import java.util.UUID;
 
 public class MetaDAO {
 
+    /**
+     * Ponto de extensão para testes: subclasses podem injetar
+     * uma Connection de banco em memória sem alterar o código de produção.
+     */
+    protected Connection getConn() throws SQLException {
+        return Database.getConnection();
+    }
+
     public void inserir(Meta meta) {
         String sql = """
                     INSERT INTO meta (id, nome, alvo_centavos, atual_centavos)
                     VALUES (?, ?, ?, ?)
                 """;
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, meta.getIdAsString());
@@ -34,13 +42,13 @@ public class MetaDAO {
         List<Meta> metas = new ArrayList<>();
         String sql = "SELECT * FROM meta";
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 Object alvoObj = rs.getObject("alvo_centavos");
-                Long alvoCentavos = alvoObj == null ? null : ((Number) alvoObj).longValue(); // Converter integer para long
+                Long alvoCentavos = alvoObj == null ? null : ((Number) alvoObj).longValue();
 
                 metas.add(new Meta(
                         UUID.fromString(rs.getString("id")),
@@ -62,7 +70,7 @@ public class MetaDAO {
                     WHERE id = ?
                 """;
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, meta.getNome());
@@ -77,9 +85,8 @@ public class MetaDAO {
     }
 
     public void deletar(UUID id) {
-        try (Connection c = Database.getConnection();
-             PreparedStatement ps = c.prepareStatement(
-                     "DELETE FROM meta WHERE id = ?")) {
+        try (Connection c = getConn();
+             PreparedStatement ps = c.prepareStatement("DELETE FROM meta WHERE id = ?")) {
 
             ps.setString(1, id.toString());
             ps.executeUpdate();
@@ -89,10 +96,9 @@ public class MetaDAO {
     }
 
     public Meta buscarPorId(UUID id) {
-
         String sql = "SELECT * FROM meta WHERE id = ?";
 
-        try (Connection c = Database.getConnection();
+        try (Connection c = getConn();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, id.toString());
@@ -100,7 +106,7 @@ public class MetaDAO {
 
             if (!rs.next()) return null;
             Object alvoObj = rs.getObject("alvo_centavos");
-            Long alvoCentavos = alvoObj == null ? null : ((Number) alvoObj).longValue(); // Converter integer para long
+            Long alvoCentavos = alvoObj == null ? null : ((Number) alvoObj).longValue();
             return new Meta(
                     UUID.fromString(rs.getString("id")),
                     rs.getString("nome"),
@@ -112,5 +118,4 @@ public class MetaDAO {
             throw new RuntimeException("Erro ao buscar meta", e);
         }
     }
-
 }

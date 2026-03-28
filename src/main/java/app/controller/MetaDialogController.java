@@ -3,9 +3,7 @@ package app.controller;
 import app.model.Meta;
 import app.service.MetaService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -41,6 +39,8 @@ public class MetaDialogController {
     private Button btnCancelar;
     @FXML
     private Button btnSalvar;
+    @FXML
+    private Button btnExcluir;
 
     private MetaService metaService;
     private Meta metaEmEdicao;
@@ -60,15 +60,17 @@ public class MetaDialogController {
         txtNome.requestFocus();
     }
 
-    // Inicia o serviço e configura a máscara de moeda no campo de valor
+    // Modo criação: esconde progresso e botão excluir
     public void configurarParaCriar() {
         lblTitulo.setText("Nova Meta");
         metaEmEdicao = null;
         boxProgresso.setVisible(false);
         boxProgresso.setManaged(false);
+        btnExcluir.setVisible(false);
+        btnExcluir.setManaged(false);
     }
 
-    // Preenche os campos com os dados da meta existente e exibe o progresso atual
+    // Modo edição: preenche campos, exibe progresso e botão excluir
     public void configurarParaEditar(Meta meta) {
         lblTitulo.setText("Editar Meta");
         metaEmEdicao = meta;
@@ -79,6 +81,9 @@ public class MetaDialogController {
         boxProgresso.setVisible(true);
         boxProgresso.setManaged(true);
         atualizarProgresso(meta);
+
+        btnExcluir.setVisible(true);
+        btnExcluir.setManaged(true);
     }
 
     public boolean isConfirmado() {
@@ -128,6 +133,31 @@ public class MetaDialogController {
     }
 
     @FXML
+    private void handleExcluir() {
+        if (metaEmEdicao == null) return;
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Excluir Meta");
+        confirm.setHeaderText(null);
+        confirm.setContentText(
+                "Tem certeza que deseja excluir a meta \"" + metaEmEdicao.getNome() + "\"?\n" +
+                        "As transações vinculadas serão mantidas no histórico."
+        );
+
+        confirm.showAndWait().ifPresent(resposta -> {
+            if (resposta == ButtonType.OK) {
+                try {
+                    metaService.deletarMeta(metaEmEdicao.getId());
+                    confirmado = true;
+                    fecharDialog();
+                } catch (Exception e) {
+                    mostrarErro("Erro ao excluir meta: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    @FXML
     private void handleCancelar() {  // Cancela a operação e fecha o dialog sem salvar
         confirmado = false;
         fecharDialog();
@@ -147,21 +177,25 @@ public class MetaDialogController {
                     long centavos = parseValorCentavos(txtValorAlvo.getText());
                     txtValorAlvo.setText(formatarValor(centavos));
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Erro ao converter valor de centavos");
+                    logger.debug("Formatacao ignorada: {}", e.getMessage());
                 }
             }
         });
     }
 
-    // Converte texto digitado pelo usuário para valor em centavos
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
         if (texto == null || texto.trim().isEmpty()) {
             return 0;
         }
 
         try {
-            texto = texto.replace(".", "").replace(",", ".");
+            texto = texto.trim();
 
+            boolean temVirgulaDecimal = texto.contains(",");
+            if (temVirgulaDecimal) {
+                // padrão BR: ponto é milhar, vírgula é decimal
+                texto = texto.replace(".", "").replace(",", ".");
+            }
             double valor = Double.parseDouble(texto);
             return Math.round(valor * 100);
 

@@ -59,14 +59,13 @@ public class TransacaoService {
             Transacao t = new Transacao(
                     UUID.randomUUID(),
                     "Aplicação em meta: " + meta.getNome(),
-                    "",
+                    comentario != null ? comentario : "",
                     permitido,
                     TipoTransacao.Saida,
                     data,
                     meta.getId(),
                     Categoria.AdicionarMeta
             );
-
 
             transacaoDAO.inserir(t);
             return;
@@ -83,7 +82,7 @@ public class TransacaoService {
             Transacao t = new Transacao(
                     UUID.randomUUID(),
                     "Resgate de meta: " + meta.getNome(),
-                    "",
+                    comentario != null ? comentario : "",
                     retirado,
                     TipoTransacao.Entrada,
                     data,
@@ -99,7 +98,7 @@ public class TransacaoService {
         Transacao t = new Transacao(
                 UUID.randomUUID(),
                 nome,
-                comentario,
+                comentario != null ? comentario : "",
                 valorCentavos,
                 tipo,
                 data,
@@ -110,6 +109,17 @@ public class TransacaoService {
         transacaoDAO.inserir(t);
     }
 
+    /**
+     * Atualiza uma transação existente.
+     *
+     * <p>Para transações comuns (sem meta), exclui a original e reinsere
+     * com os novos dados, preservando o UUID original.
+     *
+     * <p>Para transações de AdicionarMeta/RetirarMeta, a exclusão
+     * já reverte o saldo da meta via {@link #excluirTransacao}; em seguida
+     * chama {@link #registrar} com o ID original, garantindo que todas as
+     * validações de saldo/meta sejam reaplicadas.
+     */
     public void atualizar(
             UUID idOriginal,
             TipoTransacao tipo,
@@ -119,12 +129,34 @@ public class TransacaoService {
             String comentario,
             LocalDate data) {
 
-        excluirTransacao(idOriginal, categoria);
+        Objects.requireNonNull(idOriginal, "ID original é obrigatório");
 
+        // Busca a categoria original para reverter o efeito colateral correto
+        Transacao original = transacaoDAO.buscarPorId(idOriginal);
+        Categoria categoriaOriginal = original != null ? original.categoria() : categoria;
+
+        // Reverte o efeito da transação original (meta, saldo)
+        excluirTransacao(idOriginal, categoriaOriginal);
+
+        // Transações de meta passam pelo registrar() para revalidar saldo e meta
+        if (categoria == Categoria.AdicionarMeta || categoria == Categoria.RetirarMeta) {
+            registrar(tipo, categoria, valorCentavos, meta, comentario, data);
+            return;
+        }
+
+        // Transação comum: reinserir preservando o UUID original
         String nome = categoria != null ? categoria.toString() : "";
-        Transacao t = new Transacao(idOriginal, nome, comentario, valorCentavos, tipo, data,
-                meta != null ? meta.getId() : null, categoria);
-        transacaoDAO.inserir(t);
+        Transacao atualizada = new Transacao(
+                idOriginal,
+                nome,
+                comentario != null ? comentario : "",
+                valorCentavos,
+                tipo,
+                data,
+                meta != null ? meta.getId() : null,
+                categoria
+        );
+        transacaoDAO.inserir(atualizada);
     }
 
     public long calcularSaldoDisponivelCentavos() {
@@ -143,7 +175,6 @@ public class TransacaoService {
                 TipoTransacao.Saida,
                 mes.toString()
         );
-
     }
 
     public void excluirTransacao(UUID transacaoId, Categoria categoria) {

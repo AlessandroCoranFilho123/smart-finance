@@ -14,12 +14,14 @@
         <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
+    <!-- Título visível do dialog, preenchido pelo controller -->
+    <Label fx:id="lblTitulo" styleClass="view-title"/>
+
     <VBox spacing="15">
 
         <VBox spacing="6">
             <Label text="Nome da Meta" styleClass="form-label"/>
-            <TextField fx:id="txtNome"
-                       styleClass="form-field"/>
+            <TextField fx:id="txtNome" styleClass="form-field"/>
         </VBox>
 
         <VBox spacing="6">
@@ -45,28 +47,20 @@
             <HBox spacing="15" alignment="CENTER_LEFT">
                 <VBox spacing="4">
                     <Label text="Valor Atual" styleClass="info-label-small"/>
-                    <Label fx:id="lblValorAtual"
-                           text="R$ 0,00"
-                           styleClass="info-value"/>
+                    <Label fx:id="lblValorAtual" text="R$ 0,00" styleClass="info-value"/>
                 </VBox>
                 <VBox spacing="4">
                     <Label text="Restante" styleClass="info-label-small"/>
-                    <Label fx:id="lblRestante"
-                           text="R$ 0,00"
-                           styleClass="info-value"/>
+                    <Label fx:id="lblRestante" text="R$ 0,00" styleClass="info-value"/>
                 </VBox>
                 <VBox spacing="4">
                     <Label text="Progresso" styleClass="info-label-small"/>
-                    <Label fx:id="lblProgresso"
-                           text="0%"
-                           styleClass="info-value, progress-text"/>
+                    <Label fx:id="lblProgresso" text="0%" styleClass="info-value, progress-text"/>
                 </VBox>
             </HBox>
         </VBox>
 
     </VBox>
-    
-    <Label fx:id="lblTitulo" visible="false" managed="false"/>
 
     <Label fx:id="lblErroGeral"
            styleClass="error-label"
@@ -77,6 +71,13 @@
     <VBox VBox.vgrow="ALWAYS"/>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="btnExcluir"
+                text="Excluir"
+                styleClass="button-excluir"
+                visible="false"
+                managed="false"
+                onAction="#handleExcluir"/>
+        <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="btnCancelar"
                 text="Cancelar"
                 styleClass="button-secondary"

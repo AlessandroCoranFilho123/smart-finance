@@ -527,3 +527,13 @@
 .dark-theme .button-excluir:hover {
     -fx-background-color: rgba(248, 113, 113, 0.15);
 }
+/* ProgressBar nas células de Meta — modo escuro */
+.dark-theme .progress-bar-meta-ativa .bar {
+    -fx-background-color: #7551FF;
+    -fx-background-radius: 4px;
+}
+
+.dark-theme .progress-bar-meta-concluida .bar {
+    -fx-background-color: #4ADE80;
+    -fx-background-radius: 4px;
+}

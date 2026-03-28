@@ -29,7 +29,6 @@ public class MetaCell extends ListCell<Meta> {
         icon.setFitHeight(40);
         icon.setPreserveRatio(true);
 
-        // Container de conteudo
         VBox container = new VBox(10);
         container.setPadding(new Insets(12, 0, 12, 0));
         VBox.setVgrow(container, Priority.ALWAYS);
@@ -51,21 +50,20 @@ public class MetaCell extends ListCell<Meta> {
         progressBar = new ProgressBar();
         progressBar.setPrefWidth(Double.MAX_VALUE);
         progressBar.setPrefHeight(8);
-        progressBar.setStyle("-fx-accent: #4318FF; -fx-background-radius: 4px;");
+        // Classe base — cor controlada pelo CSS de acordo com o tema
+        progressBar.getStyleClass().add("progress-bar-meta");
 
         percentLabel = new Label();
-        percentLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #A3AED0;");
+        percentLabel.getStyleClass().add("cell-subtitle");
 
         container.getChildren().addAll(headerBox, progressBar, percentLabel);
         HBox.setHgrow(container, Priority.ALWAYS);
 
-        // Root com icone + conteudo
         root = new HBox(15);
         root.setAlignment(Pos.CENTER_LEFT);
         root.setPadding(new Insets(4, 0, 4, 0));
         root.getChildren().addAll(icon, container);
 
-        // Impede que a celula expanda horizontalmente causando scroll
         root.setMaxWidth(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
     }
@@ -87,20 +85,31 @@ public class MetaCell extends ListCell<Meta> {
             double progresso = meta.progresso();
             progressBar.setProgress(progresso);
 
-            // Tenta carregar icone da meta, usa fallback se nao existir
             Image iconeImg = IconManager.getImage("/app/icons/categoria/meta.png");
             if (iconeImg != null) icon.setImage(iconeImg);
 
             if (progresso >= 1.0) {
-                progressBar.setStyle("-fx-accent: #4ADE80; -fx-background-radius: 4px;");
+                // Classe CSS para barra concluída — cor definida nos arquivos de tema
+                progressBar.getStyleClass().removeAll("progress-bar-meta-ativa");
+                if (!progressBar.getStyleClass().contains("progress-bar-meta-concluida")) {
+                    progressBar.getStyleClass().add("progress-bar-meta-concluida");
+                }
                 percentLabel.setText("Meta concluida!");
                 percentLabel.getStyleClass().removeAll("cell-subtitle");
-                percentLabel.getStyleClass().add("cell-meta-concluida");
+                if (!percentLabel.getStyleClass().contains("cell-meta-concluida")) {
+                    percentLabel.getStyleClass().add("cell-meta-concluida");
+                }
             } else {
-                progressBar.setStyle("-fx-accent: #4318FF; -fx-background-radius: 4px;");
+                // Classe CSS para barra em andamento
+                progressBar.getStyleClass().removeAll("progress-bar-meta-concluida");
+                if (!progressBar.getStyleClass().contains("progress-bar-meta-ativa")) {
+                    progressBar.getStyleClass().add("progress-bar-meta-ativa");
+                }
                 percentLabel.setText(String.format("%.1f%% concluido", progresso * 100));
                 percentLabel.getStyleClass().removeAll("cell-meta-concluida");
-                percentLabel.getStyleClass().add("cell-subtitle");
+                if (!percentLabel.getStyleClass().contains("cell-subtitle")) {
+                    percentLabel.getStyleClass().add("cell-subtitle");
+                }
             }
 
             setGraphic(root);

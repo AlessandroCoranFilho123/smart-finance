@@ -66,12 +66,10 @@ public class TransacaoDialogController {
     private MetaService metaService;
     private boolean confirmado = false;
 
-    // Registrar avisos e erros
     private static final Logger logger = LoggerFactory.getLogger(TransacaoDialogController.class);
 
     private app.model.Transacao transacaoEmEdicao;
 
-    // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
@@ -83,8 +81,6 @@ public class TransacaoDialogController {
         metaService = new MetaService(metaDAO);
 
         cmbCategoria.setItems(FXCollections.observableArrayList(Categoria.values()));
-
-        // Data padrão = dia criada transação
         dateTransacao.setValue(LocalDate.now());
 
         configurarMascaraMoeda();
@@ -112,7 +108,6 @@ public class TransacaoDialogController {
 
         txtValor.setText(formatarValor(transacao.valorCentavos()));
 
-        // Preenche data da transacao
         if (transacao.data() != null) {
             dateTransacao.setValue(transacao.data());
         }
@@ -123,7 +118,9 @@ public class TransacaoDialogController {
             cmbMeta.setValue(meta);
         }
 
+        // Preenche comentário com o valor real (nunca com o nome da categoria)
         txtComentario.setText(transacao.comentario());
+
         btnSalvar.setText("Atualizar");
         btnExcluir.setVisible(true);
         btnExcluir.setManaged(true);
@@ -166,38 +163,36 @@ public class TransacaoDialogController {
             LocalDate data = dateTransacao.getValue();
             Categoria categoria = cmbCategoria.getValue();
             Meta meta = cmbMeta.getValue();
+
+            // Comentário é sempre o texto livre do usuário — nunca é substituído
+            // pela categoria (isso é papel do campo descricao, preenchido pelo service)
             String comentario = txtComentario.getText().trim();
 
-            if (valorCentavos <= 0) { // Valor deve ser maior que zero
+            if (valorCentavos <= 0) {
                 mostrarErroValor();
                 txtValor.requestFocus();
                 return;
             }
 
-            if (data == null) { // Data não pode ser nulo
+            if (data == null) {
                 mostrarErro("Selecione uma data");
                 dateTransacao.requestFocus();
                 return;
             }
 
-            if (categoria == null) { // Categoria não pode ser nulo
+            if (categoria == null) {
                 mostrarErro("Selecione uma categoria");
                 cmbCategoria.requestFocus();
                 return;
             }
 
-            // Opção de meta só aparece se selecionar categoria de adicionar ou retirar da meta
             boolean exigeMeta = categoria == Categoria.AdicionarMeta ||
                     categoria == Categoria.RetirarMeta;
 
-            if (exigeMeta && meta == null) { // Meta não pode ser nulo se categoria = adicionar ou retirar da meta
+            if (exigeMeta && meta == null) {
                 mostrarErro("Selecione uma meta");
                 cmbMeta.requestFocus();
                 return;
-            }
-
-            if (comentario.isEmpty()) { // Se comentário vazio, ele recebe nome da categoria
-                comentario = categoria.toString();
             }
 
             if (transacaoEmEdicao != null) {
@@ -225,7 +220,7 @@ public class TransacaoDialogController {
     }
 
     @FXML
-    private void handleExcluir() { // Botão de excluir transação em detalhes da transação
+    private void handleExcluir() {
         if (transacaoEmEdicao == null) return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -336,12 +331,31 @@ public class TransacaoDialogController {
         }
     }
 
-    // Converte texto digitado pelo usuário para valor em centavos
+    /**
+     * Converte texto digitado para centavos.
+     *
+     * <p>Regra de detecção de separador:
+     * <ul>
+     *   <li>Se o texto contém vírgula → padrão BR (ponto = milhar, vírgula = decimal).
+     *       Ex: "1.000,50" → remove pontos → "1000,50" → troca vírgula → "1000.50" → 100050</li>
+     *   <li>Se o texto só tem ponto → padrão EN (ponto = decimal).
+     *       Ex: "10.50" → mantém como está → 1050</li>
+     *   <li>Sem separador → inteiro direto.
+     *       Ex: "10" → 1000</li>
+     * </ul>
+     */
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
         if (texto == null || texto.trim().isEmpty()) return 0;
         try {
             texto = texto.replace("R$", "").trim();
-            texto = texto.replace(".", "").replace(",", ".");
+
+            boolean temVirgulaDecimal = texto.contains(",");
+            if (temVirgulaDecimal) {
+                // padrão BR: ponto é milhar, vírgula é decimal
+                texto = texto.replace(".", "").replace(",", ".");
+            }
+            // sem vírgula: ponto já é decimal (ex: "10.50") ou não há separador (ex: "10")
+
             double valor = Double.parseDouble(texto);
             return Math.round(valor * 100);
         } catch (NumberFormatException e) {
@@ -349,26 +363,22 @@ public class TransacaoDialogController {
         }
     }
 
-    // Converte os centavos para String formatada com duas casas decimais
     private String formatarValor(long centavos) {
         return String.format("%.2f", centavos / 100.0);
     }
 
-    // Exibe mensagem de erro
     private void mostrarErro(String mensagem) {
         lblErroGeral.setText(mensagem);
         lblErroGeral.setVisible(true);
         lblErroGeral.setManaged(true);
     }
 
-    // Helper method para erros de valor
     private void mostrarErroValor() {
         lblErroValor.setText("Valor deve ser maior que zero");
         lblErroValor.setVisible(true);
         lblErroValor.setManaged(true);
     }
 
-    // Oculta todos os labels de erro
     private void limparErros() {
         lblErroGeral.setVisible(false);
         lblErroGeral.setManaged(false);
@@ -376,7 +386,6 @@ public class TransacaoDialogController {
         lblErroValor.setManaged(false);
     }
 
-    // Fecha a janela
     private void fecharDialog() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();

@@ -252,3 +252,18 @@
 .button-excluir:pressed {
     -fx-background-color: rgba(220, 38, 38, 0.20);
 }
+/* ProgressBar nas células de Meta — cores controladas pelo CSS de tema */
+.progress-bar-meta-ativa .bar {
+    -fx-background-color: #4318FF;
+    -fx-background-radius: 4px;
+}
+
+.progress-bar-meta-concluida .bar {
+    -fx-background-color: #16a34a;
+    -fx-background-radius: 4px;
+}
+
+.progress-bar-meta-ativa .track,
+.progress-bar-meta-concluida .track {
+    -fx-background-radius: 4px;
+}

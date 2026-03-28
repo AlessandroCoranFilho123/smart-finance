@@ -99,16 +99,14 @@
                 <HBox spacing="30" styleClass="saldo-stats">
                     <VBox spacing="4">
                         <Label styleClass="stat-label" text="Receitas do mês"/>
-                        <Label fx:id="lblReceitasMes" styleClass="stat-value,entrada"
-                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;"
-                               text="R$ 0,00"/>
+                        <!-- Sem inline style — cor controlada por .saldo-banner .stat-value.entrada no CSS -->
+                        <Label fx:id="lblReceitasMes" styleClass="stat-value, entrada" text="R$ 0,00"/>
                     </VBox>
 
                     <VBox spacing="4">
                         <Label styleClass="stat-label" text="Despesas do mês"/>
-                        <Label fx:id="lblDespesasMes" styleClass="stat-value,saida"
-                               style="-fx-text-fill: #FFFFFF; -fx-font-size: 24px; -fx-font-weight: bold;"
-                               text="R$ 0,00"/>
+                        <!-- Sem inline style — cor controlada por .saldo-banner .stat-value.saida no CSS -->
+                        <Label fx:id="lblDespesasMes" styleClass="stat-value, saida" text="R$ 0,00"/>
                     </VBox>
                 </HBox>
             </VBox>
