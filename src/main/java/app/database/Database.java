@@ -9,17 +9,11 @@ public final class Database {
 
     // Em produção (instalado): %APPDATA%\SmartFinance\financas.db
     // Em desenvolvimento (IDE): ./financas.db (fallback)
-    private static final String URL;
+    private static final String DEFAULT_URL;
+    private static volatile String testOverrideUrl;
 
     static {
-        String appData = System.getenv("APPDATA");
-        if (appData != null) {
-            java.io.File dir = new java.io.File(appData, "SmartFinance");
-            dir.mkdirs();
-            URL = "jdbc:sqlite:" + new java.io.File(dir, "financas.db").getAbsolutePath();
-        } else {
-            URL = "jdbc:sqlite:financas.db";
-        }
+        DEFAULT_URL = resolveDefaultUrl();
     }
 
     private Database() {
@@ -63,6 +57,54 @@ public final class Database {
         }
     }
 
+    private static String resolveDefaultUrl() {
+        String explicitUrl = System.getProperty("smartfinance.db.url");
+        if (explicitUrl != null && !explicitUrl.isBlank()) {
+            return explicitUrl;
+        }
+
+        String explicitPath = System.getProperty("smartfinance.db.path");
+        if (explicitPath != null && !explicitPath.isBlank()) {
+            java.io.File file = new java.io.File(explicitPath).getAbsoluteFile();
+            java.io.File parent = file.getParentFile();
+            if (parent != null) {
+                parent.mkdirs();
+            }
+            return "jdbc:sqlite:" + file.getAbsolutePath();
+        }
+
+        String appDataOverride = System.getProperty("smartfinance.appdata.dir");
+        if (appDataOverride != null && !appDataOverride.isBlank()) {
+            java.io.File dir = new java.io.File(appDataOverride, "SmartFinance");
+            dir.mkdirs();
+            return "jdbc:sqlite:" + new java.io.File(dir, "financas.db").getAbsolutePath();
+        }
+
+        String appData = System.getenv("APPDATA");
+        if (appData != null) {
+            java.io.File dir = new java.io.File(appData, "SmartFinance");
+            dir.mkdirs();
+            return "jdbc:sqlite:" + new java.io.File(dir, "financas.db").getAbsolutePath();
+        }
+
+        return "jdbc:sqlite:financas.db";
+    }
+
+    private static String getEffectiveUrl() {
+        return testOverrideUrl != null ? testOverrideUrl : DEFAULT_URL;
+    }
+
+    /**
+     * Hook de testes para isolar o banco sem alterar o comportamento de produção.
+     */
+    public static void overrideUrlForTests(String jdbcUrl) {
+        testOverrideUrl = jdbcUrl;
+    }
+
+    public static void clearOverrideUrlForTests() {
+        testOverrideUrl = null;
+    }
+
     /**
      * Executa um ALTER TABLE ignorando o erro caso a coluna já exista.
      * Usado exclusivamente para migrations de schema incremental.
@@ -76,7 +118,7 @@ public final class Database {
     }
 
     public static Connection getConnection() throws SQLException {
-        Connection conn = DriverManager.getConnection(URL);
+        Connection conn = DriverManager.getConnection(getEffectiveUrl());
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON");
         }

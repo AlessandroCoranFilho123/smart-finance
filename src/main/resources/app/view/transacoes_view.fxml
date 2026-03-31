@@ -21,6 +21,10 @@
 
         <Region HBox.hgrow="ALWAYS"/>
 
+        <Button fx:id="btnExportarTxt"
+                text="Exportar .txt"
+                styleClass="button-secondary"/>
+
         <Button fx:id="btnNova"
                 text="+ Nova Transação"
                 styleClass="button-primary"/>

@@ -35,6 +35,7 @@ import java.util.prefs.Preferences;
 /* Gerencia a navegação entre telas,
    carrega os dados no dashboard,
    abre diálogos e alterna temas (claro/escuro) */
+
 @SuppressWarnings("unused")
 public class MainController {
     // Usado para formatar números padrão Brasil

@@ -67,7 +67,7 @@ public class MetaService {
 
     public boolean metaConcluida(Meta meta) {
         Objects.requireNonNull(meta, "Meta é obrigatória");
-        return meta.getAtualCentavos() >= meta.getAlvoCentavos();
+        return !meta.semAlvo() && meta.getAtualCentavos() >= meta.getAlvoCentavos();
     }
 
     @SuppressWarnings("unused")

@@ -13,13 +13,21 @@ de estudo.
 
 ## Instalação
 
-Disponível somente para windows, instale a versão com extensão ".exe" ("AplicativoFinancas-1.1.7.exe"):
+Disponível somente para windows, instale a versão com extensão ".exe" ("AplicativoFinancas-2.0.0.exe"):
 
 <p align="center">
-    <img src="./src/main/resources/instalação/parte%201.png" width="800" alt="parte 1">
-    <img src="./src/main/resources/instalação/parte%202.png" width="800" alt="parte 2">
-    <img src="./src/main/resources/instalação/parte%203.png" width="800" alt="parte 3">
-</p>
+    <img src="./src/main/resources/readme/parte%201.png" width="800" alt="parte 1">
+    <img src="./src/main/resources/readme/parte%202.png" width="800" alt="parte 2">
+    <img src="./src/main/resources/readme/parte%203.png" width="800" alt="parte 3">
+    
+## Interface
+<p align="center">
+    <img src="./src/main/resources/readme/TelaInicial.png" width="800" alt="Tela inicial">
+    <img src="./src/main/resources/readme/Transações.png" width="800" alt="Transações">
+    <img src="./src/main/resources/readme/Metas.png" width="800" alt="Metas">
+    <img src="./src/main/resources/readme/NovaTransação.png" width="800" alt="Nova Transação">
+    <img src="./src/main/resources/readme/NovaMeta.png" width="800" alt="Nova Meta">
+
 
 ## Tecnologias utilizadas
 

@@ -84,7 +84,7 @@ public class TransacaoDAO {
 
         String sql = """
                 SELECT * FROM transacao
-                ORDER BY data DESC
+                ORDER BY data DESC, rowid DESC
                 LIMIT ?
                 """;
 

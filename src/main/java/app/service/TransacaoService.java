@@ -32,6 +32,7 @@ public class TransacaoService {
 
         Objects.requireNonNull(tipo, "tipo é obrigatório");
         Objects.requireNonNull(categoria, "categoria é obrigatória");
+        Objects.requireNonNull(data, "data é obrigatória");
 
         if (valorCentavos <= 0)
             throw new IllegalArgumentException("Valores devem ser positivos");
@@ -131,32 +132,40 @@ public class TransacaoService {
 
         Objects.requireNonNull(idOriginal, "ID original é obrigatório");
 
-        // Busca a categoria original para reverter o efeito colateral correto
         Transacao original = transacaoDAO.buscarPorId(idOriginal);
-        Categoria categoriaOriginal = original != null ? original.categoria() : categoria;
+        if (original == null)
+            throw new IllegalArgumentException("Transação original não encontrada");
 
-        // Reverte o efeito da transação original (meta, saldo)
-        excluirTransacao(idOriginal, categoriaOriginal);
+        excluirTransacao(idOriginal, original.categoria());
 
-        // Transações de meta passam pelo registrar() para revalidar saldo e meta
-        if (categoria == Categoria.AdicionarMeta || categoria == Categoria.RetirarMeta) {
-            registrar(tipo, categoria, valorCentavos, meta, comentario, data);
-            return;
+        try {
+            if (categoria == Categoria.AdicionarMeta || categoria == Categoria.RetirarMeta) {
+                registrar(tipo, categoria, valorCentavos, meta, comentario, data);
+                return;
+            }
+
+            Objects.requireNonNull(tipo, "tipo é obrigatório");
+            Objects.requireNonNull(categoria, "categoria é obrigatória");
+            Objects.requireNonNull(data, "data é obrigatória");
+            if (valorCentavos <= 0)
+                throw new IllegalArgumentException("Valores devem ser positivos");
+
+            String nome = categoria.toString();
+            Transacao atualizada = new Transacao(
+                    idOriginal,
+                    nome,
+                    comentario != null ? comentario : "",
+                    valorCentavos,
+                    tipo,
+                    data,
+                    meta != null ? meta.getId() : null,
+                    categoria
+            );
+            transacaoDAO.inserir(atualizada);
+        } catch (RuntimeException e) {
+            restaurarTransacaoOriginal(original);
+            throw e;
         }
-
-        // Transação comum: reinserir preservando o UUID original
-        String nome = categoria != null ? categoria.toString() : "";
-        Transacao atualizada = new Transacao(
-                idOriginal,
-                nome,
-                comentario != null ? comentario : "",
-                valorCentavos,
-                tipo,
-                data,
-                meta != null ? meta.getId() : null,
-                categoria
-        );
-        transacaoDAO.inserir(atualizada);
     }
 
     public long calcularSaldoDisponivelCentavos() {
@@ -178,11 +187,14 @@ public class TransacaoService {
     }
 
     public void excluirTransacao(UUID transacaoId, Categoria categoria) {
+        Objects.requireNonNull(transacaoId, "ID da transação é obrigatório");
 
         Transacao t = transacaoDAO.buscarPorId(transacaoId);
         if (t == null) return;
 
-        if (categoria == Categoria.AdicionarMeta && t.metaId() != null) {
+        Categoria categoriaEfetiva = t.categoria() != null ? t.categoria() : categoria;
+
+        if (categoriaEfetiva == Categoria.AdicionarMeta && t.metaId() != null) {
             Meta meta = metaDAO.buscarPorId(t.metaId());
             if (meta != null) {
                 meta.retirar(t.valorCentavos());
@@ -190,7 +202,7 @@ public class TransacaoService {
             }
         }
 
-        if (categoria == Categoria.RetirarMeta && t.metaId() != null) {
+        if (categoriaEfetiva == Categoria.RetirarMeta && t.metaId() != null) {
             Meta meta = metaDAO.buscarPorId(t.metaId());
             if (meta != null) {
                 meta.adicionar(t.valorCentavos());
@@ -199,5 +211,25 @@ public class TransacaoService {
         }
 
         transacaoDAO.excluir(transacaoId);
+    }
+
+    private void restaurarTransacaoOriginal(Transacao original) {
+        if (original.categoria() == Categoria.AdicionarMeta && original.metaId() != null) {
+            Meta meta = metaDAO.buscarPorId(original.metaId());
+            if (meta != null) {
+                meta.adicionar(original.valorCentavos());
+                metaDAO.atualizar(meta);
+            }
+        }
+
+        if (original.categoria() == Categoria.RetirarMeta && original.metaId() != null) {
+            Meta meta = metaDAO.buscarPorId(original.metaId());
+            if (meta != null) {
+                meta.retirar(original.valorCentavos());
+                metaDAO.atualizar(meta);
+            }
+        }
+
+        transacaoDAO.inserir(original);
     }
 }

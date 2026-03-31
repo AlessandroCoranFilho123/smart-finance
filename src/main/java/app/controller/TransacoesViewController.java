@@ -4,13 +4,17 @@ import app.model.Categoria;
 import app.model.TipoTransacao;
 import app.model.Transacao;
 import app.repository.TransacaoDAO;
+import app.util.TransacaoTxtExporter;
 import app.view.TransacaoCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -22,6 +26,8 @@ public class TransacoesViewController {
 
     @FXML
     private Button btnNova;
+    @FXML
+    private Button btnExportarTxt;
     @FXML
     private Button btnFechar;
     @FXML
@@ -78,6 +84,7 @@ public class TransacoesViewController {
             }
         });
 
+        btnExportarTxt.setOnAction(e -> exportarTxt());
         btnFechar.setOnAction(e -> fechar());
         btnLimparFiltros.setOnAction(e -> limparFiltros());
 
@@ -159,6 +166,44 @@ public class TransacoesViewController {
         cmbCategoria.setValue(null);
         dateInicio.setValue(null);
         dateFim.setValue(null);
+    }
+
+    private void exportarTxt() {
+        if (transacoesFiltradas == null || transacoesFiltradas.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Exportar transações",
+                    "Não há transações para exportar.");
+            return;
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Exportar transações em TXT");
+        chooser.setInitialFileName("transacoes-" + LocalDate.now() + ".txt");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Arquivo de texto", "*.txt")
+        );
+
+        File file = chooser.showSaveDialog(btnExportarTxt.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        try {
+            TransacaoTxtExporter.exportar(file.toPath(), List.copyOf(transacoesFiltradas));
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Exportar transações",
+                    "Arquivo exportado com sucesso.");
+        } catch (IOException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Exportar transações",
+                    "Não foi possível exportar o arquivo: " + e.getMessage());
+        }
+    }
+
+    private void mostrarAlerta(Alert.AlertType type, String titulo, String mensagem) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.initOwner(btnFechar.getScene().getWindow());
+        alert.showAndWait();
     }
 
     // Botão para fechar tela de todas as transações
