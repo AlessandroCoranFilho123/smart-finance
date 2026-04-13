@@ -80,7 +80,7 @@ class AppSmokeTest {
             Scene scene = stage.getScene();
             assertAll(
                     () -> assertTrue(stage.isShowing()),
-                    () -> assertEquals("Smart Finance v2.0", stage.getTitle()),
+                    () -> assertEquals("Smart Finance v2.1.0", stage.getTitle()),
                     () -> assertEquals(1200.0, stage.getMinWidth()),
                     () -> assertEquals(700.0, stage.getMinHeight()),
                     () -> assertNotNull(scene),

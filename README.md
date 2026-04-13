@@ -13,7 +13,7 @@ de estudo.
 
 ## Instalação
 
-Disponível somente para windows, instale a versão com extensão ".exe" ("AplicativoFinancas-2.0.0.exe"):
+Disponível somente para windows, instale a versão com extensão ".exe" ("SmartFinance-2.1.0.exe"):
 
 <p align="center">
     <img src="./src/main/resources/readme/parte%201.png" width="800" alt="parte 1">

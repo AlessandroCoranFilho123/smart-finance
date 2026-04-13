@@ -1,4 +1,5 @@
 @echo off
+set VERSION=2.1.0
 :: Garante que o bat roda sempre na pasta onde ele esta
 cd /d "%~dp0"
 echo Diretorio atual: %CD%
@@ -16,7 +17,7 @@ if errorlevel 1 (
 echo [2/3] Copiando jar principal...
 echo Verificando se o jar existe:
 dir target\*.jar
-copy /Y target\app-2.0.0.jar target\dependency\app-2.0.0.jar
+copy /Y target\app-%VERSION%.jar target\dependency\app-%VERSION%.jar
 if errorlevel 1 (
     echo ERRO: Nao foi possivel copiar o jar.
     pause
@@ -28,12 +29,12 @@ if not exist installer mkdir installer
 jpackage ^
   --type exe ^
   --name SmartFinance ^
-  --app-version 2.0.0 ^
+  --app-version %VERSION% ^
   --vendor "Alessandro" ^
   --icon "src\main\resources\app\icons\logo.ico" ^
   --input target\dependency ^
   --dest installer ^
-  --main-jar app-2.0.0.jar ^
+  --main-jar app-%VERSION%.jar ^
   --main-class app.Main ^
   --module-path C:\javafx-jmods-21.0.9 ^
   --add-modules javafx.controls,javafx.fxml,javafx.graphics,java.sql,java.naming,java.logging,java.prefs ^
@@ -49,6 +50,6 @@ if errorlevel 1 (
 )
 echo.
 echo === Instalador gerado com sucesso! ===
-echo Arquivo: installer\SmartFinance-2.0.0.exe
+echo Arquivo: installer\SmartFinance-%VERSION%.exe
 echo.
 pause

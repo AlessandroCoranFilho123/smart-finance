@@ -19,7 +19,7 @@ public class Main extends Application {
         Scene scene = new Scene(loader.load()); // Carrega a interface do FXML
         CssManager.aplicarCss(scene); // Carrega o CSS (package util CssManager)
         IconManager.setAppIcon(stage); // Carrega Ícone do aplicativo (package util IconManager)
-        stage.setTitle("Smart Finance v2.0"); // Título do aplicativo
+        stage.setTitle("Smart Finance v2.1.0"); // Título do aplicativo
         stage.setMinWidth(1200); // Define a largura mínima
         stage.setMinHeight(700); // Define a altura mínima
         stage.setScene(scene); // Carrega a cena na janela
