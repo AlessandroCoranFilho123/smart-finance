@@ -21,6 +21,10 @@
 
         <Region HBox.hgrow="ALWAYS"/>
 
+        <Button fx:id="btnExportarCsv"
+                text="Exportar .csv"
+                styleClass="button-secondary"/>
+
         <Button fx:id="btnExportarTxt"
                 text="Exportar .txt"
                 styleClass="button-secondary"/>
@@ -34,6 +38,14 @@
         <padding>
             <Insets top="15" right="15" bottom="15" left="15"/>
         </padding>
+
+        <VBox spacing="6" HBox.hgrow="ALWAYS">
+            <Label text="Buscar" styleClass="filter-label"/>
+            <TextField fx:id="txtBusca"
+                       promptText="Descrição, comentário, categoria ou data"
+                       styleClass="form-field"
+                       maxWidth="Infinity"/>
+        </VBox>
 
         <VBox spacing="6">
             <Label text="Tipo" styleClass="filter-label"/>
@@ -72,7 +84,7 @@
         <VBox spacing="6">
             <Label text=" " styleClass="filter-label"/>
             <Button fx:id="btnLimparFiltros"
-                    text="Limpar"
+                    text="X"
                     styleClass="button-secondary"/>
         </VBox>
     </HBox>
@@ -119,9 +131,10 @@
 
         <Region HBox.hgrow="ALWAYS"/>
 
-        <Button fx:id="btnFechar"
-                text="Fechar"
-                styleClass="button-secondary"/>
+        <Button fx:id="btnDetalhes"
+                text="Ver detalhes"
+                styleClass="button-secondary"
+                disable="true"/>
     </HBox>
 
 </VBox>

@@ -74,11 +74,14 @@
                   style="-fx-hbar-policy: never;"/>
     </VBox>
 
-    <HBox alignment="CENTER_RIGHT" spacing="10">
-        <Label fx:id="lblTotal" text="Total: 0 metas" styleClass="footer-text"/>
-        <Button fx:id="btnFechar" text="Fechar" styleClass="button-secondary"/>
-    </HBox>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="lblProgresso"
+               text="Progresso médio: 0,0%"
+               styleClass="footer-text, meta-progress-summary"/>
 
-    <Label fx:id="lblProgresso" visible="false" managed="false"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="lblTotal" text="Total: 0 metas" styleClass="footer-text"/>
+    </HBox>
 
 </VBox>

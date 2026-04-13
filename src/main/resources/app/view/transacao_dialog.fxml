@@ -87,7 +87,7 @@
         <TextArea fx:id="txtComentario"
                   promptText="Adicione uma descricao (opcional)"
                   styleClass="form-field, field-textarea"
-                  prefRowCount="2"
+                  prefRowCount="5"
                   wrapText="true"/>
     </VBox>
 

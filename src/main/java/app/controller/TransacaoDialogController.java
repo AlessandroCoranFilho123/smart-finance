@@ -7,6 +7,7 @@ import app.repository.MetaDAO;
 import app.repository.TransacaoDAO;
 import app.service.MetaService;
 import app.service.TransacaoService;
+import app.util.FormatadorData;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class TransacaoDialogController {
+    private static final int LINHAS_COMENTARIO_PADRAO = 5;
+    private static final int LINHAS_COMENTARIO_COM_META = 3;
 
     @FXML
     private ToggleButton btnEntrada;
@@ -81,6 +84,7 @@ public class TransacaoDialogController {
         metaService = new MetaService(metaDAO);
 
         cmbCategoria.setItems(FXCollections.observableArrayList(Categoria.values()));
+        FormatadorData.configurar(dateTransacao);
         dateTransacao.setValue(LocalDate.now());
 
         configurarMascaraMoeda();
@@ -289,6 +293,7 @@ public class TransacaoDialogController {
         if (categoria == null) {
             boxMeta.setVisible(false);
             boxMeta.setManaged(false);
+            ajustarEspacoComentario(false);
             return;
         }
 
@@ -297,10 +302,17 @@ public class TransacaoDialogController {
 
         boxMeta.setVisible(precisaMeta);
         boxMeta.setManaged(precisaMeta);
+        ajustarEspacoComentario(precisaMeta);
 
         if (precisaMeta) {
             carregarMetas();
         }
+    }
+
+    private void ajustarEspacoComentario(boolean compactar) {
+        txtComentario.setPrefRowCount(compactar
+                ? LINHAS_COMENTARIO_COM_META
+                : LINHAS_COMENTARIO_PADRAO);
     }
 
     private void carregarMetas() {

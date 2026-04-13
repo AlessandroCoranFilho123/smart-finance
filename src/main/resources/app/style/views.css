@@ -90,6 +90,11 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 10, 0, 0, 2);
 }
 
+.list-transacoes-full .scroll-bar:horizontal,
+.list-transacoes-full .scroll-bar:horizontal .track,
+.list-transacoes-full .scroll-bar:horizontal .thumb,
+.list-transacoes-full .scroll-bar:horizontal .increment-button,
+.list-transacoes-full .scroll-bar:horizontal .decrement-button,
 .list-metas-full .scroll-bar:horizontal,
 .list-metas-full .scroll-bar:horizontal .track,
 .list-metas-full .scroll-bar:horizontal .thumb,
@@ -119,11 +124,33 @@
 .list-metas-full .list-cell:hover {
     -fx-background-color: rgba(67, 24, 255, 0.05);
     -fx-cursor: hand;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 2 8 2 8;
 }
 
 .list-transacoes-full .list-cell:selected,
 .list-metas-full .list-cell:selected {
     -fx-background-color: rgba(67, 24, 255, 0.10);
+    -fx-background-radius: 10px;
+    -fx-background-insets: 2 8 2 8;
+}
+
+.list-transacoes-full:focused .list-cell:selected,
+.list-metas-full:focused .list-cell:selected {
+    -fx-background-color: rgba(67, 24, 255, 0.12);
+    -fx-background-radius: 10px;
+    -fx-background-insets: 2 8 2 8;
+}
+
+.list-transacoes-full .scroll-bar:vertical,
+.list-transacoes-full .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 12px 12px 0;
+}
+
+.list-transacoes-full .corner {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 12px 0 0;
 }
 
 .footer-text {

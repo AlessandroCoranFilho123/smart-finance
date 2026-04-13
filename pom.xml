@@ -10,10 +10,7 @@
     <groupId>app</groupId>
     <artifactId>app</artifactId>
     <version>2.0.0</version>
-    <packaging>pom</packaging>
-    <modules>
-        <module>SmartFinance</module>
-    </modules>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

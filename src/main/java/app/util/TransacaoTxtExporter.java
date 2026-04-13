@@ -1,5 +1,6 @@
 package app.util;
 
+import app.model.TipoTransacao;
 import app.model.Transacao;
 
 import java.io.IOException;
@@ -29,12 +30,21 @@ public final class TransacaoTxtExporter {
     }
 
     public static String formatar(List<Transacao> transacoes) {
+        long totalEntradas = somarPorTipo(transacoes, TipoTransacao.Entrada);
+        long totalSaidas = somarPorTipo(transacoes, TipoTransacao.Saida);
+
         StringBuilder builder = new StringBuilder();
         builder.append("Smart Finance - Exportacao de Transacoes").append(System.lineSeparator());
         builder.append("Gerado em: ")
                 .append(TIMESTAMP_FORMAT.format(LocalDateTime.now()))
                 .append(System.lineSeparator());
         builder.append("Quantidade: ").append(transacoes.size()).append(System.lineSeparator());
+        builder.append("Total de Entradas: ")
+                .append(CURRENCY_FORMAT.format(totalEntradas / 100.0))
+                .append(System.lineSeparator());
+        builder.append("Total de Saidas: ")
+                .append(CURRENCY_FORMAT.format(totalSaidas / 100.0))
+                .append(System.lineSeparator());
         builder.append(System.lineSeparator());
 
         if (transacoes.isEmpty()) {
@@ -71,5 +81,12 @@ public final class TransacaoTxtExporter {
         }
 
         return builder.toString();
+    }
+
+    private static long somarPorTipo(List<Transacao> transacoes, TipoTransacao tipo) {
+        return transacoes.stream()
+                .filter(transacao -> transacao.tipo() == tipo)
+                .mapToLong(Transacao::valorCentavos)
+                .sum();
     }
 }

@@ -4,14 +4,18 @@ import app.model.Categoria;
 import app.model.TipoTransacao;
 import app.model.Transacao;
 import app.repository.TransacaoDAO;
+import app.util.TransacaoCsvExporter;
+import app.util.TransacaoSearchMatcher;
+import app.util.FormatadorData;
 import app.util.TransacaoTxtExporter;
 import app.view.TransacaoCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,16 +31,20 @@ public class TransacoesViewController {
     @FXML
     private Button btnNova;
     @FXML
+    private Button btnExportarCsv;
+    @FXML
     private Button btnExportarTxt;
     @FXML
-    private Button btnFechar;
-    @FXML
     private Button btnLimparFiltros;
+    @FXML
+    private Button btnDetalhes;
 
     @FXML
     private ComboBox<String> cmbTipo;
     @FXML
     private ComboBox<Categoria> cmbCategoria;
+    @FXML
+    private TextField txtBusca;
     @FXML
     private DatePicker dateInicio;
     @FXML
@@ -63,12 +71,14 @@ public class TransacoesViewController {
             NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
 
     private Runnable onNovaTransacao;
+    private TransacaoEditCallback onEditarTransacao;
 
     @FXML
     public void initialize() {
         transacaoDAO = new TransacaoDAO();
 
         listTransacoes.setCellFactory(lv -> new TransacaoCell());
+        FormatadorData.configurar(dateInicio, dateFim);
 
         cmbTipo.setItems(FXCollections.observableArrayList("Todos", "Entrada", "Saida"));
         cmbTipo.setValue("Todos");
@@ -84,14 +94,29 @@ public class TransacoesViewController {
             }
         });
 
+        btnExportarCsv.setOnAction(e -> exportarCsv());
+        btnDetalhes.setOnAction(e -> abrirDetalhesSelecionada());
         btnExportarTxt.setOnAction(e -> exportarTxt());
-        btnFechar.setOnAction(e -> fechar());
         btnLimparFiltros.setOnAction(e -> limparFiltros());
 
+        txtBusca.textProperty().addListener((obs, old, newVal) -> aplicarFiltros());
         cmbTipo.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
         cmbCategoria.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
         dateInicio.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
         dateFim.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
+        listTransacoes.getSelectionModel().selectedItemProperty().addListener(
+                (obs, old, newVal) -> atualizarEstadoBotaoDetalhes()
+        );
+        listTransacoes.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                abrirDetalhesSelecionada();
+            }
+        });
+        listTransacoes.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                abrirDetalhesSelecionada();
+            }
+        });
 
         carregarTransacoes();
     }
@@ -100,17 +125,29 @@ public class TransacoesViewController {
         this.onNovaTransacao = callback;
     }
 
+    public void setOnEditarTransacao(TransacaoEditCallback callback) {
+        this.onEditarTransacao = callback;
+        atualizarEstadoBotaoDetalhes();
+    }
+
+    @FunctionalInterface
+    public interface TransacaoEditCallback {
+        void editar(Transacao transacao, Window owner);
+    }
+
     private void carregarTransacoes() {
         // Carrega todas as transações registradas
         List<Transacao> lista = transacaoDAO.listarTodas();
         todasTransacoes = FXCollections.observableArrayList(lista);
         transacoesFiltradas = FXCollections.observableArrayList(lista);
         listTransacoes.setItems(transacoesFiltradas);
-        atualizarEstatisticas();
+        aplicarFiltros();
+        atualizarEstadoBotaoDetalhes();
     }
 
     private void aplicarFiltros() {
         List<Transacao> filtradas = todasTransacoes.stream()
+                .filter(this::passaFiltroBusca)
                 .filter(this::passaFiltroTipo)
                 .filter(this::passaFiltroCategoria)
                 .filter(this::passaFiltroData)
@@ -118,6 +155,10 @@ public class TransacoesViewController {
 
         transacoesFiltradas.setAll(filtradas);
         atualizarEstatisticas();
+    }
+
+    private boolean passaFiltroBusca(Transacao transacao) {
+        return TransacaoSearchMatcher.corresponde(transacao, txtBusca.getText());
     }
 
     private boolean passaFiltroTipo(Transacao t) {
@@ -162,13 +203,37 @@ public class TransacoesViewController {
 
     // Reseta todos os filtros de data ou tipo/categoria setados
     private void limparFiltros() {
+        txtBusca.clear();
         cmbTipo.setValue("Todos");
         cmbCategoria.setValue(null);
         dateInicio.setValue(null);
         dateFim.setValue(null);
     }
 
+    private void exportarCsv() {
+        exportarArquivo(
+                "Exportar transações em CSV",
+                "transacoes-" + LocalDate.now() + ".csv",
+                new FileChooser.ExtensionFilter("Arquivo CSV", "*.csv"),
+                path -> TransacaoCsvExporter.exportar(path, List.copyOf(transacoesFiltradas))
+        );
+    }
+
     private void exportarTxt() {
+        exportarArquivo(
+                "Exportar transações em TXT",
+                "transacoes-" + LocalDate.now() + ".txt",
+                new FileChooser.ExtensionFilter("Arquivo de texto", "*.txt"),
+                path -> TransacaoTxtExporter.exportar(path, List.copyOf(transacoesFiltradas))
+        );
+    }
+
+    private void exportarArquivo(
+            String tituloJanela,
+            String nomeInicial,
+            FileChooser.ExtensionFilter filtro,
+            ExportadorArquivo exportador
+    ) {
         if (transacoesFiltradas == null || transacoesFiltradas.isEmpty()) {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exportar transações",
                     "Não há transações para exportar.");
@@ -176,19 +241,17 @@ public class TransacoesViewController {
         }
 
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Exportar transações em TXT");
-        chooser.setInitialFileName("transacoes-" + LocalDate.now() + ".txt");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Arquivo de texto", "*.txt")
-        );
+        chooser.setTitle(tituloJanela);
+        chooser.setInitialFileName(nomeInicial);
+        chooser.getExtensionFilters().add(filtro);
 
-        File file = chooser.showSaveDialog(btnExportarTxt.getScene().getWindow());
+        File file = chooser.showSaveDialog(btnNova.getScene().getWindow());
         if (file == null) {
             return;
         }
 
         try {
-            TransacaoTxtExporter.exportar(file.toPath(), List.copyOf(transacoesFiltradas));
+            exportador.exportar(file.toPath());
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exportar transações",
                     "Arquivo exportado com sucesso.");
         } catch (IOException e) {
@@ -197,18 +260,33 @@ public class TransacoesViewController {
         }
     }
 
+    @FunctionalInterface
+    private interface ExportadorArquivo {
+        void exportar(java.nio.file.Path path) throws IOException;
+    }
+
     private void mostrarAlerta(Alert.AlertType type, String titulo, String mensagem) {
         Alert alert = new Alert(type);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensagem);
-        alert.initOwner(btnFechar.getScene().getWindow());
+        alert.initOwner(btnNova.getScene().getWindow());
         alert.showAndWait();
     }
 
-    // Botão para fechar tela de todas as transações
-    private void fechar() {
-        Stage stage = (Stage) btnFechar.getScene().getWindow();
-        stage.close();
+    private void abrirDetalhesSelecionada() {
+        Transacao selecionada = listTransacoes.getSelectionModel().getSelectedItem();
+        if (selecionada == null || onEditarTransacao == null) {
+            return;
+        }
+
+        onEditarTransacao.editar(selecionada, listTransacoes.getScene().getWindow());
+        carregarTransacoes();
+    }
+
+    private void atualizarEstadoBotaoDetalhes() {
+        boolean desabilitar = onEditarTransacao == null ||
+                listTransacoes.getSelectionModel().getSelectedItem() == null;
+        btnDetalhes.setDisable(desabilitar);
     }
 }

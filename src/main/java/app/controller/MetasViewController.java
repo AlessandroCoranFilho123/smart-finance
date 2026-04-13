@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -24,10 +23,10 @@ import java.util.stream.Collectors;
    edita meta existente (duplo clique) */
 
 public class MetasViewController {
+    private static final Locale APP_LOCALE = Locale.of("pt", "BR");
+
     @FXML
     private Button btnNova;
-    @FXML
-    private Button btnFechar;
     @FXML
     private Button btnLimparBusca;
     @FXML
@@ -63,7 +62,7 @@ public class MetasViewController {
 
     // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
-            NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
+            NumberFormat.getCurrencyInstance(APP_LOCALE);
 
     private Runnable onNovaMeta;
     private MetaEditCallback onEditarMeta;
@@ -87,7 +86,6 @@ public class MetasViewController {
             }
         });
 
-        btnFechar.setOnAction(e -> fechar());
         btnLimparBusca.setOnAction(e -> limparBusca());
 
         // Aba de todas as metas
@@ -207,7 +205,7 @@ public class MetasViewController {
         );
 
         lblProgresso.setText(
-                String.format("Progresso médio: %.1f%%", progressoMedio)
+                String.format(APP_LOCALE, "Progresso médio: %.1f%%", progressoMedio)
         );
     }
 
@@ -235,11 +233,6 @@ public class MetasViewController {
         if (!botaoAtivo.getStyleClass().contains("active")) {
             botaoAtivo.getStyleClass().add("active");
         }
-    }
-
-    private void fechar() {
-        Stage stage = (Stage) btnFechar.getScene().getWindow();
-        stage.close();
     }
 
     // Filtro metas janela acessada pela sidebar

@@ -80,7 +80,7 @@
     </left>
 
     <center>
-        <VBox spacing="25" styleClass="main-content">
+        <VBox fx:id="dashboardContent" spacing="25" styleClass="main-content">
             <padding>
                 <Insets bottom="30" left="20" right="30" top="30"/>
             </padding>

@@ -44,11 +44,13 @@ class TransacaoTxtExporterTest {
                 )
         );
 
-        String conteudo = TransacaoTxtExporter.formatar(transacoes);
+        String conteudo = normalizarEspacos(TransacaoTxtExporter.formatar(transacoes));
 
         assertAll(
                 () -> assertTrue(conteudo.contains("Smart Finance - Exportacao de Transacoes")),
                 () -> assertTrue(conteudo.contains("Quantidade: 2")),
+                () -> assertTrue(conteudo.contains("Total de Entradas: R$ 5.000,00")),
+                () -> assertTrue(conteudo.contains("Total de Saidas: R$ 1.200,00")),
                 () -> assertTrue(conteudo.contains("30/03/2026 | Entrada | Salario")),
                 () -> assertTrue(conteudo.contains("Comentario: Pagamento principal")),
                 () -> assertTrue(conteudo.contains("Categoria: Aluguel")),
@@ -76,12 +78,31 @@ class TransacaoTxtExporterTest {
 
         TransacaoTxtExporter.exportar(destino, transacoes);
 
-        String conteudo = Files.readString(destino);
+        String conteudo = normalizarEspacos(Files.readString(destino));
         assertAll(
                 () -> assertTrue(Files.exists(destino)),
+                () -> assertTrue(conteudo.contains("Total de Entradas: R$ 0,00")),
+                () -> assertTrue(conteudo.contains("Total de Saidas: R$ 350,00")),
                 () -> assertTrue(conteudo.contains("Mercado")),
                 () -> assertTrue(conteudo.contains("compras do mês")),
                 () -> assertTrue(conteudo.contains("Categoria: Alimentacao"))
         );
+    }
+
+    @Test
+    @DisplayName("mostra totais zerados quando não há transações")
+    void mostraTotaisZeradosQuandoNaoHaTransacoes() {
+        String conteudo = normalizarEspacos(TransacaoTxtExporter.formatar(List.of()));
+
+        assertAll(
+                () -> assertTrue(conteudo.contains("Quantidade: 0")),
+                () -> assertTrue(conteudo.contains("Total de Entradas: R$ 0,00")),
+                () -> assertTrue(conteudo.contains("Total de Saidas: R$ 0,00")),
+                () -> assertTrue(conteudo.contains("Nenhuma transacao encontrada."))
+        );
+    }
+
+    private static String normalizarEspacos(String texto) {
+        return texto.replace('\u00A0', ' ');
     }
 }

@@ -8,7 +8,7 @@
 *.exe
 *.msi
 
-!build-exe.bat
+build-exe.bat
 
 /.idea/
 /.ai/

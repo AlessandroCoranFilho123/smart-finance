@@ -23,6 +23,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,8 @@ public class MainController {
 
     @FXML
     private BorderPane rootContainer;
+    @FXML
+    private VBox dashboardContent;
     @FXML
     private Button btnInicio;
     @FXML
@@ -110,7 +113,7 @@ public class MainController {
     // Define o visual personalizado para os itens das listas.
     private void configurarCelulasCustomizadas() {
         listTransacoes.setCellFactory(lv -> new TransacaoCell());
-        listMetas.setCellFactory(lv -> new MetaCell());
+        listMetas.setCellFactory(lv -> new MetaCell(true));
     }
 
     //  Configura todos os botões
@@ -199,97 +202,58 @@ public class MainController {
     // Tela inicial (main.fxml)
     private void navegarParaInicio() {
         marcarBotaoAtivo(btnInicio);
+        rootContainer.setCenter(dashboardContent);
         carregarDados();
     }
 
     // Tela transações (transacoes_view.fxml)
     private void navegarParaTransacoes() {
         marcarBotaoAtivo(btnTransacao);
-        abrirViewTransacoes();
+        expandirHistoricoTransacoes();
     }
 
     // Tela metas (metas_view.fxml)
     private void navegarParaMetas() {
         marcarBotaoAtivo(btnMetas);
-        abrirViewMetas();
+        expandirViewMetas();
     }
 
-    // Janela de transações acessada pela sidebar
-    private void abrirViewTransacoes() {
+    // Expande o histórico de transações na própria janela principal
+    private void expandirHistoricoTransacoes() {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/app/view/transacoes_view.fxml")
             );
 
-            VBox dialogRoot = loader.load();
+            VBox viewRoot = loader.load();
             TransacoesViewController controller = loader.getController();
 
             controller.setOnNovaTransacao(this::abrirDialogNovaTransacao);
+            controller.setOnEditarTransacao(this::abrirDetalhesTransacao);
 
-            Stage stage = new Stage();
-            stage.setTitle("Transações");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(btnTransacao.getScene().getWindow());
-
-            Scene scene = new Scene(dialogRoot);
-            CssManager.aplicarCss(scene);
-
-            if (darkTheme) {
-                dialogRoot.getStyleClass().add("dark-theme");
-            }
-
-            stage.setScene(scene);
-            stage.setResizable(true);
-            stage.setMinWidth(900);
-            stage.setMinHeight(600);
-            IconManager.setTransacaoIcon(stage);
-
-            stage.showAndWait();
-
-            carregarDados();
+            rootContainer.setCenter(viewRoot);
 
         } catch (Exception e) {
-            logger.error("Erro ao abrir view de transações: {}", e.getMessage());
+            logger.error("Erro ao expandir histórico de transações: {}", e.getMessage());
         }
     }
 
-    // Janela de metas acessada pela sidebar
-    private void abrirViewMetas() {
+    // Expande a tela de metas na própria janela principal
+    private void expandirViewMetas() {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/app/view/metas_view.fxml")
             );
 
-            VBox dialogRoot = loader.load();
+            VBox viewRoot = loader.load();
             MetasViewController controller = loader.getController();
 
             controller.setOnNovaMeta(this::abrirDialogNovaMeta);
             controller.setOnEditarMeta(this::abrirDetalhesMeta);
-
-            Stage stage = new Stage();
-            stage.setTitle("Metas");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(btnMetas.getScene().getWindow());
-
-            Scene scene = new Scene(dialogRoot);
-            CssManager.aplicarCss(scene);
-
-            if (darkTheme) {
-                dialogRoot.getStyleClass().add("dark-theme");
-            }
-
-            stage.setScene(scene);
-            stage.setResizable(true);
-            stage.setMinWidth(900);
-            stage.setMinHeight(600);
-            IconManager.setMetaIcon(stage);
-
-            stage.showAndWait();
-
-            carregarDados();
+            rootContainer.setCenter(viewRoot);
 
         } catch (Exception e) {
-            logger.error("Erro ao abrir view de metas: {}", e.getMessage());
+            logger.error("Erro ao expandir view de metas: {}", e.getMessage());
 
         }
     }
@@ -344,6 +308,12 @@ public class MainController {
         }
     }
 
+    private Window obterJanelaPrincipal() {
+        return rootContainer != null && rootContainer.getScene() != null
+                ? rootContainer.getScene().getWindow()
+                : null;
+    }
+
     // Janela aberta a partir de botão "Nota Transação"
     private void abrirDialogNovaTransacao() {
         try {
@@ -357,7 +327,10 @@ public class MainController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Nova Transação");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initOwner(btnNovaTransacao.getScene().getWindow());
+            Window owner = obterJanelaPrincipal();
+            if (owner != null) {
+                dialogStage.initOwner(owner);
+            }
 
             Scene scene = new Scene(dialogRoot);
             CssManager.aplicarCss(scene);
@@ -386,6 +359,13 @@ public class MainController {
 
     // Janela duplo clique em uma transação
     private void abrirDetalhesTransacao(Transacao transacao) {
+        Window owner = listTransacoes != null && listTransacoes.getScene() != null
+                ? listTransacoes.getScene().getWindow()
+                : obterJanelaPrincipal();
+        abrirDetalhesTransacao(transacao, owner);
+    }
+
+    private void abrirDetalhesTransacao(Transacao transacao, Window owner) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/app/view/transacao_dialog.fxml")
@@ -399,7 +379,9 @@ public class MainController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Detalhes da Transação");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initOwner(listTransacoes.getScene().getWindow());
+            if (owner != null) {
+                dialogStage.initOwner(owner);
+            }
 
             Scene scene = new Scene(dialogRoot);
             CssManager.aplicarCss(scene);
@@ -441,7 +423,10 @@ public class MainController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Nova Meta");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initOwner(btnNovaMeta.getScene().getWindow());
+            Window owner = obterJanelaPrincipal();
+            if (owner != null) {
+                dialogStage.initOwner(owner);
+            }
 
             Scene scene = new Scene(dialogRoot);
             CssManager.aplicarCss(scene);
@@ -481,7 +466,12 @@ public class MainController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Editar Meta");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initOwner(listMetas.getScene().getWindow());
+            Window owner = listMetas != null && listMetas.getScene() != null
+                    ? listMetas.getScene().getWindow()
+                    : obterJanelaPrincipal();
+            if (owner != null) {
+                dialogStage.initOwner(owner);
+            }
 
             Scene scene = new Scene(dialogRoot);
             CssManager.aplicarCss(scene);

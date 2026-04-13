@@ -136,6 +136,63 @@ class DatabaseBootstrapIntegrationTest {
         );
     }
 
+    @Test
+    @DisplayName("banco com comentário legado adiciona categoria sem perder comentário")
+    void bancoComComentarioLegadoAdicionaCategoriaSemPerderComentario() throws Exception {
+        Path dbFile = tempDir.resolve("legacy-comment-only.db");
+        UUID transacaoId = UUID.randomUUID();
+
+        try (Connection conn = DriverManager.getConnection(jdbcUrl(dbFile));
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("PRAGMA foreign_keys = ON");
+            stmt.execute("""
+                    CREATE TABLE meta (
+                        id TEXT PRIMARY KEY,
+                        nome TEXT NOT NULL,
+                        alvo_centavos INTEGER,
+                        atual_centavos INTEGER NOT NULL DEFAULT 0
+                    )
+                    """);
+            stmt.execute("""
+                    CREATE TABLE transacao (
+                        id TEXT PRIMARY KEY,
+                        descricao TEXT NOT NULL,
+                        comentario TEXT NOT NULL DEFAULT '',
+                        valor_centavos INTEGER NOT NULL,
+                        tipo TEXT NOT NULL,
+                        data TEXT NOT NULL,
+                        meta_id TEXT
+                    )
+                    """);
+            stmt.execute("""
+                    INSERT INTO transacao (id, descricao, comentario, valor_centavos, tipo, data, meta_id)
+                    VALUES ('%s', 'Registro legado', 'comentário preservado', 2550, 'Saida', '2026-03-02', NULL)
+                    """.formatted(transacaoId));
+        }
+
+        Database.overrideUrlForTests(jdbcUrl(dbFile));
+        Database.inicializar();
+
+        try (Connection conn = DriverManager.getConnection(jdbcUrl(dbFile))) {
+            Set<String> columns = columnsOf(conn, "transacao");
+            assertAll(
+                    () -> assertTrue(columns.contains("comentario")),
+                    () -> assertTrue(columns.contains("categoria"))
+            );
+        }
+
+        TransacaoDAO transacaoDAO = new TransacaoDAO();
+        Transacao transacao = transacaoDAO.buscarPorId(transacaoId);
+
+        assertAll(
+                () -> assertNotNull(transacao),
+                () -> assertEquals("Registro legado", transacao.descricao()),
+                () -> assertEquals("comentário preservado", transacao.comentario()),
+                () -> assertNull(transacao.categoria()),
+                () -> assertEquals(2550L, transacao.valorCentavos())
+        );
+    }
+
     private static Set<String> columnsOf(Connection conn, String tableName) throws Exception {
         Set<String> columns = new HashSet<>();
         try (Statement stmt = conn.createStatement();

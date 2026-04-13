@@ -1,9 +1,12 @@
 @echo off
+:: Garante que o bat roda sempre na pasta onde ele esta
+cd /d "%~dp0"
+echo Diretorio atual: %CD%
 echo === Smart Finance - Gerando instalador .exe ===
 echo.
 :: Passo 1: Compilar e copiar dependencias
 echo [1/3] Compilando projeto...
-call mvn clean package -q
+call mvn clean package
 if errorlevel 1 (
     echo ERRO: Falha na compilacao. Rode "mvn clean package" para ver detalhes.
     pause
@@ -11,6 +14,8 @@ if errorlevel 1 (
 )
 :: Passo 2: Copiar o jar principal para a pasta de dependencias
 echo [2/3] Copiando jar principal...
+echo Verificando se o jar existe:
+dir target\*.jar
 copy /Y target\app-2.0.0.jar target\dependency\app-2.0.0.jar
 if errorlevel 1 (
     echo ERRO: Nao foi possivel copiar o jar.
