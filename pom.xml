@@ -57,7 +57,7 @@
             <version>1.7.36</version>
         </dependency>
 
-        <!-- JNA (título da barra Windows) -->
+        <!-- JNA -->
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
@@ -69,7 +69,7 @@
             <version>5.14.0</version>
         </dependency>
 
-        <!-- ───── Testes ───── -->
+        <!-- Testes -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -142,7 +142,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire — roda JUnit 5 e exclui testes JavaFX que precisam de display -->
+            <!-- Surefire - roda JUnit 5 e exclui testes JavaFX que precisam de display -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -164,7 +164,7 @@
                 </configuration>
             </plugin>
 
-            <!-- jpackage — gerar instalador .exe (mvn exec:exec@jpackage) -->
+            <!-- jpackage - gerar instalador .exe (mvn exec:exec@jpackage) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

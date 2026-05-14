@@ -44,6 +44,7 @@
             <TextField fx:id="txtBusca"
                        promptText="Descrição, comentário, categoria ou data"
                        styleClass="form-field"
+                       prefHeight="40"
                        maxWidth="Infinity"/>
         </VBox>
 
@@ -52,6 +53,7 @@
             <ComboBox fx:id="cmbTipo"
                       promptText="Todos"
                       prefWidth="150"
+                      prefHeight="40"
                       styleClass="form-combo"/>
         </VBox>
 
@@ -60,6 +62,7 @@
             <ComboBox fx:id="cmbCategoria"
                       promptText="Todas"
                       prefWidth="180"
+                      prefHeight="40"
                       styleClass="form-combo"/>
         </VBox>
 
@@ -68,6 +71,7 @@
             <DatePicker fx:id="dateInicio"
                         promptText="Data inicial"
                         prefWidth="150"
+                        prefHeight="40"
                         styleClass="form-combo"/>
         </VBox>
 
@@ -76,6 +80,7 @@
             <DatePicker fx:id="dateFim"
                         promptText="Data final"
                         prefWidth="150"
+                        prefHeight="40"
                         styleClass="form-combo"/>
         </VBox>
 
@@ -85,6 +90,7 @@
             <Label text=" " styleClass="filter-label"/>
             <Button fx:id="btnLimparFiltros"
                     text="X"
+                    prefHeight="40"
                     styleClass="button-secondary"/>
         </VBox>
     </HBox>

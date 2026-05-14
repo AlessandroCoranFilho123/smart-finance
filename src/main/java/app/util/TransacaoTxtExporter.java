@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,8 +53,9 @@ public final class TransacaoTxtExporter {
             return builder.toString();
         }
 
-        for (int i = 0; i < transacoes.size(); i++) {
-            Transacao transacao = transacoes.get(i);
+        List<Transacao> transacoesOrdenadas = ordenarPorDataDecrescente(transacoes);
+        for (int i = 0; i < transacoesOrdenadas.size(); i++) {
+            Transacao transacao = transacoesOrdenadas.get(i);
 
             builder.append(i + 1).append(". ")
                     .append(DATE_FORMAT.format(transacao.data()))
@@ -75,7 +77,7 @@ public final class TransacaoTxtExporter {
                         .append(System.lineSeparator());
             }
 
-            if (i < transacoes.size() - 1) {
+            if (i < transacoesOrdenadas.size() - 1) {
                 builder.append(System.lineSeparator());
             }
         }
@@ -88,5 +90,11 @@ public final class TransacaoTxtExporter {
                 .filter(transacao -> transacao.tipo() == tipo)
                 .mapToLong(Transacao::valorCentavos)
                 .sum();
+    }
+
+    private static List<Transacao> ordenarPorDataDecrescente(List<Transacao> transacoes) {
+        return transacoes.stream()
+                .sorted(Comparator.comparing(Transacao::data).reversed())
+                .toList();
     }
 }

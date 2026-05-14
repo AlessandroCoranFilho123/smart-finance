@@ -12,8 +12,10 @@
     -color-bg-main: #f8fafc;
     -color-bg-surface: #ffffff;
     -color-bg-surface-alt: #f1f5f9;
+    -color-bg-field: #f8fafc;
     -color-border: #e2e8f0;
     -color-border-strong: #cbd5e1;
+    -color-border-field-hover: #94a3b8;
     -color-primary: #6366f1;
     -color-primary-hover: #4f46e5;
     -color-primary-pressed: #4338ca;
@@ -320,7 +322,8 @@
 }
 
 .footer-text {
-    -fx-text-fill: -color-text-subtle;
+    -fx-text-fill: -color-text-muted;
+    -fx-font-weight: 500;
 }
 
 .meta-progress-summary {
@@ -337,16 +340,24 @@
 }
 
 .form-field {
-    -fx-background-color: -color-bg-surface;
-    -fx-border-color: -color-border;
+    -fx-background-color: -color-bg-field;
+    -fx-border-color: -color-border-strong;
     -fx-text-fill: -color-text-main;
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
+.form-field:hover {
+    -fx-border-color: -color-border-field-hover;
 }
 
 .form-field:focused {
     -fx-border-color: -color-primary;
     -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(99, 102, 241, 0.12), 8, 0, 0, 0);
 }
 
 .text-field,
@@ -356,71 +367,102 @@
 
 .field-textarea,
 .text-area {
-    -fx-background-color: -color-bg-surface;
-    -fx-border-color: -color-border;
+    -fx-background-color: -color-bg-field;
+    -fx-border-color: -color-border-strong;
     -fx-text-fill: -color-text-main;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
+.text-area:hover,
+.field-textarea:hover {
+    -fx-border-color: -color-border-field-hover;
 }
 
 .text-area .content {
-    -fx-background-color: -color-bg-surface;
+    -fx-background-color: -color-bg-field;
     -fx-text-fill: -color-text-main;
     -fx-background-radius: 8px;
 }
 
 .text-area .scroll-pane {
-    -fx-background-color: -color-bg-surface;
+    -fx-background-color: -color-bg-field;
     -fx-background-radius: 8px;
 }
 
 .text-area .scroll-pane .viewport {
-    -fx-background-color: -color-bg-surface;
+    -fx-background-color: -color-bg-field;
     -fx-background-radius: 8px;
 }
 
 .text-area .scroll-pane .corner {
-    -fx-background-color: -color-bg-surface;
+    -fx-background-color: -color-bg-field;
 }
 
 .text-area:focused,
 .field-textarea:focused {
     -fx-border-color: -color-primary;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(99, 102, 241, 0.12), 8, 0, 0, 0);
 }
 
 .form-combo,
 .combo-box,
 .date-picker {
-    -fx-background-color: -color-bg-surface;
-    -fx-border-color: -color-border;
+    -fx-background-color: -color-bg-field;
+    -fx-border-color: -color-border-strong;
     -fx-border-radius: 8px;
     -fx-border-width: 1px;
     -fx-background-radius: 8px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
 }
 
 .form-combo:hover,
 .combo-box:hover,
 .date-picker:hover {
-    -fx-border-color: #94a3b8;
+    -fx-border-color: -color-border-field-hover;
+}
+
+.form-combo:focused,
+.combo-box:focused,
+.date-picker:focused,
+.form-combo:armed,
+.combo-box:armed {
+    -fx-border-color: -color-primary;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(99, 102, 241, 0.12), 8, 0, 0, 0);
 }
 
 .form-combo:showing,
 .combo-box:showing,
 .date-picker:showing {
     -fx-border-color: -color-primary;
+    -fx-border-width: 2px;
 }
 
 .combo-box .combo-box-base,
 .form-combo .combo-box-base,
-.date-picker .combo-box-base {
-    -fx-background-color: -color-bg-surface;
+.date-picker .combo-box-base,
+.date-picker .text-field {
+    -fx-background-color: -color-bg-field;
     -fx-text-fill: -color-text-main;
 }
 
 .combo-box .list-cell,
 .form-combo .list-cell {
-    -fx-background-color: -color-bg-surface;
+    -fx-background-color: -color-bg-field;
     -fx-text-fill: -color-text-main;
+}
+
+.combo-box > .list-cell,
+.form-combo > .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 10 0 10;
 }
 
 .combo-box-popup .list-view {
@@ -464,7 +506,7 @@
 
 .date-picker .date-picker-display-node,
 .date-picker > .combo-box-base > .date-picker-display-node {
-    -fx-background-color: -color-bg-surface;
+    -fx-background-color: -color-bg-field;
     -fx-text-fill: -color-text-main;
     -fx-prompt-text-fill: -color-text-subtle;
     -fx-padding: 6 10;
@@ -543,15 +585,29 @@
 }
 
 .toggle-entrada:selected {
-    -fx-background-color: rgba(16, 185, 129, 0.12);
+    -fx-background-color: rgba(16, 185, 129, 0.20);
     -fx-text-fill: -color-success-bright;
     -fx-border-color: -color-success;
+    -fx-border-width: 2px;
+    -fx-font-weight: 700;
+}
+
+.toggle-entrada:selected:hover {
+    -fx-background-color: rgba(16, 185, 129, 0.26);
+    -fx-text-fill: #047857;
 }
 
 .toggle-saida:selected {
-    -fx-background-color: rgba(244, 63, 94, 0.10);
+    -fx-background-color: rgba(244, 63, 94, 0.20);
     -fx-text-fill: -color-danger-bright;
     -fx-border-color: -color-danger;
+    -fx-border-width: 2px;
+    -fx-font-weight: 700;
+}
+
+.toggle-saida:selected:hover {
+    -fx-background-color: rgba(244, 63, 94, 0.26);
+    -fx-text-fill: #be123c;
 }
 
 .info-label-small {

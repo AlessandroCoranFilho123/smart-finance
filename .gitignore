@@ -8,12 +8,11 @@
 *.exe
 *.msi
 
-build-exe.bat
-
 /.idea/
 /.ai/
 /.vscode/
 *.iml
+docs/
 
 .DS_Store
 Thumbs.db

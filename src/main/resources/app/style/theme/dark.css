@@ -72,10 +72,18 @@
     -fx-effect: dropshadow(three-pass-box, rgba(2, 6, 23, 0.30), 18, 0, 0, 6);
 }
 
-/* Banner de saldo (gradiente indigo) */
+/* Banner de saldo no dashboard */
 .dark-theme .saldo-banner {
-    -fx-background-color: linear-gradient(to right, #4f46e5, #6366f1);
-    -fx-effect: dropshadow(three-pass-box, rgba(79, 70, 229, 0.28), 20, 0, 0, 8);
+    -fx-background-color: -color-bg-surface-alt;
+    -fx-effect: dropshadow(three-pass-box, rgba(2, 6, 23, 0.30), 18, 0, 0, 6);
+}
+
+.dark-theme .saldo-label {
+    -fx-text-fill: -color-text-muted;
+}
+
+.dark-theme .saldo-valor {
+    -fx-text-fill: -color-text-main;
 }
 
 .dark-theme .saldo-banner .stat-label,

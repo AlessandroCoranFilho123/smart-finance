@@ -82,10 +82,10 @@
     <center>
         <VBox fx:id="dashboardContent" spacing="25" styleClass="main-content">
             <padding>
-                <Insets bottom="30" left="20" right="30" top="30"/>
+                <Insets bottom="20" left="20" right="30" top="20"/>
             </padding>
 
-            <VBox spacing="8" styleClass="saldo-banner">
+            <VBox spacing="8" styleClass="card, saldo-banner">
                 <padding>
                     <Insets bottom="25" left="30" right="30" top="25"/>
                 </padding>

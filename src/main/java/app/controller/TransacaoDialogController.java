@@ -343,19 +343,6 @@ public class TransacaoDialogController {
         }
     }
 
-    /**
-     * Converte texto digitado para centavos.
-     *
-     * <p>Regra de detecção de separador:
-     * <ul>
-     *   <li>Se o texto contém vírgula → padrão BR (ponto = milhar, vírgula = decimal).
-     *       Ex: "1.000,50" → remove pontos → "1000,50" → troca vírgula → "1000.50" → 100050</li>
-     *   <li>Se o texto só tem ponto → padrão EN (ponto = decimal).
-     *       Ex: "10.50" → mantém como está → 1050</li>
-     *   <li>Sem separador → inteiro direto.
-     *       Ex: "10" → 1000</li>
-     * </ul>
-     */
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
         if (texto == null || texto.trim().isEmpty()) return 0;
         try {

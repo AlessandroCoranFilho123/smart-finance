@@ -3,12 +3,13 @@ package app.controller;
 import app.model.Categoria;
 import app.model.TipoTransacao;
 import app.model.Transacao;
+import app.repository.TransacaoFiltro;
 import app.repository.TransacaoDAO;
 import app.util.TransacaoCsvExporter;
-import app.util.TransacaoSearchMatcher;
 import app.util.FormatadorData;
 import app.util.TransacaoTxtExporter;
 import app.view.TransacaoCell;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class TransacoesViewController {
 
@@ -63,8 +64,8 @@ public class TransacoesViewController {
     private ListView<Transacao> listTransacoes;
 
     private TransacaoDAO transacaoDAO;
-    private ObservableList<Transacao> todasTransacoes;
     private ObservableList<Transacao> transacoesFiltradas;
+    private PauseTransition filtroDelay;
 
     // Usado para formatar números padrão Brasil
     private final NumberFormat currencyFormatter =
@@ -86,6 +87,10 @@ public class TransacoesViewController {
         List<Categoria> cats = Arrays.asList(Categoria.values());
         cmbCategoria.setItems(FXCollections.observableArrayList(cats));
         cmbCategoria.setPromptText("Todas");
+        transacoesFiltradas = FXCollections.observableArrayList();
+        listTransacoes.setItems(transacoesFiltradas);
+        filtroDelay = new PauseTransition(Duration.millis(180));
+        filtroDelay.setOnFinished(e -> aplicarFiltros());
 
         btnNova.setOnAction(e -> {
             if (onNovaTransacao != null) {
@@ -99,7 +104,7 @@ public class TransacoesViewController {
         btnExportarTxt.setOnAction(e -> exportarTxt());
         btnLimparFiltros.setOnAction(e -> limparFiltros());
 
-        txtBusca.textProperty().addListener((obs, old, newVal) -> aplicarFiltros());
+        txtBusca.textProperty().addListener((obs, old, newVal) -> agendarAplicacaoFiltros());
         cmbTipo.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
         cmbCategoria.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
         dateInicio.valueProperty().addListener((obs, old, newVal) -> aplicarFiltros());
@@ -136,49 +141,40 @@ public class TransacoesViewController {
     }
 
     private void carregarTransacoes() {
-        // Carrega todas as transações registradas
-        List<Transacao> lista = transacaoDAO.listarTodas();
-        todasTransacoes = FXCollections.observableArrayList(lista);
-        transacoesFiltradas = FXCollections.observableArrayList(lista);
-        listTransacoes.setItems(transacoesFiltradas);
         aplicarFiltros();
         atualizarEstadoBotaoDetalhes();
     }
 
-    private void aplicarFiltros() {
-        List<Transacao> filtradas = todasTransacoes.stream()
-                .filter(this::passaFiltroBusca)
-                .filter(this::passaFiltroTipo)
-                .filter(this::passaFiltroCategoria)
-                .filter(this::passaFiltroData)
-                .collect(Collectors.toList());
+    private void agendarAplicacaoFiltros() {
+        if (filtroDelay != null) {
+            filtroDelay.playFromStart();
+        } else {
+            aplicarFiltros();
+        }
+    }
 
+    private void aplicarFiltros() {
+        List<Transacao> filtradas = transacaoDAO.listarPorFiltro(criarFiltroAtual());
         transacoesFiltradas.setAll(filtradas);
         atualizarEstatisticas();
     }
 
-    private boolean passaFiltroBusca(Transacao transacao) {
-        return TransacaoSearchMatcher.corresponde(transacao, txtBusca.getText());
+    private TransacaoFiltro criarFiltroAtual() {
+        return new TransacaoFiltro(
+                txtBusca.getText(),
+                tipoSelecionado(),
+                cmbCategoria.getValue(),
+                dateInicio.getValue(),
+                dateFim.getValue()
+        );
     }
 
-    private boolean passaFiltroTipo(Transacao t) {
+    private TipoTransacao tipoSelecionado() {
         String tipo = cmbTipo.getValue();
-        if (tipo == null || tipo.equals("Todos")) return true;
-        return (tipo.equals("Entrada") && t.tipo() == TipoTransacao.Entrada) ||
-                (tipo.equals("Saida") && t.tipo() == TipoTransacao.Saida);
-    }
-
-    private boolean passaFiltroCategoria(Transacao t) {
-        Categoria cat = cmbCategoria.getValue();
-        if (cat == null) return true; // Nenhuma categoria selecionada = mostrar todas
-        return cat.equals(t.categoria());
-    }
-
-    private boolean passaFiltroData(Transacao t) {
-        LocalDate inicio = dateInicio.getValue();
-        LocalDate fim = dateFim.getValue();
-        if (inicio != null && t.data().isBefore(inicio)) return false;
-        return fim == null || !t.data().isAfter(fim);
+        if (tipo == null || tipo.equals("Todos")) {
+            return null;
+        }
+        return TipoTransacao.valueOf(tipo);
     }
 
     private void atualizarEstatisticas() {

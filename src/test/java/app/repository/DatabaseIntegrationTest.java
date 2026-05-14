@@ -4,6 +4,7 @@ import app.model.Categoria;
 import app.model.Meta;
 import app.model.TipoTransacao;
 import app.model.Transacao;
+import app.repository.TransacaoFiltro;
 import app.service.TransacaoService;
 import org.junit.jupiter.api.*;
 
@@ -470,5 +471,48 @@ class DatabaseIntegrationTest {
         Transacao t = tDao.listarTodas().get(0);
         assertEquals(TipoTransacao.Entrada, t.tipo());
         assertEquals("resgate parcial", t.comentario());
+    }
+
+    @Test
+    @Order(26)
+    @DisplayName("listarPorFiltro combina busca textual, tipo, categoria e datas")
+    void listarPorFiltroCombinaCriterios() {
+        TransacaoDAO dao = new TestTransacaoDAO();
+        dao.inserir(new Transacao(UUID.randomUUID(), "Café da manhã", "padaria central",
+                45_00L, TipoTransacao.Saida, LocalDate.of(2026, 4, 13), null, Categoria.Alimentacao));
+        dao.inserir(new Transacao(UUID.randomUUID(), "Café da manhã", "fora do intervalo",
+                30_00L, TipoTransacao.Saida, LocalDate.of(2026, 5, 1), null, Categoria.Alimentacao));
+        dao.inserir(new Transacao(UUID.randomUUID(), "Salário", "pagamento",
+                5000_00L, TipoTransacao.Entrada, LocalDate.of(2026, 4, 10), null, Categoria.Salario));
+
+        List<Transacao> filtradas = dao.listarPorFiltro(new TransacaoFiltro(
+                "cafe padaria",
+                TipoTransacao.Saida,
+                Categoria.Alimentacao,
+                LocalDate.of(2026, 4, 1),
+                LocalDate.of(2026, 4, 30)
+        ));
+
+        assertAll(
+                () -> assertEquals(1, filtradas.size()),
+                () -> assertEquals("Café da manhã", filtradas.getFirst().descricao()),
+                () -> assertEquals("padaria central", filtradas.getFirst().comentario())
+        );
+    }
+
+    @Test
+    @Order(27)
+    @DisplayName("busca textual acompanha exclusões por trigger FTS")
+    void buscaTextualAcompanhaExclusoes() {
+        TransacaoDAO dao = new TestTransacaoDAO();
+        UUID id = UUID.randomUUID();
+        dao.inserir(new Transacao(id, "Internet", "fibra residencial",
+                120_00L, TipoTransacao.Saida, LocalDate.of(2026, 4, 1), null, Categoria.Internet));
+
+        assertEquals(1, dao.listarPorFiltro(new TransacaoFiltro("fibra", null, null, null, null)).size());
+
+        dao.excluir(id);
+
+        assertTrue(dao.listarPorFiltro(new TransacaoFiltro("fibra", null, null, null, null)).isEmpty());
     }
 }

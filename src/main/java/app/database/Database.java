@@ -33,7 +33,7 @@ public final class Database {
                     )
                     """);
 
-            // Tabela transacao — schema completo com comentario e categoria
+            // Tabela transacao - schema completo com comentario e categoria
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS transacao (
                         id             TEXT PRIMARY KEY,
@@ -51,6 +51,9 @@ public final class Database {
             // Migrations para bancos existentes que não possuem as colunas novas
             executarMigrationSegura(stmt, "ALTER TABLE transacao ADD COLUMN comentario TEXT NOT NULL DEFAULT ''");
             executarMigrationSegura(stmt, "ALTER TABLE transacao ADD COLUMN categoria TEXT");
+
+            criarIndices(stmt);
+            criarBuscaTextual(stmt);
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao inicializar banco de dados", e);
@@ -119,9 +122,80 @@ public final class Database {
 
     public static Connection getConnection() throws SQLException {
         Connection conn = DriverManager.getConnection(getEffectiveUrl());
+        configurarConexao(conn);
+        return conn;
+    }
+
+    private static void configurarConexao(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON");
+            stmt.execute("PRAGMA busy_timeout = 5000");
+            stmt.execute("PRAGMA journal_mode = WAL");
+            stmt.execute("PRAGMA synchronous = NORMAL");
+            stmt.execute("PRAGMA secure_delete = ON");
         }
-        return conn;
+    }
+
+    private static void criarIndices(Statement stmt) throws SQLException {
+        stmt.execute("CREATE INDEX IF NOT EXISTS idx_transacao_data_desc ON transacao (data DESC)");
+        stmt.execute("CREATE INDEX IF NOT EXISTS idx_transacao_tipo_data ON transacao (tipo, data)");
+        stmt.execute("CREATE INDEX IF NOT EXISTS idx_transacao_categoria_data ON transacao (categoria, data)");
+        stmt.execute("CREATE INDEX IF NOT EXISTS idx_transacao_meta_id ON transacao (meta_id)");
+        stmt.execute("CREATE INDEX IF NOT EXISTS idx_meta_nome ON meta (nome COLLATE NOCASE)");
+    }
+
+    private static void criarBuscaTextual(Statement stmt) throws SQLException {
+        boolean indiceCriadoAgora = !objetoExiste(stmt, "transacao_fts");
+
+        stmt.execute("""
+                CREATE VIRTUAL TABLE IF NOT EXISTS transacao_fts USING fts5(
+                    descricao,
+                    comentario,
+                    categoria,
+                    tipo,
+                    data,
+                    content='transacao',
+                    content_rowid='rowid',
+                    tokenize='unicode61 remove_diacritics 2'
+                )
+                """);
+
+        stmt.execute("""
+                CREATE TRIGGER IF NOT EXISTS transacao_ai AFTER INSERT ON transacao BEGIN
+                    INSERT INTO transacao_fts(rowid, descricao, comentario, categoria, tipo, data)
+                    VALUES (new.rowid, new.descricao, new.comentario, COALESCE(new.categoria, ''), new.tipo, new.data);
+                END
+                """);
+
+        stmt.execute("""
+                CREATE TRIGGER IF NOT EXISTS transacao_ad AFTER DELETE ON transacao BEGIN
+                    INSERT INTO transacao_fts(transacao_fts, rowid, descricao, comentario, categoria, tipo, data)
+                    VALUES ('delete', old.rowid, old.descricao, old.comentario, COALESCE(old.categoria, ''), old.tipo, old.data);
+                END
+                """);
+
+        stmt.execute("""
+                CREATE TRIGGER IF NOT EXISTS transacao_au AFTER UPDATE ON transacao BEGIN
+                    INSERT INTO transacao_fts(transacao_fts, rowid, descricao, comentario, categoria, tipo, data)
+                    VALUES ('delete', old.rowid, old.descricao, old.comentario, COALESCE(old.categoria, ''), old.tipo, old.data);
+                    INSERT INTO transacao_fts(rowid, descricao, comentario, categoria, tipo, data)
+                    VALUES (new.rowid, new.descricao, new.comentario, COALESCE(new.categoria, ''), new.tipo, new.data);
+                END
+                """);
+
+        if (indiceCriadoAgora) {
+            stmt.execute("INSERT INTO transacao_fts(transacao_fts) VALUES ('rebuild')");
+        }
+    }
+
+    private static boolean objetoExiste(Statement stmt, String nome) throws SQLException {
+        try (var rs = stmt.executeQuery("""
+                SELECT 1
+                FROM sqlite_master
+                WHERE name = '%s'
+                LIMIT 1
+                """.formatted(nome))) {
+            return rs.next();
+        }
     }
 }

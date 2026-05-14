@@ -102,6 +102,36 @@ class TransacaoTxtExporterTest {
         );
     }
 
+    @Test
+    @DisplayName("ordena o TXT da transação mais recente para a mais antiga")
+    void ordenaTxtDaMaisRecenteParaMaisAntiga() {
+        Transacao antiga = new Transacao(
+                UUID.randomUUID(),
+                "Curso",
+                "",
+                250_00L,
+                TipoTransacao.Saida,
+                LocalDate.of(2026, 4, 2),
+                null,
+                Categoria.Educacao
+        );
+        Transacao recente = new Transacao(
+                UUID.randomUUID(),
+                "Freela",
+                "",
+                900_00L,
+                TipoTransacao.Entrada,
+                LocalDate.of(2026, 4, 18),
+                null,
+                Categoria.Salario
+        );
+
+        String conteudo = normalizarEspacos(TransacaoTxtExporter.formatar(List.of(antiga, recente)));
+
+        assertTrue(conteudo.indexOf("1. 18/04/2026 | Entrada | Freela") <
+                conteudo.indexOf("2. 02/04/2026 | Saida | Curso"));
+    }
+
     private static String normalizarEspacos(String texto) {
         return texto.replace('\u00A0', ' ');
     }
