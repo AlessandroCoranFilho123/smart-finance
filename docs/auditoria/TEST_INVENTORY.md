@@ -1,6 +1,6 @@
 # Inventário de testes — Smart Finance
 
-Data: 10/11/2026 · Suíte: `tests/SmartFinance.Tests` (xUnit, .NET 10) · **79 execuções** (49 métodos, `[Theory]` expande casos).
+Atualizado: 10/11/2026 (segunda rodada) · Suítes: `tests/SmartFinance.Tests` (**84 execuções**) e `tests/SmartFinance.GuiTests` (6, categoria GUI).
 
 | Classe | Categoria | Métodos | Objetivo | Qualidade | Observações |
 |---|---|---|---|---|---|
@@ -11,14 +11,15 @@ Data: 10/11/2026 · Suíte: `tests/SmartFinance.Tests` (xUnit, .NET 10) · **79 
 | `PlanejamentoFinanceiroTests` | Unitário/integração | 15 | Cartão, empréstimos, metas (validações, totais, status de vencimento) | Boa | — |
 | `ExporterTests` | Unitário | 4 | Formatos CSV (BOM, escapamento) e TXT (resumo) | Boa | — |
 | `AuditoriaTests` | Auditoria (fases 3-6) | 14 | Busca degradada, Unicode, volumes (10k), concorrência, corrupção, idempotência | Boa | Criados nesta auditoria; incluem regressões de AUD-001/004 |
+| `ManutencaoTests` | Auditoria (P6/P8) | 5 | Backup diário (criação, idempotência, poda) e rotação de log | Boa | Segunda rodada |
 | `TestApp` | Suporte | — | Banco SQLite isolado por teste em `%TEMP%` | Adequada | Sem dados reais do usuário |
+| `GuiTests` (projeto `SmartFinance.GuiTests`) | GUI/Interação (P1) | 6 | Automação UIA real: dashboard, navegação nas 5 visões, criação de transação persistida, Escape, diálogo de carteiras, tema com persistência | Boa | FlaUI 5; requer sessão interativa; roda no CI e com `--filter Category=GUI` |
 
 ## Testes que não existem
 
-- Testes de UI automatizados (WPF): não há. Cobertura de UI é manual.
-- Testes de instalação/distribuição automatizados: execução manual documentada em TEST_RESULTS.
 - Testes de carga além de 10k registros (suíte atual).
-- Pipeline de CI (GitHub Actions): inexistente — recomendação em REMAINING_ISSUES.
+- Testes de acessibilidade automatizados (leitor de tela) — verificação via UIA parcialmente coberta pelos nomes acessíveis usados pela suíte GUI.
+- Instalador automatizado no CI (script .iss versionado; ciclo instal/desinstal validado manualmente).
 
 ## Qualidade geral
 

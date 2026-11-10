@@ -10,6 +10,8 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | Suíte original (pré-auditoria) | 65 testes | PASSOU (65/65) |
 | Testes de auditoria — 1ª rodada (investigação) | 14 testes | FALHOU (3) → **confirmou AUD-001**, AUD-002 classificada, 1 asserção de teste corrigida |
 | Suíte completa pós-correções | 79 testes | **PASSOU (79/79)**, ~35s |
+| Suíte completa + ManutencaoTests (rodada 2) | 84 testes | **PASSOU (84/84)** |
+| Suíte GUI FlaUI (rodada 2) | 6 testes | **PASSOU (6/6) via CI** — runner windows-latest |
 | Build de release | `dotnet publish -c Release` | PASSOU (0 erros, 0 warnings) |
 | Pacotes vulneráveis | `dotnet list package --vulnerable --include-transitive` | PASSOU (nenhum) |
 
@@ -28,8 +30,10 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | T8 | Kill forçado ×5 + reinício no mesmo banco | Recuperação | PASSOU | recuperação por WAL, `startup ok`, 0 exceções |
 | T9 | Estabilidade de memória (30s ocioso pós ciclos) | Estabilidade | PASSOU | 132MB → 132MB (sem crescimento) |
 | T10 | Exe final com cópia do banco real do usuário | Funcional | PASSOU | `startup ok`, 0 exceções (mesmo banco que causava o crash pré-1a8bf16) |
-| T11 | Interação real com UI (cliques, teclado, foco, DPI, temas visuais) | GUI/Interação | NÃO EXECUTADO | sem automação de desktop disponível no ambiente; coberto por revisão estrutural de XAML (ver AUDIT_REPORT §GUI) |
-| T12 | Soak > 5 min, suspensão/hibernação, troca de usuário | Estabilidade | NÃO EXECUTADO | tempo/controle do SO indisponível nesta sessão |
+| T11 | Interação real com UI — suíte FlaUI (6 testes: navegação, criação de transação persistida, Escape, tema) | GUI/Interação | **PASSOU** (via CI, runner Windows interativo; localmente exige sessão ociosa) | `tests/SmartFinance.GuiTests`; rodada 2 |
+| T12 | Soak 30 min com exe publicado (processo vivo, log limpo, memória estável) | Estabilidade | **PASSOU** | 20:17–20:48 locais, isolated DB; ver PERF |
+| T13 | Instalador: instalar → executar instalado → desinstalar | Distribuição | **PASSOU** | Inno Setup, /VERYSILENT em dir isolado; dados %APPDATA% preservados |
+| T14 | Suspensão/hibernação/troca de usuário | Estabilidade | NÃO EXECUTADO | requer controle do SO indisponível nesta sessão |
 
 ## Verificações estáticas
 

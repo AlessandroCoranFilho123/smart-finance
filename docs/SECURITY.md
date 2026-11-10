@@ -35,3 +35,7 @@ A versão JavaFX 2.x continha uma **fundação** de criptografia (AES-256-GCM co
 2. Backup automático agendado do `financas.db` com opção de exportação protegida por senha (derivação PBKDF2/Argon2id).
 3. Revisão de permissão do arquivo do banco (ACL restritiva) na criação.
 4. Evitar logs com valores financeiros, comentários ou identificadores sensíveis.
+
+## Backup
+
+Snapshot diário automático em `%APPDATA%\SmartFinance\backups` (API de backup online do SQLite, retenção de 7 cópias). O snapshot é consistente mesmo com o aplicativo aberto. Restauração manual: substituir `financas.db` por um snapshot com o aplicativo fechado.

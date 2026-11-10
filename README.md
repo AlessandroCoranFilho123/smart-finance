@@ -2,7 +2,7 @@
 
 Smart Finance é um aplicativo desktop **para Windows** de controle financeiro pessoal: transações, carteiras, metas, compras parceladas no cartão e empréstimos — com busca textual, filtros, exportação e tema claro/escuro.
 
-A versão 3.0 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão anterior era JavaFX e foi substituída por um aplicativo nativo mais leve: sem JVM, inicialização praticamente instantânea e distribuição em um único executável.
+A versão 3.1 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão anterior era JavaFX e foi substituída por um aplicativo nativo mais leve: sem JVM, inicialização praticamente instantânea e distribuição em um único executável.
 
 ## Funcionalidades
 
@@ -20,7 +20,7 @@ A versão 3.0 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão ant
 
 Disponível somente para Windows 10/11.
 
-Baixe o `SmartFinance.exe` na área de releases do repositório e execute — não é necessário instalar nada (executável único, autocontido).
+Baixe o `SmartFinance-Setup-3.1.0.exe` (instalador com atalhos e desinstalador) ou o `SmartFinance.exe` portátil na área de releases.
 
 [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/AlessandroCoranFilho123/smart-finance)
 
@@ -85,4 +85,8 @@ docs/                        arquitetura e segurança
 
 ## Status do projeto
 
-Projeto acadêmico em evolução. A versão 3.0 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design e [docs/auditoria/AUDIT_REPORT.md](docs/auditoria/AUDIT_REPORT.md) para a auditoria técnica completa (10/11/2026).
+Projeto acadêmico em evolução. A versão 3.1 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design e [docs/auditoria/AUDIT_REPORT.md](docs/auditoria/AUDIT_REPORT.md) para a auditoria técnica completa (10/11/2026).
+
+## Backup automático
+
+A cada dia de uso o aplicativo gera um snapshot do banco em `%APPDATA%\SmartFinance\backups` (retenção de 7 cópias), usando a API de backup online do SQLite. Para restaurar: feche o aplicativo e copie um snapshot de volta para `%APPDATA%\SmartFinance\financas.db`.

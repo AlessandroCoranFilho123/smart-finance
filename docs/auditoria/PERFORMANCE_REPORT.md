@@ -18,8 +18,9 @@ A extração de nativos acontece uma vez por versão do executável; execuções
 |---|---|---|
 | Em repouso (dashboard) | 134MB | 84MB |
 | Após 30s ocioso pós-ciclos de uso | 132MB | — |
+| Soak 30 min contínuos (rodada 2) | estável, sem crescimento | — |
 
-Sem evidência de crescimento descontrolado no recorte testado (30s; soak longo registrado como não executado).
+Sem evidência de vazamento nos recortes testados.
 
 ## Consultas com volume (xUnit, banco em memória de arquivo temporário)
 
