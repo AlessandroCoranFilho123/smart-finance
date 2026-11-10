@@ -70,7 +70,10 @@ public sealed class TransacaoRepository(Database db) : RepositoryBase(db)
     public List<Transacao> ListarPorFiltro(TransacaoFiltro filtro)
     {
         filtro ??= TransacaoFiltro.Vazio;
-        bool filtrarTexto = filtro.PossuiBusca;
+        // Se a busca não contiver nenhum termo utilizável (ex.: só símbolos),
+        // ignora o filtro textual em vez de enviar um MATCH vazio ao FTS5.
+        string consultaFts = filtro.PossuiBusca ? CriarConsultaFts(filtro.Busca) : string.Empty;
+        bool filtrarTexto = consultaFts.Length > 0;
 
         var parametros = new List<(string Nome, object Valor)>();
         var condicoes = new List<string>();
@@ -82,7 +85,7 @@ public sealed class TransacaoRepository(Database db) : RepositoryBase(db)
         if (filtrarTexto)
         {
             condicoes.Add("transacao_fts MATCH $busca");
-            parametros.Add(("$busca", CriarConsultaFts(filtro.Busca)));
+            parametros.Add(("$busca", consultaFts));
         }
 
         if (filtro.Tipo is not null)

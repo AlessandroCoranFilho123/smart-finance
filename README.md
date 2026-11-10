@@ -85,4 +85,4 @@ docs/                        arquitetura e segurança
 
 ## Status do projeto
 
-Projeto acadêmico em evolução. A versão 3.0 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design.
+Projeto acadêmico em evolução. A versão 3.0 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design e [docs/auditoria/AUDIT_REPORT.md](docs/auditoria/AUDIT_REPORT.md) para a auditoria técnica completa (10/11/2026).

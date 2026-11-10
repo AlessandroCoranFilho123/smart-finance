@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using SmartFinance.Data;
 using SmartFinance.Services;
@@ -14,6 +16,12 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // WPF usa en-US como cultura padrão de elementos (datas do DatePicker, por exemplo);
+        // alinha toda a interface com a cultura pt-BR do aplicativo.
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
 
         DispatcherUnhandledException += (_, args) =>
         {

@@ -38,8 +38,12 @@ public partial class CarteirasDialog : Window
         MostrarErro(null);
         try
         {
-            _servicos.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, ValorMonetario.ParseCentavos(CampoBanco.Text));
-            _servicos.Carteiras.AtualizarSaldoInicial(Database.CarteiraDinheiroFisicoId, ValorMonetario.ParseCentavos(CampoDinheiro.Text));
+            // Uma única transação: se a segunda carteira falhar, a primeira não fica aplicada.
+            _servicos.Db.EmTransacao(() =>
+            {
+                _servicos.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, ValorMonetario.ParseCentavos(CampoBanco.Text));
+                _servicos.Carteiras.AtualizarSaldoInicial(Database.CarteiraDinheiroFisicoId, ValorMonetario.ParseCentavos(CampoDinheiro.Text));
+            });
             DialogResult = true;
         }
         catch (ArgumentException ex)

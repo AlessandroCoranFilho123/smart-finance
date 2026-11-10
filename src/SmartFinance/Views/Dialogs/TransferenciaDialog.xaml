@@ -53,7 +53,7 @@
                    Visibility="Collapsed" TextWrapping="Wrap" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,4">
-            <Button Content="Cancelar" Style="{StaticResource BotaoSecundario}" Click="Cancelar" />
+            <Button Content="Cancelar" IsCancel="True" Style="{StaticResource BotaoSecundario}" Click="Cancelar" />
             <Button Content="Transferir" Style="{StaticResource BotaoPrimario}"
                     Margin="8,0,0,0" Padding="20,8" IsDefault="True" Click="Salvar" />
         </StackPanel>

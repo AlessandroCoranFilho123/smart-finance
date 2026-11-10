@@ -53,7 +53,7 @@
             <Button x:Name="BotaoExcluir" Content="Excluir" Style="{StaticResource BotaoExcluir}"
                     HorizontalAlignment="Left" Click="Excluir" Visibility="Collapsed" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Cancelar" Style="{StaticResource BotaoSecundario}" Click="Cancelar" />
+                <Button Content="Cancelar" IsCancel="True" Style="{StaticResource BotaoSecundario}" Click="Cancelar" />
                 <Button x:Name="BotaoSalvar" Content="Salvar" Style="{StaticResource BotaoPrimario}"
                         Margin="8,0,0,0" Padding="20,8" IsDefault="True" Click="Salvar" />
             </StackPanel>
