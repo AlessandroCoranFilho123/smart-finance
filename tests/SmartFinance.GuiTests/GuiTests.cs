@@ -49,9 +49,14 @@ public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable
             Processo = Process.Start(psi)!;
             Automation = new UIA3Automation();
 
+            // Não usar GetMainWindow: o host .NET cria uma janela oculta com o nome do
+            // exe, que pode ser retornada antes da janela real (falhou no CI). Espera
+            // explicitamente por uma janela de topo com o título do aplicativo.
             Janela = Retry.WhileNull(
-                    () => Application.Attach(Processo).GetMainWindow(Automation),
-                    TimeSpan.FromSeconds(20)).Result
+                    () => Application.Attach(Processo)
+                        .GetAllTopLevelWindows(Automation)
+                        .FirstOrDefault(w => w.Title == "Smart Finance"),
+                    TimeSpan.FromSeconds(40)).Result
                 ?? throw new InvalidOperationException("janela principal não apareceu");
             Janela.WaitUntilClickable(TimeSpan.FromSeconds(10));
         }
