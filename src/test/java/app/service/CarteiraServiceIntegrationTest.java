@@ -17,6 +17,7 @@ import java.time.YearMonth;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("CarteiraService - integração")
@@ -100,6 +101,127 @@ class CarteiraServiceIntegrationTest {
                 () -> assertEquals(200_00L, carteiraService.calcularSaldoCarteiraCentavos(CarteiraDAO.DINHEIRO_FISICO_ID)),
                 () -> assertEquals(1000_00L, carteiraService.calcularSaldoTotalCentavos()),
                 () -> assertTrue(transacaoDAO.listarTodas().isEmpty())
+        );
+    }
+
+    @Test
+    @DisplayName("saída comum não pode deixar carteira negativa")
+    void saidaComumNaoPodeDeixarCarteiraNegativa() {
+        prepararBanco("saida-negativa.db");
+        CarteiraService carteiraService = new CarteiraService();
+        TransacaoDAO transacaoDAO = new TransacaoDAO();
+        TransacaoService transacaoService = new TransacaoService(
+                transacaoDAO,
+                new MetaDAO(),
+                carteiraService
+        );
+
+        carteiraService.atualizarSaldoInicial(CarteiraDAO.DINHEIRO_FISICO_ID, 10_00L);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                transacaoService.registrar(
+                        TipoTransacao.Saida,
+                        Categoria.Alimentacao,
+                        20_00L,
+                        null,
+                        "mercado",
+                        LocalDate.now(),
+                        CarteiraDAO.DINHEIRO_FISICO_ID
+                ));
+
+        assertAll(
+                () -> assertEquals("Saldo insuficiente", exception.getMessage()),
+                () -> assertTrue(transacaoDAO.listarTodas().isEmpty()),
+                () -> assertEquals(10_00L, carteiraService.calcularSaldoCarteiraCentavos(CarteiraDAO.DINHEIRO_FISICO_ID))
+        );
+    }
+
+    @Test
+    @DisplayName("atualização não pode transformar saída em saldo negativo")
+    void atualizacaoNaoPodeTransformarSaidaEmSaldoNegativo() {
+        prepararBanco("atualizacao-saida-negativa.db");
+        CarteiraService carteiraService = new CarteiraService();
+        TransacaoDAO transacaoDAO = new TransacaoDAO();
+        TransacaoService transacaoService = new TransacaoService(
+                transacaoDAO,
+                new MetaDAO(),
+                carteiraService
+        );
+
+        carteiraService.atualizarSaldoInicial(CarteiraDAO.BANCO_ID, 100_00L);
+        transacaoService.registrar(
+                TipoTransacao.Saida,
+                Categoria.Aluguel,
+                20_00L,
+                null,
+                "original",
+                LocalDate.now(),
+                CarteiraDAO.BANCO_ID
+        );
+        var original = transacaoDAO.listarTodas().getFirst();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                transacaoService.atualizar(
+                        original.id(),
+                        TipoTransacao.Saida,
+                        Categoria.Aluguel,
+                        120_00L,
+                        null,
+                        "reajuste",
+                        LocalDate.now(),
+                        CarteiraDAO.BANCO_ID
+                ));
+
+        assertAll(
+                () -> assertEquals("Saldo insuficiente", exception.getMessage()),
+                () -> assertEquals(20_00L, transacaoDAO.buscarPorId(original.id()).valorCentavos()),
+                () -> assertEquals(80_00L, carteiraService.calcularSaldoCarteiraCentavos(CarteiraDAO.BANCO_ID))
+        );
+    }
+
+    @Test
+    @DisplayName("saldo inicial não pode deixar carteira negativa")
+    void saldoInicialNaoPodeDeixarCarteiraNegativa() {
+        prepararBanco("saldo-inicial-negativo.db");
+        CarteiraService carteiraService = new CarteiraService();
+        TransacaoService transacaoService = new TransacaoService(
+                new TransacaoDAO(),
+                new MetaDAO(),
+                carteiraService
+        );
+
+        carteiraService.atualizarSaldoInicial(CarteiraDAO.BANCO_ID, 100_00L);
+        transacaoService.registrar(
+                TipoTransacao.Saida,
+                Categoria.Aluguel,
+                80_00L,
+                null,
+                "aluguel",
+                LocalDate.now(),
+                CarteiraDAO.BANCO_ID
+        );
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                carteiraService.atualizarSaldoInicial(CarteiraDAO.BANCO_ID, 50_00L));
+
+        assertAll(
+                () -> assertEquals("Saldo inicial insuficiente para cobrir movimentações da carteira", exception.getMessage()),
+                () -> assertEquals(20_00L, carteiraService.calcularSaldoCarteiraCentavos(CarteiraDAO.BANCO_ID))
+        );
+    }
+
+    @Test
+    @DisplayName("saldo inicial negativo é recusado")
+    void saldoInicialNegativoEhRecusado() {
+        prepararBanco("saldo-inicial-menor-que-zero.db");
+        CarteiraService carteiraService = new CarteiraService();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                carteiraService.atualizarSaldoInicial(CarteiraDAO.BANCO_ID, -1L));
+
+        assertAll(
+                () -> assertEquals("Saldo inicial não pode ser negativo", exception.getMessage()),
+                () -> assertEquals(0L, carteiraService.calcularSaldoCarteiraCentavos(CarteiraDAO.BANCO_ID))
         );
     }
 

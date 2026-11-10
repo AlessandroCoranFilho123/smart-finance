@@ -3,6 +3,7 @@ package app.controller;
 import app.model.CompraCartaoCredito;
 import app.service.CartaoCreditoService;
 import app.util.FormatadorData;
+import app.util.ValorMonetario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -133,20 +134,11 @@ public class CartaoDialogController {
     }
 
     private long parseValorCentavos(String texto) {
-        if (texto == null || texto.trim().isEmpty()) return 0;
-        try {
-            String normalizado = texto.replace("R$", "").trim();
-            if (normalizado.contains(",")) {
-                normalizado = normalizado.replace(".", "").replace(",", ".");
-            }
-            return Math.round(Double.parseDouble(normalizado) * 100);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Valor invalido");
-        }
+        return ValorMonetario.parseCentavos(texto);
     }
 
     private String formatarValor(long centavos) {
-        return String.format("%.2f", centavos / 100.0);
+        return ValorMonetario.formatarCentavos(centavos);
     }
 
     private void mostrarErro(String mensagem) {

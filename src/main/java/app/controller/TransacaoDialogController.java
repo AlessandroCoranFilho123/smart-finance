@@ -11,6 +11,7 @@ import app.service.CarteiraService;
 import app.service.MetaService;
 import app.service.TransacaoService;
 import app.util.FormatadorData;
+import app.util.ValorMonetario;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -396,26 +397,11 @@ public class TransacaoDialogController {
     }
 
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
-        if (texto == null || texto.trim().isEmpty()) return 0;
-        try {
-            texto = texto.replace("R$", "").trim();
-
-            boolean temVirgulaDecimal = texto.contains(",");
-            if (temVirgulaDecimal) {
-                // padrão BR: ponto é milhar, vírgula é decimal
-                texto = texto.replace(".", "").replace(",", ".");
-            }
-            // sem vírgula: ponto já é decimal (ex: "10.50") ou não há separador (ex: "10")
-
-            double valor = Double.parseDouble(texto);
-            return Math.round(valor * 100);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Valor invalido");
-        }
+        return ValorMonetario.parseCentavos(texto);
     }
 
     private String formatarValor(long centavos) {
-        return String.format("%.2f", centavos / 100.0);
+        return ValorMonetario.formatarCentavos(centavos);
     }
 
     private void mostrarErro(String mensagem) {

@@ -71,6 +71,24 @@ public class CarteiraService {
     }
 
     public void atualizarSaldoInicial(UUID carteiraId, long saldoInicialCentavos) {
+        if (carteiraId == null) {
+            throw new IllegalArgumentException("Carteira é obrigatória");
+        }
+
+        if (saldoInicialCentavos < 0) {
+            throw new IllegalArgumentException("Saldo inicial não pode ser negativo");
+        }
+
+        Carteira carteira = carteiraDAO.buscarPorId(carteiraId);
+        if (carteira == null) {
+            throw new IllegalArgumentException("Carteira não encontrada");
+        }
+
+        long saldoSemInicial = calcularSaldoCarteiraCentavos(carteira.id()) - carteira.saldoInicialCentavos();
+        if (saldoInicialCentavos + saldoSemInicial < 0) {
+            throw new IllegalArgumentException("Saldo inicial insuficiente para cobrir movimentações da carteira");
+        }
+
         carteiraDAO.atualizarSaldoInicial(carteiraId, saldoInicialCentavos);
     }
 

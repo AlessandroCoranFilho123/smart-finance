@@ -3,6 +3,7 @@ package app.controller;
 import app.model.Carteira;
 import app.service.CarteiraService;
 import app.util.FormatadorData;
+import app.util.ValorMonetario;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -104,16 +105,7 @@ public class TransferenciaCarteiraDialogController {
     }
 
     private long parseValorCentavos(String texto) {
-        if (texto == null || texto.trim().isEmpty()) return 0;
-        try {
-            String normalizado = texto.replace("R$", "").trim();
-            if (normalizado.contains(",")) {
-                normalizado = normalizado.replace(".", "").replace(",", ".");
-            }
-            return Math.round(Double.parseDouble(normalizado) * 100);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Valor inválido");
-        }
+        return ValorMonetario.parseCentavos(texto);
     }
 
     private void mostrarErro(String mensagem) {

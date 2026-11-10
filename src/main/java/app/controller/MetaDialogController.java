@@ -2,6 +2,7 @@ package app.controller;
 
 import app.model.Meta;
 import app.service.MetaService;
+import app.util.ValorMonetario;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -184,30 +185,12 @@ public class MetaDialogController {
     }
 
     private long parseValorCentavos(String texto) throws IllegalArgumentException {
-        if (texto == null || texto.trim().isEmpty()) {
-            return 0;
-        }
-
-        try {
-            texto = texto.trim();
-
-            boolean temVirgulaDecimal = texto.contains(",");
-            if (temVirgulaDecimal) {
-                // padrão BR: ponto é milhar, vírgula é decimal
-                texto = texto.replace(".", "").replace(",", ".");
-            }
-            double valor = Double.parseDouble(texto);
-            return Math.round(valor * 100);
-
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Valor inválido");
-        }
+        return ValorMonetario.parseCentavos(texto);
     }
 
     // Converte os centavos para String formatada com duas casas decimais
     private String formatarValor(long centavos) {
-        double valor = centavos / 100.0;
-        return String.format("%.2f", valor);
+        return ValorMonetario.formatarCentavos(centavos);
     }
 
     // Atualiza os labels de valor atual, restante e porcentagem de progresso

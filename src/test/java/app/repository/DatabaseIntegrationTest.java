@@ -429,6 +429,8 @@ class DatabaseIntegrationTest {
         TransacaoDAO tDao = new TestTransacaoDAO();
         TransacaoService service = new TransacaoService(tDao, mDao);
         UUID id = UUID.randomUUID();
+        tDao.inserir(new Transacao(UUID.randomUUID(), "Salário", "",
+                1000_00L, TipoTransacao.Entrada, LocalDate.now(), null, Categoria.Salario));
         tDao.inserir(new Transacao(id, "Aluguel", "", 800_00L,
                 TipoTransacao.Saida, LocalDate.now(), null, Categoria.Aluguel));
         service.atualizar(id, TipoTransacao.Saida, Categoria.Aluguel, 900_00L, null, "reajuste", LocalDate.now());

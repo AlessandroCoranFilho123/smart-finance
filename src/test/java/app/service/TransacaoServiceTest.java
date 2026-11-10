@@ -119,12 +119,14 @@ class TransacaoServiceTest {
 
         @Test
         void registraSaida() {
+            tDAO.saldoFixo = 1200_00L;
             service.registrar(TipoTransacao.Saida, Categoria.Aluguel, 1200_00L, null, "", LocalDate.now());
             assertEquals(TipoTransacao.Saida, tDAO.db.values().iterator().next().tipo());
         }
 
         @Test
         void comentarioPassadoParaTransacao() {
+            tDAO.saldoFixo = 100_00L;
             service.registrar(TipoTransacao.Saida, Categoria.Alimentacao, 100_00L, null, "mercado", LocalDate.now());
             assertEquals("mercado", tDAO.db.values().iterator().next().comentario());
         }
@@ -228,6 +230,17 @@ class TransacaoServiceTest {
             assertEquals(1000_00L, meta.getAtualCentavos());
             assertEquals(200_00L, tDAO.db.values().iterator().next().valorCentavos());
         }
+
+        @Test
+        void validaSaldoPeloValorLimitadoAoRestanteDaMeta() {
+            Meta meta = new Meta(UUID.randomUUID(), "V", 1000_00L, 900_00L);
+            tDAO.saldoFixo = 100_00L;
+
+            service.registrar(TipoTransacao.Saida, Categoria.AdicionarMeta, 500_00L, meta, "", LocalDate.now());
+
+            assertEquals(1000_00L, meta.getAtualCentavos());
+            assertEquals(100_00L, tDAO.db.values().iterator().next().valorCentavos());
+        }
     }
 
     // ── registrar: RetirarMeta ───────────────────────────────────────────────
@@ -271,6 +284,7 @@ class TransacaoServiceTest {
             Transacao original = new Transacao(id, "Aluguel", "", 800_00L,
                     TipoTransacao.Saida, LocalDate.now(), null, Categoria.Aluguel);
             tDAO.db.put(id, original);
+            tDAO.saldoFixo = 900_00L;
 
             service.atualizar(id, TipoTransacao.Saida, Categoria.Aluguel, 900_00L, null, "reajuste", LocalDate.now());
 

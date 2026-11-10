@@ -65,13 +65,11 @@ public class TransacaoService {
 
         if (categoria == Categoria.AdicionarMeta) {
 
-            long saldo = calcularSaldoParaValidacao(carteiraId);
-            if (valorCentavos > saldo)
-                throw new IllegalArgumentException("Saldo insuficiente");
-
             long permitido = Math.min(valorCentavos, meta.restanteParaAlvo());
             if (permitido <= 0)
                 throw new IllegalArgumentException("Meta já alcançada");
+
+            validarSaldoSuficienteParaSaida(TipoTransacao.Saida, permitido, carteiraId);
 
             meta.adicionar(permitido);
             metaDAO.atualizar(meta);
@@ -115,6 +113,8 @@ public class TransacaoService {
             transacaoDAO.inserir(t);
             return;
         }
+
+        validarSaldoSuficienteParaSaida(tipo, valorCentavos, carteiraId);
 
         String nome = categoria.toString();
         Transacao t = new Transacao(
@@ -184,6 +184,8 @@ public class TransacaoService {
             Objects.requireNonNull(data, "data é obrigatória");
             if (valorCentavos <= 0)
                 throw new IllegalArgumentException("Valores devem ser positivos");
+
+            validarSaldoSuficienteParaSaida(tipo, valorCentavos, carteiraEfetiva);
 
             String nome = categoria.toString();
             Transacao atualizada = new Transacao(
@@ -273,6 +275,17 @@ public class TransacaoService {
 
     private UUID carteiraPadraoIdOuNull() {
         return carteiraService != null ? carteiraService.carteiraPadraoId() : null;
+    }
+
+    private void validarSaldoSuficienteParaSaida(TipoTransacao tipo, long valorCentavos, UUID carteiraId) {
+        if (tipo != TipoTransacao.Saida) {
+            return;
+        }
+
+        long saldo = calcularSaldoParaValidacao(carteiraId);
+        if (valorCentavos > saldo) {
+            throw new IllegalArgumentException("Saldo insuficiente");
+        }
     }
 
     private long calcularSaldoParaValidacao(UUID carteiraId) {
