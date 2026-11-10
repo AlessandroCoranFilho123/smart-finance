@@ -13,6 +13,8 @@ public partial class App : Application
 {
     public static Servicos? Servicos { get; private set; }
 
+    private const long LimiteLogBytes = 1_000_000;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -37,6 +39,11 @@ public partial class App : Application
 
         var db = new Database(Database.CaminhoPadrao());
         db.Initialize();
+        if (Environment.GetEnvironmentVariable("SMARTFINANCE_DB_PATH") is null)
+        {
+            // Em desenvolvimento/teste (banco isolado) não gera backup do usuário.
+            ExecutarBackupDiario(db);
+        }
 
         var transacaoRepo = new TransacaoRepository(db);
         var metaRepo = new MetaRepository(db);
@@ -60,18 +67,62 @@ public partial class App : Application
         RegistrarLog("startup ok");
     }
 
+    private static void ExecutarBackupDiario(Database db)
+    {
+        try
+        {
+            string pasta = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "SmartFinance", "backups");
+            var backup = new BackupService(db.CaminhoBanco, pasta);
+            string? criado = backup.ExecutarBackupDiario();
+            if (criado is not null)
+            {
+                RegistrarLog($"backup diário criado: {criado}");
+            }
+        }
+        catch (Exception ex)
+        {
+            RegistrarLog($"falha no backup diário (não bloqueia inicialização): {ex.Message}");
+        }
+    }
+
     internal static void RegistrarLog(string mensagem)
     {
         try
         {
-            string log = Path.Combine(
+            string pasta = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "SmartFinance", "erro.log");
+                "SmartFinance");
+            string log = Path.Combine(pasta, "erro.log");
+            RotacionarSeNecessario(log);
             File.AppendAllText(log, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {mensagem}\n");
         }
         catch
         {
             // diagnóstico best-effort
+        }
+    }
+
+    /// <summary>Mantém o log de erros pequeno: acima de ~1MB arquiva e conserva 2 gerações.</summary>
+    internal static void RotacionarSeNecessario(string caminhoLog)
+    {
+        var info = new FileInfo(caminhoLog);
+        if (!info.Exists || info.Length < LimiteLogBytes)
+        {
+            return;
+        }
+
+        string pasta = info.DirectoryName!;
+        string baseNome = Path.GetFileNameWithoutExtension(caminhoLog);
+        string arquivado = Path.Combine(pasta, $"{baseNome}-{DateTime.Now:yyyyMMdd-HHmmss}.log");
+        File.Move(caminhoLog, arquivado);
+
+        foreach (string antigo in Directory.GetFiles(pasta, $"{baseNome}-*.log")
+                     .OrderByDescending(File.GetLastWriteTime)
+                     .Skip(2))
+        {
+            File.Delete(antigo);
         }
     }
 

@@ -44,6 +44,7 @@ public partial class TransacaoDialog : Window
             BotaoSalvar.Content = "Salvar";
             BotaoExcluir.Visibility = Visibility.Collapsed;
             BotaoEntrada.IsChecked = true;
+            ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource).FirstOrDefault();
         }
         else
         {

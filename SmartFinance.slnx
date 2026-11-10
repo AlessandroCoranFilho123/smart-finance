@@ -4,5 +4,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/SmartFinance.Tests/SmartFinance.Tests.csproj" />
+    <Project Path="tests/SmartFinance.GuiTests/SmartFinance.GuiTests.csproj" />
   </Folder>
 </Solution>
