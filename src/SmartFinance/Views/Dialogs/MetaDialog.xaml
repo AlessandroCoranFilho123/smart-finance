@@ -1,0 +1,69 @@
+<Window x:Class="SmartFinance.Views.Dialogs.MetaDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Nova meta"
+        Width="500" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        FontFamily="Segoe UI Variable Display, Segoe UI">
+
+    <StackPanel Margin="24">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Width="40" Height="40" CornerRadius="10"
+                    Background="{DynamicResource BrushAccentSoft}" Padding="8">
+                <Image Source="Assets/icons/meta.png" Stretch="Uniform" />
+            </Border>
+            <TextBlock x:Name="TxtTitulo" Grid.Column="1" Text="Nova meta" Style="{StaticResource TituloView}"
+                       VerticalAlignment="Center" Margin="12,0,0,0" />
+        </Grid>
+
+        <TextBlock Text="Nome da meta" Style="{StaticResource RotuloForm}" Margin="0,18,0,4" />
+        <TextBox x:Name="CampoNome" />
+
+        <TextBlock Text="Valor alvo" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
+        <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" />
+
+        <StackPanel x:Name="BoxProgresso" Visibility="Collapsed">
+            <Grid Margin="0,18,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Valor atual" Style="{StaticResource TextoSecundario}" />
+                    <TextBlock x:Name="TxtAtual" Text="R$ 0,00" FontWeight="SemiBold" Margin="0,3,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Restante" Style="{StaticResource TextoSecundario}" />
+                    <TextBlock x:Name="TxtRestante" Text="R$ 0,00" FontWeight="SemiBold" Margin="0,3,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Progresso" Style="{StaticResource TextoSecundario}" />
+                    <TextBlock x:Name="TxtProgresso" Text="0%" FontWeight="Bold"
+                               Foreground="{DynamicResource BrushAccent}" Margin="0,3,0,0" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <TextBlock x:Name="TxtErro" Style="{StaticResource TextoErro}" Margin="2,14,0,0"
+                   Visibility="Collapsed" TextWrapping="Wrap" />
+
+        <Grid Margin="0,20,0,4">
+            <Button x:Name="BotaoExcluir" Content="Excluir" Style="{StaticResource BotaoExcluir}"
+                    HorizontalAlignment="Left" Click="Excluir" Visibility="Collapsed" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancelar" Style="{StaticResource BotaoSecundario}" Click="Cancelar" />
+                <Button x:Name="BotaoSalvar" Content="Salvar" Style="{StaticResource BotaoPrimario}"
+                        Margin="8,0,0,0" Padding="20,8" IsDefault="True" Click="Salvar" />
+            </StackPanel>
+        </Grid>
+
+    </StackPanel>
+</Window>

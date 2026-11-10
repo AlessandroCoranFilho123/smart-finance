@@ -1,0 +1,28 @@
+<UserControl x:Class="SmartFinance.Views.MetasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Metas" Style="{StaticResource TituloView}" />
+            <Button Grid.Column="1" Content="+ Nova meta" Style="{StaticResource BotaoPrimario}" Click="NovaMeta" />
+        </Grid>
+
+        <ListBox Grid.Row="1" x:Name="ListaMetas" Margin="0,16,0,0"
+                 MouseDoubleClick="EditarMeta" />
+
+        <TextBlock Grid.Row="2" Margin="4,10,4,0"
+                   Text="Duplo clique em uma meta para editar ou excluir"
+                   Style="{StaticResource TextoSecundario}" />
+    </Grid>
+</UserControl>

@@ -1,100 +1,88 @@
 # Smart Finance
 
-Smart Finance é um aplicativo desktop para controle financeiro pessoal, feito em JavaFX com persistência local em SQLite. O projeto foi desenvolvido para fins de estudo, explorando interface desktop, organização em camadas, acesso a banco de dados, exportação de dados, testes automatizados e primeiras práticas de segurança.
+Smart Finance é um aplicativo desktop **para Windows** de controle financeiro pessoal: transações, carteiras, metas, compras parceladas no cartão e empréstimos — com busca textual, filtros, exportação e tema claro/escuro.
+
+A versão 3.0 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão anterior era JavaFX e foi substituída por um aplicativo nativo mais leve: sem JVM, inicialização praticamente instantânea e distribuição em um único executável.
 
 ## Funcionalidades
 
-- Cadastro, edição e exclusão de transações.
-- Separação entre entradas e saídas.
-- Categorias financeiras com regras específicas para metas.
-- Comentários em transações.
-- Busca de transações por descrição, comentário, categoria, tipo e data.
-- Filtros por tipo, categoria e período.
-- Exportação de transações em `.csv` e `.txt`.
-- Criação e acompanhamento de metas financeiras.
-- Registro de compras parceladas no cartão de crédito, com valor mensal calculado e alerta de vencimento.
-- Anotações de empréstimos separadas entre "Emprestei pra alguém" e "Pedi emprestado".
-- Dashboard com saldo disponível, receitas do mês, despesas do mês, transações recentes e metas.
-- Interface com tema claro e escuro.
-- Persistência de dados em SQLite.
-- Otimizações de banco com índices e busca textual FTS5.
-- Base inicial de segurança com criptografia AES-GCM e chave fora do código/banco pelo Windows Credential Manager.
+- **Transações** — entradas e saídas com 13 categorias, comentário, data e carteira; edição e exclusão com duplo clique.
+- **Carteiras** — Banco e Dinheiro físico com saldo inicial editável e transferências entre elas, com validação de saldo.
+- **Metas** — acompanhamento de progresso com barra colorida; aplicar/resgatar dinheiro de uma meta gera transações automáticas, com limites ao restante e ao saldo disponível.
+- **Cartão de crédito** — compras parceladas com valor da parcela calculado e status de vencimento (verde / laranja / vermelho).
+- **Empréstimos** — registros separados entre "Emprestei pra alguém" e "Pedi emprestado", com totais por tipo.
+- **Dashboard** — saldo total, receitas e despesas do mês, saldos por carteira, transações recentes e metas.
+- **Busca e filtros** — busca textual sem acento com prefixo (FTS5) combinada com tipo, categoria e período.
+- **Exportação** — transações filtradas em `.csv` e `.txt`.
+- **Temas** — claro e escuro (segue o sistema por padrão), com persistência da escolha.
 
 ## Instalação
 
-Disponível somente para Windows.
+Disponível somente para Windows 10/11.
 
-Baixe o instalador `SmartFinance-2.1.0.exe` na área de releases do repositório:
-
-<div align="center">
+Baixe o `SmartFinance.exe` na área de releases do repositório e execute — não é necessário instalar nada (executável único, autocontido).
 
 [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/AlessandroCoranFilho123/smart-finance)
-</div>
-Depois, siga o assistente de instalação:
 
-<p align="center">
-  <img src="./src/main/resources/readme/instalacao-p1.png" width="800" alt="Primeira etapa da instalação">
-  <img src="./src/main/resources/readme/instalacao-p2.png" width="800" alt="Segunda etapa da instalação">
-  <img src="./src/main/resources/readme/instalacao-p3.png" width="800" alt="Terceira etapa da instalação">
-</p>
+> O antivirus pode pedir confirmação na primeira execução por se tratar de um executável novo. O primeiro início também extrai bibliotecas nativas para uma pasta temporária e é um pouco mais lento; nas próximas execuções a inicialização é praticamente imediata.
 
-## Interface
+## Dados
 
-<p align="center">
-<h6 align="center">Tela inicial</h6>
-  <img src="./src/main/resources/readme/tela-inicial.png" width="800" alt="Tela Inicial">
-  <h6 align="center">Tela de transações</h6>
-  <img src="./src/main/resources/readme/transacoes.png" width="800" alt="Tela de transações">
-  <h6 align="center">Tela de metas</h6>
-  <img src="./src/main/resources/readme/metas.png" width="800" alt="Tela de metas">
-  <h6 align="center">Janela de Nova Transação</h6>
-  <img src="./src/main/resources/readme/nova-transacao.png" width="800" alt="Janela de nova transação">
-  <h6 align="center">Janela de Nova Meta</h6>
-  <img src="./src/main/resources/readme/nova-meta.png" width="800" alt="Janela de nova meta">
-</p>
-
-## Dados e segurança
-
-O banco de dados é local. Em ambiente instalado, os dados ficam em:
+Os dados ficam em banco SQLite local:
 
 ```text
 %APPDATA%\SmartFinance\financas.db
 ```
 
-O projeto usa `PreparedStatement` nas operações de banco, `PRAGMA foreign_keys`, índices para consultas frequentes e FTS5 para busca textual. Compras no cartão e empréstimos ficam em tabelas próprias, sem transformar automaticamente esses registros em transações. Também há uma base de criptografia com AES-256-GCM e gerenciamento de chave pelo Windows Credential Manager.
+O schema é o mesmo da versão JavaFX: **quem já usava a versão 2.x mantém transações, metas, carteiras, compras no cartão e empréstimos sem migração manual**. O aplicativo aplica automaticamente as migrations incrementais em bancos antigos.
+
+Preferências de tema ficam em `%APPDATA%\SmartFinance\settings.json`.
+
+## Segurança
+
+O banco é um arquivo local protegido pelas permissões do seu perfil do Windows. A camada de banco usa `PRAGMA foreign_keys`, WAL, `secure_delete` e consultas parametrizadas. Detalhes e próximos passos em [docs/SECURITY.md](docs/SECURITY.md).
 
 ## Desenvolvimento
 
-Para executar o projeto em ambiente de desenvolvimento:
+Requisitos: [.NET SDK 10 ou superior](https://dotnet.microsoft.com/download) (o projeto foi desenvolvido com o SDK 11 RC, alvo `net10.0-windows`).
 
 ```bash
-mvn javafx:run
+# restaurar e rodar
+dotnet run --project src/SmartFinance
+
+# testes (xUnit)
+dotnet test tests/SmartFinance.Tests
+
+# publicar executável único autocontido (win-x64)
+dotnet publish src/SmartFinance -c Release -o dist
 ```
 
-Para rodar os testes:
+Para apontar o aplicativo para outro banco durante o desenvolvimento:
 
 ```bash
-mvn test
+SMARTFINANCE_DB_PATH=C:\caminho\para\teste.db dotnet run --project src/SmartFinance
 ```
 
-Para empacotar dependências usadas no instalador:
+## Estrutura
 
-```bash
-mvn package
+```
+src/SmartFinance/            aplicativo WPF
+├── Data/                    acesso ao SQLite (Database + repositórios)
+├── Models/                  registros de domínio e enums
+├── Services/                regras de negócio, parsing monetário e exportadores
+├── Themes/                  paletas clara/escura, estilos e templates
+├── Views/                   janela principal, visões e diálogos
+└── Assets/                  ícones
+tests/SmartFinance.Tests/    testes de negócio, dados e exportação
+docs/                        arquitetura e segurança
 ```
 
-## Tecnologias utilizadas
+## Tecnologias
 
-- Java 21
-- JavaFX 21.0.9
-- CSS
-- Maven
-- SQLite JDBC 3.45.3.0
-- JNA 5.14.0
-- JUnit 5.10.1
-- Mockito 5.8.0
-- jlink / jpackage
+- C# 14 / .NET 10 (WPF)
+- SQLite via Microsoft.Data.Sqlite (FTS5 para busca textual)
+- xUnit para testes
 
 ## Status do projeto
 
-Projeto acadêmico em evolução. A versão atual foca em controle de transações, metas, cartão de crédito, empréstimos, persistência local, melhorias visuais, exportação de dados, otimizações de banco e fundação inicial de segurança.
+Projeto acadêmico em evolução. A versão 3.0 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design.

@@ -1,23 +1,18 @@
-/target/
-/out/
-/dist/
-/installer/
+# Build outputs
+bin/
+obj/
+dist/
+out/
+publish/
 
-*.class
-*.jar
-*.exe
-*.msi
-
+# IDEs
 /.idea/
-/.ai/
+/.vs/
 /.vscode/
 *.iml
-docs/
+*.user
 
-.DS_Store
-Thumbs.db
-/financas.db
-/identifier.sqlite
+# Banco de dados local (dados do usuário — nunca versionar)
 *.db
 *.db-*
 *.sqlite
@@ -27,24 +22,16 @@ Thumbs.db
 *.mv.db
 *.wal
 *.shm
-*.log
-*.pid
-hs_err_pid*
-replay_pid*
-/data/
-/cache/
-/tmp/
-/temp/
-/runtime/
-/logs/
-/backup/
-/backups/
-/export/
-/exports/
+
+# Arquivos temporários e de log
 *.tmp
 *.temp
-*.bak
-*.backup
+*.log
+*.pid
+Thumbs.db
+.DS_Store
+
+# Segredos
 .env
 .env.*
 *.secret
@@ -54,6 +41,7 @@ replay_pid*
 *.pem
 *.p12
 *.pfx
-*.jks
-*.keystore
-*.kdbx
+
+# Locais do usuário (não versionar)
+/.ai/
+/installer/

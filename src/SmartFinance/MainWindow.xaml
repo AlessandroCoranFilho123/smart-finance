@@ -1,0 +1,93 @@
+<Window x:Class="SmartFinance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Smart Finance"
+        Width="1300" Height="800"
+        MinWidth="1080" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Icon="Assets/logo.ico"
+        Background="{DynamicResource BrushBg}"
+        FontFamily="Segoe UI Variable Display, Segoe UI">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="232" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Barra lateral -->
+        <Border Grid.Column="0"
+                Background="{DynamicResource BrushSidebar}"
+                BorderBrush="{DynamicResource BrushCardBorder}"
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="18,22,18,12">
+                    <Image Source="Assets/icons/logo.png" Height="52" HorizontalAlignment="Left" />
+                    <TextBlock Text="Smart Finance" FontSize="17" FontWeight="Bold" Margin="2,12,0,0" />
+                    <TextBlock Text="Finanças pessoais" Style="{StaticResource TextoSecundario}" Margin="2,2,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="14,8,14,0">
+                    <RadioButton x:Name="NavInicio" Style="{StaticResource BotaoNav}"
+                                 GroupName="navegacao" IsChecked="True" Checked="AoNavegar">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Assets/icons/inicio.png" Width="18" Height="18" Stretch="Uniform" />
+                            <TextBlock Text="Início" Margin="12,0,0,0" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton x:Name="NavTransacoes" Style="{StaticResource BotaoNav}"
+                                 GroupName="navegacao" Checked="AoNavegar" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Assets/icons/transacao.png" Width="18" Height="18" Stretch="Uniform" />
+                            <TextBlock Text="Transações" Margin="12,0,0,0" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton x:Name="NavMetas" Style="{StaticResource BotaoNav}"
+                                 GroupName="navegacao" Checked="AoNavegar" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Assets/icons/meta.png" Width="18" Height="18" Stretch="Uniform" />
+                            <TextBlock Text="Metas" Margin="12,0,0,0" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton x:Name="NavCartoes" Style="{StaticResource BotaoNav}"
+                                 GroupName="navegacao" Checked="AoNavegar" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Assets/icons/credito.png" Width="18" Height="18" Stretch="Uniform" />
+                            <TextBlock Text="Cartão" Margin="12,0,0,0" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton x:Name="NavEmprestimos" Style="{StaticResource BotaoNav}"
+                                 GroupName="navegacao" Checked="AoNavegar" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Assets/icons/emprestimo.png" Width="18" Height="18" Stretch="Uniform" />
+                            <TextBlock Text="Empréstimos" Margin="12,0,0,0" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Margin="14,0,14,18">
+                    <Button x:Name="BotaoTema" Click="AlternarTema"
+                            HorizontalContentAlignment="Left" Padding="14,11">
+                        <StackPanel Orientation="Horizontal">
+                            <Image x:Name="IconeTema" Width="18" Height="18" Stretch="Uniform" />
+                            <TextBlock x:Name="TextoTema" Text="Tema escuro" Margin="12,0,0,0" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Conteúdo -->
+        <ContentControl x:Name="AreaConteudo" Grid.Column="1" Margin="22,20,22,20" />
+    </Grid>
+</Window>

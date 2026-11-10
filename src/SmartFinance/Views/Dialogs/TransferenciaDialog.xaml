@@ -1,0 +1,62 @@
+<Window x:Class="SmartFinance.Views.Dialogs.TransferenciaDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Transferir entre carteiras"
+        Width="500" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        FontFamily="Segoe UI Variable Display, Segoe UI">
+
+    <StackPanel Margin="24">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Width="40" Height="40" CornerRadius="10"
+                    Background="{DynamicResource BrushAccentSoft}" Padding="8">
+                <Image Source="Assets/icons/transacao.png" Stretch="Uniform" />
+            </Border>
+            <TextBlock Grid.Column="1" Text="Transferir entre carteiras" Style="{StaticResource TituloView}"
+                       VerticalAlignment="Center" Margin="12,0,0,0" />
+        </Grid>
+
+        <Grid Margin="0,18,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Origem" Style="{StaticResource RotuloForm}" />
+                <ComboBox x:Name="ComboOrigem" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Destino" Style="{StaticResource RotuloForm}" />
+                <ComboBox x:Name="ComboDestino" />
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Text="Valor" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
+        <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" />
+
+        <TextBlock Text="Data" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
+        <DatePicker x:Name="CampoData" />
+
+        <TextBlock Text="Comentário" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
+        <TextBox x:Name="CampoComentario" Height="58" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" />
+
+        <TextBlock x:Name="TxtErro" Style="{StaticResource TextoErro}" Margin="2,14,0,0"
+                   Visibility="Collapsed" TextWrapping="Wrap" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,4">
+            <Button Content="Cancelar" Style="{StaticResource BotaoSecundario}" Click="Cancelar" />
+            <Button Content="Transferir" Style="{StaticResource BotaoPrimario}"
+                    Margin="8,0,0,0" Padding="20,8" IsDefault="True" Click="Salvar" />
+        </StackPanel>
+
+    </StackPanel>
+</Window>
