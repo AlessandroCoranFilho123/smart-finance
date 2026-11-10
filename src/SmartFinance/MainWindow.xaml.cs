@@ -18,6 +18,13 @@ public partial class MainWindow : Window
 
     private void AoNavegar(object sender, RoutedEventArgs e)
     {
+        if (AreaConteudo is null)
+        {
+            // IsChecked="True" do NavInicio dispara este evento durante o parsing
+            // do XAML, antes de AreaConteudo existir; o construtor já define o dashboard.
+            return;
+        }
+
         AreaConteudo.Content = sender switch
         {
             _ when sender == NavTransacoes => new TransacoesView(),

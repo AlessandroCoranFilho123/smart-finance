@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using SmartFinance.Data;
@@ -16,6 +17,8 @@ public partial class App : Application
 
         DispatcherUnhandledException += (_, args) =>
         {
+            RegistrarLog(args.Exception.ToString());
+
             MessageBox.Show(
                 $"Ocorreu um erro inesperado:\n{args.Exception.Message}",
                 "Smart Finance",
@@ -45,6 +48,23 @@ public partial class App : Application
         var janela = new MainWindow();
         MainWindow = janela;
         janela.Show();
+
+        RegistrarLog("startup ok");
+    }
+
+    internal static void RegistrarLog(string mensagem)
+    {
+        try
+        {
+            string log = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "SmartFinance", "erro.log");
+            File.AppendAllText(log, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {mensagem}\n");
+        }
+        catch
+        {
+            // diagnóstico best-effort
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
