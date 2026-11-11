@@ -16,23 +16,25 @@ public static class JanelaNativa
 
     public static void AoFonteInicializada(Window janela)
     {
-        janela.SourceInitialized += (_, _) => AplicarBarraEscura(janela);
+        janela.SourceInitialized += (_, _) => Aplicar(janela);
     }
 
-    public static void AplicarBarraEscura(Window janela)
+    /// <summary>Aplica (ou desliga) a barra de título escura conforme o tema ativo.
+    /// Chame de novo quando o tema mudar (SF-018).</summary>
+    public static void Aplicar(Window janela)
     {
         try
         {
-            if (!TemaManager.TemaEscuroAtivo)
+            var handle = new WindowInteropHelper(janela).Handle;
+            if (handle == IntPtr.Zero)
             {
                 return;
             }
 
-            var handle = new WindowInteropHelper(janela).Handle;
-            int ligado = 1;
-            if (DwmSetWindowAttribute(handle, DwmwaUseImmersiveDarkMode, ref ligado, sizeof(int)) != 0)
+            int modo = TemaManager.TemaEscuroAtivo ? 1 : 0;
+            if (DwmSetWindowAttribute(handle, DwmwaUseImmersiveDarkMode, ref modo, sizeof(int)) != 0)
             {
-                DwmSetWindowAttribute(handle, DwmwaUseImmersiveDarkModeAntigo, ref ligado, sizeof(int));
+                DwmSetWindowAttribute(handle, DwmwaUseImmersiveDarkModeAntigo, ref modo, sizeof(int));
             }
         }
         catch (DllNotFoundException)

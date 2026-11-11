@@ -21,7 +21,7 @@ public sealed class CarteiraRepository(Database db) : RepositoryBase(db)
     public Carteira? BuscarPorId(Guid id)
     {
         using var comando = Comando("SELECT id, nome, saldo_inicial_centavos FROM carteira WHERE id = $id");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         using var reader = comando.ExecuteReader();
         return reader.Read() ? new Carteira(reader.GetGuid(0), reader.GetString(1), reader.GetInt64(2)) : null;
     }
@@ -30,7 +30,7 @@ public sealed class CarteiraRepository(Database db) : RepositoryBase(db)
     {
         using var comando = Comando("UPDATE carteira SET saldo_inicial_centavos = $saldo WHERE id = $id");
         comando.Parameters.AddWithValue("$saldo", saldoInicialCentavos);
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         comando.ExecuteNonQuery();
     }
 
@@ -40,9 +40,9 @@ public sealed class CarteiraRepository(Database db) : RepositoryBase(db)
             INSERT INTO transferencia_carteira (id, origem_carteira_id, destino_carteira_id, valor_centavos, data, comentario)
             VALUES ($id, $origem, $destino, $valor, $data, $comentario)
             """);
-        comando.Parameters.AddWithValue("$id", transferencia.Id);
-        comando.Parameters.AddWithValue("$origem", transferencia.OrigemCarteiraId);
-        comando.Parameters.AddWithValue("$destino", transferencia.DestinoCarteiraId);
+        comando.Parameters.AddWithValue("$id", transferencia.Id.ToString());
+        comando.Parameters.AddWithValue("$origem", transferencia.OrigemCarteiraId.ToString());
+        comando.Parameters.AddWithValue("$destino", transferencia.DestinoCarteiraId.ToString());
         comando.Parameters.AddWithValue("$valor", transferencia.ValorCentavos);
         comando.Parameters.AddWithValue("$data", transferencia.Data);
         comando.Parameters.AddWithValue("$comentario", transferencia.Comentario ?? string.Empty);

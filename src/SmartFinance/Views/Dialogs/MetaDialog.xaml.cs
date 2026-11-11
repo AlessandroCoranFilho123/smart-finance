@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,8 +9,6 @@ namespace SmartFinance.Views.Dialogs;
 
 public partial class MetaDialog : Window
 {
-    private static readonly Regex PadraoValor = new("^[0-9.,]*$", RegexOptions.Compiled);
-
     private readonly Servicos _servicos = App.Servicos!;
     private Meta? _emEdicao;
 
@@ -70,10 +68,9 @@ public partial class MetaDialog : Window
             : "0%";
     }
 
-    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e)
-    {
-        e.Handled = !PadraoValor.IsMatch(e.Text);
-    }
+    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e) => MascaraValor.ValidarDigitos(sender, e);
+
+    private void FormatarAoSair(object sender, RoutedEventArgs e) => MascaraValor.FormatarAoSair((System.Windows.Controls.TextBox)sender);
 
     private void Salvar(object sender, RoutedEventArgs e)
     {
@@ -122,8 +119,15 @@ public partial class MetaDialog : Window
             return;
         }
 
-        _servicos.Metas.DeletarMeta(_emEdicao.Id);
-        DialogResult = true;
+        try
+        {
+            _servicos.Metas.DeletarMeta(_emEdicao.Id);
+            DialogResult = true;
+        }
+        catch (ArgumentException ex)
+        {
+            MostrarErro(ex.Message);
+        }
     }
 
     private void Cancelar(object sender, RoutedEventArgs e) => DialogResult = false;

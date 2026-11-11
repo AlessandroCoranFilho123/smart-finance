@@ -17,7 +17,7 @@
             </Grid.ColumnDefinitions>
             <Border Width="40" Height="40" CornerRadius="10"
                     Background="{DynamicResource BrushAccentSoft}" Padding="8">
-                <Image Source="Assets/icons/transacao.png" Stretch="Uniform" />
+                <Image Source="/Assets/icons/transacao.png" Stretch="Uniform" />
             </Border>
             <TextBlock Grid.Column="1" Text="Transferir entre carteiras" Style="{StaticResource TituloView}"
                        VerticalAlignment="Center" Margin="12,0,0,0" />
@@ -31,16 +31,16 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="Origem" Style="{StaticResource RotuloForm}" />
-                <ComboBox x:Name="ComboOrigem" />
+                <ComboBox x:Name="ComboOrigem" DisplayMemberPath="Nome" />
             </StackPanel>
             <StackPanel Grid.Column="2">
                 <TextBlock Text="Destino" Style="{StaticResource RotuloForm}" />
-                <ComboBox x:Name="ComboDestino" />
+                <ComboBox x:Name="ComboDestino" DisplayMemberPath="Nome" />
             </StackPanel>
         </Grid>
 
         <TextBlock Text="Valor" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-        <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" />
+        <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" LostFocus="FormatarAoSair" />
 
         <TextBlock Text="Data" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
         <DatePicker x:Name="CampoData" />

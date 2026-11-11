@@ -39,3 +39,7 @@ A versão JavaFX 2.x continha uma **fundação** de criptografia (AES-256-GCM co
 ## Backup
 
 Snapshot diário automático em `%APPDATA%\SmartFinance\backups` (API de backup online do SQLite, retenção de 7 cópias). O snapshot é consistente mesmo com o aplicativo aberto. Restauração manual: substituir `financas.db` por um snapshot com o aplicativo fechado.
+
+### Restauração e WAL (SF-032)
+
+O snapshot automático interno usa a API de backup online do SQLite e captura também o conteúdo do WAL — é o método recomendado. Se for copiar arquivos manualmente, **feche o aplicativo primeiro** e copie `financas.db`, `financas.db-wal` e `financas.db-shm` juntos; copiar apenas `financas.db` com o app aberto pode perder transações recentes.

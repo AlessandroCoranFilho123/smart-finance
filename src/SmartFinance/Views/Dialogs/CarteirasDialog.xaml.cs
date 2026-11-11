@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,8 +8,6 @@ namespace SmartFinance.Views.Dialogs;
 
 public partial class CarteirasDialog : Window
 {
-    private static readonly Regex PadraoValor = new("^[0-9.,]*$", RegexOptions.Compiled);
-
     private readonly Servicos _servicos = App.Servicos!;
 
     public CarteirasDialog()
@@ -28,10 +25,9 @@ public partial class CarteirasDialog : Window
         CampoDinheiro.Text = ((dinheiro?.SaldoInicialCentavos ?? 0) / 100m).ToString("N2", Formatacao.CulturaBr);
     }
 
-    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e)
-    {
-        e.Handled = !PadraoValor.IsMatch(e.Text);
-    }
+    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e) => MascaraValor.ValidarDigitos(sender, e);
+
+    private void FormatarAoSair(object sender, RoutedEventArgs e) => MascaraValor.FormatarAoSair((System.Windows.Controls.TextBox)sender);
 
     private void Salvar(object sender, RoutedEventArgs e)
     {

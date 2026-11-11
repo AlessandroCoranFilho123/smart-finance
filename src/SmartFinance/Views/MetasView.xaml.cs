@@ -26,7 +26,15 @@ public partial class MetasView : UserControl, IViewAtualizavel
 
     private void EditarMeta(object sender, MouseButtonEventArgs e)
     {
-        if (ListaMetas.SelectedItem is LinhaMeta linha)
+        if (InteracaoLista.ItemSobCursor<LinhaMeta>(e, out var linha))
+        {
+            AbrirDialogo(linha.Meta);
+        }
+    }
+
+    private void AoTeclarLista(object sender, KeyEventArgs e)
+    {
+        if (InteracaoLista.EnterNoSelecionado<LinhaMeta>(e, ListaMetas.SelectedItem, out var linha))
         {
             AbrirDialogo(linha.Meta);
         }

@@ -2,7 +2,7 @@
 ; Requisito: Inno Setup 6 (ISCC). Build: ISCC setup\SmartFinance.iss (a partir da raiz)
 
 #define NomeApp "Smart Finance"
-#define VersaoApp "3.1.0"
+#define VersaoApp "3.2.0"
 
 [Setup]
 AppId={{7E1B6C2A-9F4E-4C3B-8F2A-SMARTFINANCE31}

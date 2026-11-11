@@ -43,6 +43,17 @@ public static class TransacaoCsvExporter
         bool precisaAspas = conteudo.Contains(';') || conteudo.Contains('"')
             || conteudo.Contains('\n') || conteudo.Contains('\r');
 
-        return precisaAspas ? "\"" + conteudo.Replace("\"", "\"\"") + "\"" : conteudo;
+        if (precisaAspas)
+        {
+            return "\"" + conteudo.Replace("\"", "\"\"") + "\"";
+        }
+
+        // SF-020: impede que o Excel interprete o conteúdo como fórmula
+        if (conteudo.Length > 0 && "=+-@\t".Contains(conteudo[0]))
+        {
+            return "'" + conteudo;
+        }
+
+        return conteudo;
     }
 }

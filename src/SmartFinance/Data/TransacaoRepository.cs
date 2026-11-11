@@ -27,29 +27,29 @@ public sealed class TransacaoRepository(Database db) : RepositoryBase(db)
             VALUES ($id, $descricao, $comentario, $valor, $tipo, $data, $metaId, $categoria, $carteiraId)
             """);
 
-        comando.Parameters.AddWithValue("$id", transacao.Id);
+        comando.Parameters.AddWithValue("$id", transacao.Id.ToString());
         comando.Parameters.AddWithValue("$descricao", transacao.Descricao);
         comando.Parameters.AddWithValue("$comentario", transacao.Comentario ?? string.Empty);
         comando.Parameters.AddWithValue("$valor", transacao.ValorCentavos);
         comando.Parameters.AddWithValue("$tipo", transacao.Tipo.ToString());
         comando.Parameters.AddWithValue("$data", transacao.Data);
-        comando.Parameters.AddWithValue("$metaId", (object?)transacao.MetaId ?? DBNull.Value);
+        comando.Parameters.AddWithValue("$metaId", (object?)transacao.MetaId?.ToString() ?? DBNull.Value);
         comando.Parameters.AddWithValue("$categoria", (object?)transacao.Categoria?.ToString() ?? DBNull.Value);
-        comando.Parameters.AddWithValue("$carteiraId", (object?)transacao.CarteiraId ?? Database.CarteiraBancoId);
+        comando.Parameters.AddWithValue("$carteiraId", (object?)transacao.CarteiraId?.ToString() ?? Database.CarteiraBancoId.ToString());
         comando.ExecuteNonQuery();
     }
 
     public void Excluir(Guid id)
     {
         using var comando = Comando("DELETE FROM transacao WHERE id = $id");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         comando.ExecuteNonQuery();
     }
 
     public Transacao? BuscarPorId(Guid id)
     {
         using var comando = ComandoSelecaoTransacoes(Db, "WHERE id = $id", "LIMIT 1");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         using var reader = comando.ExecuteReader();
         return reader.Read() ? LerTransacao(reader) : null;
     }
@@ -137,14 +137,20 @@ public sealed class TransacaoRepository(Database db) : RepositoryBase(db)
             FROM transacao
             WHERE COALESCE(carteira_id, '00000000-0000-0000-0000-000000000001') = $carteiraId
             """);
-        comando.Parameters.AddWithValue("$carteiraId", carteiraEfetiva);
+        comando.Parameters.AddWithValue("$carteiraId", carteiraEfetiva.ToString());
         return (long)(comando.ExecuteScalar() ?? 0L);
     }
 
     public long CalcularTotalPorTipoEMes(TipoTransacao tipo, DateOnly primeiroDiaDoMes)
     {
+        // Movimentos de meta (aplicar/resgatar) não entram nos totais do mês:
+        // não são renda nem consumo, apenas mudam dinheiro de lugar (decisão D-02).
         DateOnly fim = primeiroDiaDoMes.AddMonths(1);
-        using var comando = Comando("SELECT SUM(valor_centavos) FROM transacao WHERE tipo = $tipo AND data >= $inicio AND data < $fim");
+        using var comando = Comando("""
+            SELECT SUM(valor_centavos) FROM transacao
+            WHERE tipo = $tipo AND data >= $inicio AND data < $fim
+              AND (categoria IS NULL OR categoria NOT IN ('AdicionarMeta', 'RetirarMeta'))
+            """);
         comando.Parameters.AddWithValue("$tipo", tipo.ToString());
         comando.Parameters.AddWithValue("$inicio", primeiroDiaDoMes);
         comando.Parameters.AddWithValue("$fim", fim);

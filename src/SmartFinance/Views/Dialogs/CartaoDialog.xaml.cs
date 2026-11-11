@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,8 +8,6 @@ namespace SmartFinance.Views.Dialogs;
 
 public partial class CartaoDialog : Window
 {
-    private static readonly Regex PadraoValor = new("^[0-9.,]*$", RegexOptions.Compiled);
-
     private readonly Servicos _servicos = App.Servicos!;
     private CompraCartaoCredito? _emEdicao;
 
@@ -40,10 +37,9 @@ public partial class CartaoDialog : Window
         BotaoExcluir.Visibility = Visibility.Visible;
     }
 
-    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e)
-    {
-        e.Handled = !PadraoValor.IsMatch(e.Text);
-    }
+    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e) => MascaraValor.ValidarDigitos(sender, e);
+
+    private void FormatarAoSair(object sender, RoutedEventArgs e) => MascaraValor.FormatarAoSair((System.Windows.Controls.TextBox)sender);
 
     private void Salvar(object sender, RoutedEventArgs e)
     {

@@ -101,7 +101,7 @@
 
         <!-- Lista -->
         <TextBlock Grid.Row="2" Text="Histórico" Style="{StaticResource TituloSecao}" Margin="2,16,0,8" />
-        <ListBox Grid.Row="3" x:Name="ListaTransacoes" MouseDoubleClick="EditarTransacao" />
+        <ListBox Grid.Row="3" x:Name="ListaTransacoes" MouseDoubleClick="EditarTransacao" KeyDown="AoTeclarLista" />
 
         <!-- Rodapé -->
         <Grid Grid.Row="4" Margin="4,10,4,0">

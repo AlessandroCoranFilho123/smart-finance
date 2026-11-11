@@ -59,4 +59,19 @@ public class ExporterTests
         string conteudo = TransacaoTxtExporter.Formatar(new List<Transacao>());
         Assert.Contains("Nenhuma transação encontrada.", conteudo);
     }
+
+    [Fact]
+    public void Csv_InjecaoDeFormula_EhSanitizada()
+    {
+        var transacoes = new List<Transacao>
+        {
+            new(Guid.NewGuid(), "X", "=1+1", 100, TipoTransacao.Saida, Data, null, Categoria.Outros),
+            new(Guid.NewGuid(), "+cmd", "", 100, TipoTransacao.Saida, Data, null, Categoria.Outros),
+        };
+
+        string conteudo = TransacaoCsvExporter.Formatar(transacoes);
+
+        Assert.Contains("'=1+1", conteudo);
+        Assert.Contains("'+cmd", conteudo);
+    }
 }

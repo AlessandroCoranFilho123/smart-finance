@@ -93,7 +93,7 @@
 
                         <ListBox x:Name="ListaTransacoes" Grid.Row="1" Margin="0,10,0,0"
                                  MinHeight="260" MaxHeight="440"
-                                 MouseDoubleClick="EditarTransacao" />
+                                 MouseDoubleClick="EditarTransacao" KeyDown="AoTeclarLista" />
                     </Grid>
                 </Border>
 
@@ -117,7 +117,7 @@
 
                         <ListBox x:Name="ListaMetas" Grid.Row="1" Margin="0,10,0,0"
                                  MinHeight="260" MaxHeight="440"
-                                 MouseDoubleClick="EditarMeta" />
+                                 MouseDoubleClick="EditarMeta" KeyDown="AoTeclarListaMeta" />
                     </Grid>
                 </Border>
             </Grid>

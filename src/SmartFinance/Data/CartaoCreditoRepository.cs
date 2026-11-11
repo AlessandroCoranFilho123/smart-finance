@@ -11,7 +11,7 @@ public sealed class CartaoCreditoRepository(Database db) : RepositoryBase(db)
             INSERT INTO compra_cartao_credito (id, nome, valor_total_centavos, parcelas, vencimento)
             VALUES ($id, $nome, $valorTotal, $parcelas, $vencimento)
             """);
-        comando.Parameters.AddWithValue("$id", compra.Id);
+        comando.Parameters.AddWithValue("$id", compra.Id.ToString());
         comando.Parameters.AddWithValue("$nome", compra.Nome);
         comando.Parameters.AddWithValue("$valorTotal", compra.ValorTotalCentavos);
         comando.Parameters.AddWithValue("$parcelas", compra.Parcelas);
@@ -30,14 +30,14 @@ public sealed class CartaoCreditoRepository(Database db) : RepositoryBase(db)
         comando.Parameters.AddWithValue("$valorTotal", compra.ValorTotalCentavos);
         comando.Parameters.AddWithValue("$parcelas", compra.Parcelas);
         comando.Parameters.AddWithValue("$vencimento", compra.Vencimento);
-        comando.Parameters.AddWithValue("$id", compra.Id);
+        comando.Parameters.AddWithValue("$id", compra.Id.ToString());
         comando.ExecuteNonQuery();
     }
 
     public void Deletar(Guid id)
     {
         using var comando = Comando("DELETE FROM compra_cartao_credito WHERE id = $id");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         comando.ExecuteNonQuery();
     }
 

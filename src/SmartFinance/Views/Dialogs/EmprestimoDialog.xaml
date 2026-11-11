@@ -17,7 +17,7 @@
             </Grid.ColumnDefinitions>
             <Border Width="40" Height="40" CornerRadius="10"
                     Background="{DynamicResource BrushAccentSoft}" Padding="8">
-                <Image Source="Assets/icons/emprestimo.png" Stretch="Uniform" />
+                <Image Source="/Assets/icons/emprestimo.png" Stretch="Uniform" />
             </Border>
             <TextBlock x:Name="TxtTitulo" Grid.Column="1" Text="Novo empréstimo" Style="{StaticResource TituloView}"
                        VerticalAlignment="Center" Margin="12,0,0,0" />
@@ -31,17 +31,17 @@
             </Grid.ColumnDefinitions>
             <ToggleButton x:Name="BotaoEmprestei" Style="{StaticResource BotaoAlternar}"
                           Tag="{DynamicResource BrushEntrada}"
-                          Content="Emprestei" Checked="AoMudarTipo" />
+                          Content="Emprestei" Checked="AoMudarTipo" Unchecked="AoMudarTipo" />
             <ToggleButton x:Name="BotaoPedi" Grid.Column="2" Style="{StaticResource BotaoAlternar}"
                           Tag="{DynamicResource BrushAviso}"
-                          Content="Pedi emprestado" Checked="AoMudarTipo" />
+                          Content="Pedi emprestado" Checked="AoMudarTipo" Unchecked="AoMudarTipo" />
         </Grid>
 
         <TextBlock Text="Nome" Style="{StaticResource RotuloForm}" Margin="0,16,0,4" />
         <TextBox x:Name="CampoNome" />
 
         <TextBlock Text="Valor" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-        <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" />
+        <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" LostFocus="FormatarAoSair" />
 
         <TextBlock Text="Data de pagamento" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
         <DatePicker x:Name="CampoData" />

@@ -8,7 +8,7 @@ public sealed class MetaRepository(Database db) : RepositoryBase(db)
     public void Inserir(Meta meta)
     {
         using var comando = Comando("INSERT INTO meta (id, nome, alvo_centavos, atual_centavos) VALUES ($id, $nome, $alvo, $atual)");
-        comando.Parameters.AddWithValue("$id", meta.Id);
+        comando.Parameters.AddWithValue("$id", meta.Id.ToString());
         comando.Parameters.AddWithValue("$nome", meta.Nome);
         comando.Parameters.AddWithValue("$alvo", (object?)meta.AlvoCentavos ?? DBNull.Value);
         comando.Parameters.AddWithValue("$atual", meta.AtualCentavos);
@@ -21,21 +21,21 @@ public sealed class MetaRepository(Database db) : RepositoryBase(db)
         comando.Parameters.AddWithValue("$nome", meta.Nome);
         comando.Parameters.AddWithValue("$alvo", (object?)meta.AlvoCentavos ?? DBNull.Value);
         comando.Parameters.AddWithValue("$atual", meta.AtualCentavos);
-        comando.Parameters.AddWithValue("$id", meta.Id);
+        comando.Parameters.AddWithValue("$id", meta.Id.ToString());
         comando.ExecuteNonQuery();
     }
 
     public void Deletar(Guid id)
     {
         using var comando = Comando("DELETE FROM meta WHERE id = $id");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         comando.ExecuteNonQuery();
     }
 
     public Meta? BuscarPorId(Guid id)
     {
         using var comando = Comando("SELECT id, nome, alvo_centavos, atual_centavos FROM meta WHERE id = $id");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         using var reader = comando.ExecuteReader();
         return reader.Read() ? LerMeta(reader) : null;
     }

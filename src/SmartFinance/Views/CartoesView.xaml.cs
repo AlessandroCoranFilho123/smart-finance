@@ -9,7 +9,7 @@ namespace SmartFinance.Views;
 public partial class CartoesView : UserControl, IViewAtualizavel
 {
     private readonly Servicos _servicos = App.Servicos!;
-    private static readonly DateOnly Hoje = DateOnly.FromDateTime(DateTime.Today);
+    
 
     public CartoesView()
     {
@@ -21,11 +21,12 @@ public partial class CartoesView : UserControl, IViewAtualizavel
     {
         TxtAberto.Text = Formatacao.Moeda(_servicos.Cartao.CalcularTotalAbertoCentavos());
         TxtParcelasMes.Text = Formatacao.Moeda(_servicos.Cartao.CalcularTotalParcelasMesCentavos());
-        long vencendo = _servicos.Cartao.ContarVencendoEmAte(7, Hoje);
+        var hoje = DateOnly.FromDateTime(DateTime.Today); // SF-016: data calculada a cada atualização
+        long vencendo = _servicos.Cartao.ContarVencendoEmAte(7, hoje);
         TxtVencendo.Text = $"{vencendo} compra(s)";
 
         ListaCompras.ItemsSource = _servicos.Cartao.ListarTodas()
-            .Select(c => new LinhaCompra(c))
+            .Select(c => new LinhaCompra(c, hoje))
             .ToList();
     }
 
@@ -33,7 +34,15 @@ public partial class CartoesView : UserControl, IViewAtualizavel
 
     private void EditarCompra(object sender, MouseButtonEventArgs e)
     {
-        if (ListaCompras.SelectedItem is LinhaCompra linha)
+        if (InteracaoLista.ItemSobCursor<LinhaCompra>(e, out var linha))
+        {
+            AbrirDialogo(linha.Compra);
+        }
+    }
+
+    private void AoTeclarLista(object sender, KeyEventArgs e)
+    {
+        if (InteracaoLista.EnterNoSelecionado<LinhaCompra>(e, ListaCompras.SelectedItem, out var linha))
         {
             AbrirDialogo(linha.Compra);
         }

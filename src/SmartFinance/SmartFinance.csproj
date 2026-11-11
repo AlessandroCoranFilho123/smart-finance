@@ -10,10 +10,9 @@
     <AssemblyName>SmartFinance</AssemblyName>
     <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
     <Authors>Alessandro Coran Filho</Authors>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <NoWarn>$(NoWarn);CS8602</NoWarn>
 
     <!-- Publicação via linha de comando (ver README): dotnet publish com
          -r win-x64, -self-contained true, PublishSingleFile, PublishReadyToRun

@@ -35,7 +35,16 @@ public partial class EmprestimosView : UserControl, IViewAtualizavel
     private void EditarSelecionado(object sender, MouseButtonEventArgs e)
     {
         var origem = (ListBox)sender;
-        if (origem.SelectedItem is LinhaEmprestimo linha)
+        if (InteracaoLista.ItemSobCursor<LinhaEmprestimo>(e, out var linha))
+        {
+            AbrirDialogo(linha.Emprestimo);
+        }
+    }
+
+    private void AoTeclarLista(object sender, KeyEventArgs e)
+    {
+        var origem = (ListBox)sender;
+        if (InteracaoLista.EnterNoSelecionado<LinhaEmprestimo>(e, origem.SelectedItem, out var linha))
         {
             AbrirDialogo(linha.Emprestimo);
         }

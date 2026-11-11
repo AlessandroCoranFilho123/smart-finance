@@ -25,8 +25,4 @@ public static class Formatacao
         return data.ToString(PadraoData, CulturaBr);
     }
 
-    public static bool TryParseData(string? texto, out DateOnly data)
-    {
-        return DateOnly.TryParseExact(texto?.Trim(), PadraoData, CulturaBr, DateTimeStyles.None, out data);
-    }
 }

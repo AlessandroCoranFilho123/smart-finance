@@ -110,9 +110,9 @@ public static class TemaManager
                 }));
             File.WriteAllText(CaminhoConfig, texto);
         }
-        catch (IOException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // Falha ao salvar preferência não deve interromper o aplicativo.
+            // Falha ao salvar preferência não deve interromper o aplicativo (SF-021).
         }
     }
 

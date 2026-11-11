@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -95,7 +94,15 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
 
     private void EditarTransacao(object sender, MouseButtonEventArgs e)
     {
-        if (ListaTransacoes.SelectedItem is LinhaTransacao linha)
+        if (InteracaoLista.ItemSobCursor<LinhaTransacao>(e, out var linha))
+        {
+            AbrirDialogo(linha.Transacao);
+        }
+    }
+
+    private void AoTeclarLista(object sender, KeyEventArgs e)
+    {
+        if (InteracaoLista.EnterNoSelecionado<LinhaTransacao>(e, ListaTransacoes.SelectedItem, out var linha))
         {
             AbrirDialogo(linha.Transacao);
         }
@@ -131,7 +138,7 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
             MessageBox.Show("Transações exportadas com sucesso.", "Exportação",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        catch (IOException ex)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             MessageBox.Show($"Não foi possível salvar o arquivo:\n{ex.Message}", "Exportação",
                 MessageBoxButton.OK, MessageBoxImage.Error);
@@ -158,7 +165,7 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
             MessageBox.Show("Transações exportadas com sucesso.", "Exportação",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        catch (IOException ex)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             MessageBox.Show($"Não foi possível salvar o arquivo:\n{ex.Message}", "Exportação",
                 MessageBoxButton.OK, MessageBoxImage.Error);

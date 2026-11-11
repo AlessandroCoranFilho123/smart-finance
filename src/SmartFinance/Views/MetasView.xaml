@@ -19,7 +19,7 @@
         </Grid>
 
         <ListBox Grid.Row="1" x:Name="ListaMetas" Margin="0,16,0,0"
-                 MouseDoubleClick="EditarMeta" />
+                 MouseDoubleClick="EditarMeta" KeyDown="AoTeclarLista" />
 
         <TextBlock Grid.Row="2" Margin="4,10,4,0"
                    Text="Duplo clique em uma meta para editar ou excluir"

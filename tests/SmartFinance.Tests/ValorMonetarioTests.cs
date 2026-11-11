@@ -9,15 +9,29 @@ public class ValorMonetarioTests
     [InlineData("10,50", 1050)]
     [InlineData("10", 1000)]
     [InlineData("10.50", 1050)]
+    [InlineData("10,5", 1050)]
     [InlineData("R$ 1.234,56", 123456)]
     [InlineData("R$1.234,56", 123456)]
     [InlineData("0,05", 5)]
     [InlineData("1.005", 100500)]
+    [InlineData("1.234.567", 123456700)]
     [InlineData(" 2,00 ", 200)]
-    [InlineData("1,005", 101)]
     public void ParseCentavos_ConverteValoresBr(string texto, long esperado)
     {
         Assert.Equal(esperado, ValorMonetario.ParseCentavos(texto));
+    }
+
+    [Theory]
+    [InlineData("1,234.56")]
+    [InlineData("1.2.3,4")]
+    [InlineData("1,005")]
+    [InlineData("0.500")]
+    [InlineData("10,123")]
+    [InlineData("99999999999999999999")]
+    public void ParseCentavos_EntradasAmbiguasOuEstouro_SaoRecusadas(string texto)
+    {
+        // D-03: valor errado gravado em silêncio é pior que recusar; teto de long (T-014).
+        Assert.Throws<ArgumentException>(() => ValorMonetario.ParseCentavos(texto));
     }
 
     [Theory]

@@ -35,7 +35,7 @@
                     <TextBlock Text="Emprestei pra alguém" Style="{StaticResource TituloSecao}" />
                     <TextBlock Grid.Row="1" x:Name="TxtEmprestei" Text="R$ 0,00" FontSize="18" FontWeight="Bold"
                                Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6" />
-                    <ListBox Grid.Row="2" x:Name="ListaEmprestei" MouseDoubleClick="EditarSelecionado" MinHeight="180" />
+                    <ListBox Grid.Row="2" x:Name="ListaEmprestei" MouseDoubleClick="EditarSelecionado" KeyDown="AoTeclarLista" MinHeight="180" />
                 </Grid>
             </Border>
 
@@ -50,7 +50,7 @@
                     <TextBlock Text="Pedi emprestado" Style="{StaticResource TituloSecao}" />
                     <TextBlock Grid.Row="1" x:Name="TxtPedi" Text="R$ 0,00" FontSize="18" FontWeight="Bold"
                                Foreground="{DynamicResource BrushAviso}" Margin="0,4,0,6" />
-                    <ListBox Grid.Row="2" x:Name="ListaPedi" MouseDoubleClick="EditarSelecionado" MinHeight="180" />
+                    <ListBox Grid.Row="2" x:Name="ListaPedi" MouseDoubleClick="EditarSelecionado" KeyDown="AoTeclarLista" MinHeight="180" />
                 </Grid>
             </Border>
         </Grid>

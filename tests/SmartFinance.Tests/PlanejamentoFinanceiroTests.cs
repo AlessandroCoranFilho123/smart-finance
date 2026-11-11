@@ -42,7 +42,7 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     }
 
     [Fact]
-    public void ValorParcela_ArredondaParaCima()
+    public void ValorParcela_UsaArredondamentoPadrao() // SF-026: nome antigo descrevia o oposto
     {
         var compra = new CompraCartaoCredito(Guid.NewGuid(), "X", 100_00, 3, Hoje);
         Assert.Equal(33_33, compra.ValorParcelaCentavos);
@@ -151,17 +151,34 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     }
 
     [Fact]
-    public void Metas_Excluir_RevinculaTransacoesParaNulo()
+    public void Metas_Excluir_SemValorAcumulado_RevinculaTransacoesParaNulo()
     {
         _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 1000_00);
         _app.Metas.CriarMeta("Viagem", 500_00);
         var meta = _app.Metas.ListarTodasMetas().Single();
-        _app.Transacoes.Registrar(TipoTransacao.Saida, Categoria.AdicionarMeta, 100_00, meta, "", Hoje);
+        // transação vinculada sem acumulado na meta (referência direta via repositório)
+        _app.TransacaoRepo.Inserir(new Transacao(
+            Guid.NewGuid(), "Histórico", "", 100_00, TipoTransacao.Saida, Hoje, meta.Id, Categoria.Outros));
 
         _app.Metas.DeletarMeta(meta.Id);
 
         var transacao = _app.TransacaoRepo.ListarTodas().Single();
         Assert.Null(transacao.MetaId);
+    }
+
+    [Fact]
+    public void Metas_Excluir_ComValorAcumulado_EhBloqueado()
+    {
+        // D-01: dinheiro aplicado não pode desaparecer com a meta
+        _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 1000_00);
+        _app.Metas.CriarMeta("Viagem", 500_00);
+        var meta = _app.Metas.ListarTodasMetas().Single();
+        _app.Transacoes.Registrar(TipoTransacao.Saida, Categoria.AdicionarMeta, 100_00, meta, "", Hoje);
+
+        var excecao = Assert.Throws<ArgumentException>(() => _app.Metas.DeletarMeta(meta.Id));
+
+        Assert.Contains("acumulados", excecao.Message);
+        Assert.NotNull(_app.MetaRepo.BuscarPorId(meta.Id));
     }
 
     public void Dispose() => _app.Dispose();

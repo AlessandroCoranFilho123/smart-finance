@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -48,7 +47,15 @@ public partial class DashboardView : UserControl, IViewAtualizavel
 
     private void EditarTransacao(object sender, MouseButtonEventArgs e)
     {
-        if (ListaTransacoes.SelectedItem is LinhaTransacao linha)
+        if (InteracaoLista.ItemSobCursor<LinhaTransacao>(e, out var linha))
+        {
+            AbrirDialogTransacao(linha.Transacao);
+        }
+    }
+
+    private void AoTeclarLista(object sender, KeyEventArgs e)
+    {
+        if (InteracaoLista.EnterNoSelecionado<LinhaTransacao>(e, ListaTransacoes.SelectedItem, out var linha))
         {
             AbrirDialogTransacao(linha.Transacao);
         }
@@ -68,7 +75,15 @@ public partial class DashboardView : UserControl, IViewAtualizavel
 
     private void EditarMeta(object sender, MouseButtonEventArgs e)
     {
-        if (ListaMetas.SelectedItem is LinhaMeta linha)
+        if (InteracaoLista.ItemSobCursor<LinhaMeta>(e, out var linha))
+        {
+            AbrirDialogMeta(linha.Meta);
+        }
+    }
+
+    private void AoTeclarListaMeta(object sender, KeyEventArgs e)
+    {
+        if (InteracaoLista.EnterNoSelecionado<LinhaMeta>(e, ListaMetas.SelectedItem, out var linha))
         {
             AbrirDialogMeta(linha.Meta);
         }

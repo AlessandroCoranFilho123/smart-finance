@@ -6,7 +6,6 @@
     <sys:Double x:Key="FonteNormal">13</sys:Double>
     <sys:Double x:Key="FontePequena">12</sys:Double>
     <sys:Double x:Key="FonteTitulo">20</sys:Double>
-    <sys:Double x:Key="FonteSaldo">34</sys:Double>
 
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}" />
@@ -162,6 +161,12 @@
     </Style>
 
     <!-- Navegação da barra lateral -->
+    <!-- SF-025: o estilo implícito de TextBlock fixa Foreground e vence a herança;
+         este estilo rebinda ao Foreground do RadioButton (muda no IsChecked). -->
+    <Style x:Key="TextoNav" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" />
+    </Style>
+
     <Style x:Key="BotaoNav" TargetType="RadioButton">
         <Setter Property="Foreground" Value="{DynamicResource BrushTextSecondary}" />
         <Setter Property="FontSize" Value="14" />

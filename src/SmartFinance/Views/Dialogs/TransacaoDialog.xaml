@@ -18,7 +18,7 @@
             </Grid.ColumnDefinitions>
             <Border Width="40" Height="40" CornerRadius="10"
                     Background="{DynamicResource BrushAccentSoft}" Padding="8">
-                <Image Source="Assets/icons/transacao.png" Stretch="Uniform" />
+                <Image Source="/Assets/icons/transacao.png" Stretch="Uniform" />
             </Border>
             <TextBlock x:Name="TxtTitulo" Grid.Column="1" Text="Nova transação" Style="{StaticResource TituloView}"
                        VerticalAlignment="Center" Margin="12,0,0,0" />
@@ -32,10 +32,10 @@
             </Grid.ColumnDefinitions>
             <ToggleButton x:Name="BotaoEntrada" Style="{StaticResource BotaoAlternar}"
                           Tag="{DynamicResource BrushEntrada}"
-                          Content="Entrada" Checked="AoMudarTipo" />
+                          Content="Entrada" Checked="AoMudarTipo" Unchecked="AoMudarTipo" />
             <ToggleButton x:Name="BotaoSaida" Grid.Column="2" Style="{StaticResource BotaoAlternar}"
                           Tag="{DynamicResource BrushSaida}"
-                          Content="Saída" Checked="AoMudarTipo" />
+                          Content="Saída" Checked="AoMudarTipo" Unchecked="AoMudarTipo" />
         </Grid>
 
         <TextBlock Text="Valor" Style="{StaticResource RotuloForm}" Margin="0,16,0,4" />
@@ -48,11 +48,11 @@
         <ComboBox x:Name="ComboCategoria" SelectionChanged="AoMudarCategoria" />
 
         <TextBlock Text="Carteira" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-        <ComboBox x:Name="ComboCarteira" />
+        <ComboBox x:Name="ComboCarteira" DisplayMemberPath="Nome" />
 
         <StackPanel x:Name="BoxMeta" Visibility="Collapsed">
             <TextBlock Text="Meta" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-            <ComboBox x:Name="ComboMeta" SelectionChanged="AoMudarMeta" />
+            <ComboBox x:Name="ComboMeta" SelectionChanged="AoMudarMeta" DisplayMemberPath="Nome" />
             <TextBlock x:Name="TxtInfoMeta" Style="{StaticResource TextoSecundario}" Margin="2,6,0,0" />
         </StackPanel>
 

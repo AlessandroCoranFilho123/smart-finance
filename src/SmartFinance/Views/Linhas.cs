@@ -63,20 +63,20 @@ public sealed class LinhaMeta
 
 public sealed class LinhaCompra
 {
-    public LinhaCompra(Models.CompraCartaoCredito compra)
+    public LinhaCompra(Models.CompraCartaoCredito compra, DateOnly hoje)
     {
         Compra = compra;
         Nome = compra.Nome;
         Detalhe = $"{compra.Parcelas}x de {Formatacao.Moeda(compra.ValorParcelaCentavos)} · total {Formatacao.Moeda(compra.ValorTotalCentavos)} · vence em {Formatacao.Data(compra.Vencimento)}";
 
-        var status = compra.CalcularStatusVencimento(DateOnly.FromDateTime(DateTime.Today));
+        var status = compra.CalcularStatusVencimento(hoje);
         CorAviso = Icones.BrushDeRecurso(status switch
         {
             Models.StatusVencimento.Vermelho => "BrushSaida",
             Models.StatusVencimento.Laranja => "BrushAviso",
             _ => "BrushEntrada"
         });
-        Aviso = compra.AvisoVencimento(DateOnly.FromDateTime(DateTime.Today));
+        Aviso = compra.AvisoVencimento(hoje);
         AvisoVisivel = string.IsNullOrEmpty(Aviso) ? Visibility.Collapsed : Visibility.Visible;
         ValorParcela = Formatacao.Moeda(compra.ValorParcelaCentavos);
     }

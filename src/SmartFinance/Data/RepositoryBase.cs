@@ -33,6 +33,8 @@ public abstract class RepositoryBase(Database db)
     private const string ColunasTransacao =
         "id, descricao, comentario, valor_centavos, tipo, data, meta_id, categoria, carteira_id";
 
+    // SF-033: where/orderBy são montados apenas com constantes desta classe (nunca
+    // entrada do usuário); valores dinâmicos vão sempre via SqliteParameter.
     protected static SqliteCommand ComandoSelecaoTransacoes(Database db, string where, string orderBy)
     {
         var comando = db.Connection.CreateCommand();

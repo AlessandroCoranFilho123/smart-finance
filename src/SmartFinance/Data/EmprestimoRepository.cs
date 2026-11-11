@@ -11,7 +11,7 @@ public sealed class EmprestimoRepository(Database db) : RepositoryBase(db)
             INSERT INTO emprestimo (id, tipo, nome, valor_centavos, data_pagamento)
             VALUES ($id, $tipo, $nome, $valor, $dataPagamento)
             """);
-        comando.Parameters.AddWithValue("$id", emprestimo.Id);
+        comando.Parameters.AddWithValue("$id", emprestimo.Id.ToString());
         comando.Parameters.AddWithValue("$tipo", emprestimo.Tipo.ToString());
         comando.Parameters.AddWithValue("$nome", emprestimo.Nome);
         comando.Parameters.AddWithValue("$valor", emprestimo.ValorCentavos);
@@ -30,14 +30,14 @@ public sealed class EmprestimoRepository(Database db) : RepositoryBase(db)
         comando.Parameters.AddWithValue("$nome", emprestimo.Nome);
         comando.Parameters.AddWithValue("$valor", emprestimo.ValorCentavos);
         comando.Parameters.AddWithValue("$dataPagamento", emprestimo.DataPagamento);
-        comando.Parameters.AddWithValue("$id", emprestimo.Id);
+        comando.Parameters.AddWithValue("$id", emprestimo.Id.ToString());
         comando.ExecuteNonQuery();
     }
 
     public void Deletar(Guid id)
     {
         using var comando = Comando("DELETE FROM emprestimo WHERE id = $id");
-        comando.Parameters.AddWithValue("$id", id);
+        comando.Parameters.AddWithValue("$id", id.ToString());
         comando.ExecuteNonQuery();
     }
 

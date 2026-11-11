@@ -10,7 +10,6 @@ namespace SmartFinance.Views.Dialogs;
 
 public partial class TransacaoDialog : Window
 {
-    private static readonly Regex PadraoValor = new("^[0-9.,]*$", RegexOptions.Compiled);
 
     private static readonly Categoria[] CategoriasEntrada =
         { Categoria.Salario, Categoria.Emprestimo, Categoria.RetirarMeta, Categoria.Outros };
@@ -62,6 +61,15 @@ public partial class TransacaoDialog : Window
         }
 
         AtualizarEstadoTipo(transacao);
+
+        // SF-023: pré-seleciona a meta da transação em edição (antes o usuário tinha
+        // de reselecionar, o que impedia o fluxo correto de atualização).
+        if (transacao?.MetaId is not null && ComboMeta.ItemsSource is List<Meta> metas)
+        {
+            ComboMeta.SelectedItem = metas.FirstOrDefault(m => m.Id == transacao.MetaId);
+            AtualizarInfoMeta();
+        }
+
         _carregando = false;
         CampoValor.Focus();
         CampoValor.CaretIndex = CampoValor.Text.Length;
@@ -73,24 +81,34 @@ public partial class TransacaoDialog : Window
 
     private void AoMudarTipo(object sender, RoutedEventArgs e)
     {
-        // ToggleButtons precisam ficar mutuamente exclusivos manualmente (não usam ToggleGroup).
-        if (sender == BotaoEntrada && BotaoEntrada.IsChecked == true)
+        if (_carregando)
         {
-            BotaoSaida.IsChecked = false;
-        }
-        else if (sender == BotaoSaida && BotaoSaida.IsChecked == true)
-        {
-            BotaoEntrada.IsChecked = false;
-        }
-        else if (BotaoEntrada.IsChecked != true && BotaoSaida.IsChecked != true)
-        {
-            (sender == BotaoEntrada ? BotaoEntrada : BotaoSaida).IsChecked = true;
+            return;
         }
 
-        if (!_carregando)
+        // ToggleButtons independentes: garante sempre exatamente um tipo marcado
+        // (SF-003 — clicar no botão já marcado o desmarca sem disparar Checked).
+        if (BotaoEntrada.IsChecked != true && BotaoSaida.IsChecked != true)
         {
-            AtualizarEstadoTipo(null);
+            (sender == BotaoEntrada ? BotaoEntrada : BotaoSaida).IsChecked = true;
+            return;
         }
+
+        if (BotaoEntrada.IsChecked == true && BotaoSaida.IsChecked == true)
+        {
+            if (sender == BotaoEntrada)
+            {
+                BotaoSaida.IsChecked = false;
+            }
+            else
+            {
+                BotaoEntrada.IsChecked = false;
+            }
+
+            return;
+        }
+
+        AtualizarEstadoTipo(null);
     }
 
     private void AtualizarEstadoTipo(Transacao? transacao)
@@ -149,28 +167,9 @@ public partial class TransacaoDialog : Window
         };
     }
 
-    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e)
-    {
-        e.Handled = !PadraoValor.IsMatch(e.Text);
-    }
+    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e) => MascaraValor.ValidarDigitos(sender, e);
 
-    private void FormatarValorAoSair(object sender, RoutedEventArgs e)
-    {
-        if (CampoValor.Text.Length == 0)
-        {
-            return;
-        }
-
-        try
-        {
-            long centavos = ValorMonetario.ParseCentavos(CampoValor.Text);
-            CampoValor.Text = (centavos / 100m).ToString("N2", Formatacao.CulturaBr);
-        }
-        catch (ArgumentException)
-        {
-            // deixa o usuário corrigir o texto inválido
-        }
-    }
+    private void FormatarValorAoSair(object sender, RoutedEventArgs e) => MascaraValor.FormatarAoSair(CampoValor);
 
     private void Salvar(object sender, RoutedEventArgs e)
     {

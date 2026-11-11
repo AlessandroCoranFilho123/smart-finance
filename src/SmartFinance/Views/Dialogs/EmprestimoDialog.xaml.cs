@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,8 +8,6 @@ namespace SmartFinance.Views.Dialogs;
 
 public partial class EmprestimoDialog : Window
 {
-    private static readonly Regex PadraoValor = new("^[0-9.,]*$", RegexOptions.Compiled);
-
     private readonly Servicos _servicos = App.Servicos!;
     private Emprestimo? _emEdicao;
 
@@ -48,24 +45,29 @@ public partial class EmprestimoDialog : Window
 
     private void AoMudarTipo(object sender, RoutedEventArgs e)
     {
-        if (sender == BotaoEmprestei && BotaoEmprestei.IsChecked == true)
-        {
-            BotaoPedi.IsChecked = false;
-        }
-        else if (sender == BotaoPedi && BotaoPedi.IsChecked == true)
-        {
-            BotaoEmprestei.IsChecked = false;
-        }
-        else if (BotaoEmprestei.IsChecked != true && BotaoPedi.IsChecked != true)
+        // Garante sempre exatamente um tipo marcado (SF-003).
+        if (BotaoEmprestei.IsChecked != true && BotaoPedi.IsChecked != true)
         {
             (sender == BotaoEmprestei ? BotaoEmprestei : BotaoPedi).IsChecked = true;
+            return;
+        }
+
+        if (BotaoEmprestei.IsChecked == true && BotaoPedi.IsChecked == true)
+        {
+            if (sender == BotaoEmprestei)
+            {
+                BotaoPedi.IsChecked = false;
+            }
+            else
+            {
+                BotaoEmprestei.IsChecked = false;
+            }
         }
     }
 
-    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e)
-    {
-        e.Handled = !PadraoValor.IsMatch(e.Text);
-    }
+    private void ValidarDigitoValor(object sender, TextCompositionEventArgs e) => MascaraValor.ValidarDigitos(sender, e);
+
+    private void FormatarAoSair(object sender, RoutedEventArgs e) => MascaraValor.FormatarAoSair((System.Windows.Controls.TextBox)sender);
 
     private void Salvar(object sender, RoutedEventArgs e)
     {

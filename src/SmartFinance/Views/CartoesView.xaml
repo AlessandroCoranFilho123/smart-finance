@@ -41,7 +41,7 @@
             </Grid>
         </Border>
 
-        <ListBox Grid.Row="2" x:Name="ListaCompras" Margin="0,16,0,0" MouseDoubleClick="EditarCompra" />
+        <ListBox Grid.Row="2" x:Name="ListaCompras" Margin="0,16,0,0" MouseDoubleClick="EditarCompra" KeyDown="AoTeclarLista" />
 
         <TextBlock Grid.Row="3" Margin="4,10,4,0"
                    Text="Duplo clique em uma compra para editar ou excluir"

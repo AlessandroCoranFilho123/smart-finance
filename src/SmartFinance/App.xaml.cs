@@ -20,10 +20,10 @@ public partial class App : Application
         base.OnStartup(e);
 
         // WPF usa en-US como cultura padrão de elementos (datas do DatePicker, por exemplo);
-        // alinha toda a interface com a cultura pt-BR do aplicativo.
+        // o aplicativo é pt-BR, então fixa a cultura independentemente do Windows (SF-019).
         FrameworkElement.LanguageProperty.OverrideMetadata(
             typeof(FrameworkElement),
-            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(Formatacao.CulturaBr.IetfLanguageTag)));
 
         DispatcherUnhandledException += (_, args) =>
         {
@@ -37,6 +37,25 @@ public partial class App : Application
             args.Handled = true;
         };
 
+        try
+        {
+            InicializarAplicativo();
+        }
+        catch (Exception ex)
+        {
+            // SF-009: sem isso, exceção no bootstrap deixa o processo vivo e invisível.
+            RegistrarLog(ex.ToString());
+            MessageBox.Show(
+                $"Falha ao iniciar o Smart Finance:\n{ex.Message}\n\nBanco de dados: {Database.CaminhoPadrao()}",
+                "Smart Finance",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Shutdown(1);
+        }
+    }
+
+    private void InicializarAplicativo()
+    {
         var db = new Database(Database.CaminhoPadrao());
         db.Initialize();
         if (Environment.GetEnvironmentVariable("SMARTFINANCE_DB_PATH") is null)

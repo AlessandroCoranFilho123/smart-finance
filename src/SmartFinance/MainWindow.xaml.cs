@@ -13,6 +13,12 @@ public partial class MainWindow : Window
         InitializeComponent();
         AtualizarIndicadorTema();
         TemaManager.TemaAlterado += AtualizarIndicadorTema;
+
+        // SF-018: a janela principal também recebe a barra de título escura,
+        // reaplicada quando o tema muda (liga e desliga).
+        JanelaNativa.AoFonteInicializada(this);
+        TemaManager.TemaAlterado += () => JanelaNativa.Aplicar(this);
+
         AreaConteudo.Content = new DashboardView();
     }
 
@@ -56,18 +62,6 @@ public partial class MainWindow : Window
         {
             IconeTema.Source = Icones.Carregar(TemaManager.TemaEscuroAtivo ? "tema/claro.png" : "tema/escuro.png");
             TextoTema.Text = TemaManager.RotuloBotaoTema();
-        }
-    }
-
-    /// <summary>Abre o diálogo de transação usado pelo dashboard e pela lista de transações.</summary>
-    internal void AbrirDialogTransacao(Models.Transacao? transacao = null)
-    {
-        var dialogo = new TransacaoDialog { Owner = this };
-        dialogo.Configurar(transacao);
-        dialogo.ShowDialog();
-        if (dialogo.DialogResult == true)
-        {
-            AtualizarVisaoAtual();
         }
     }
 }

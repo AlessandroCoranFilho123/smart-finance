@@ -2,7 +2,7 @@
 
 Smart Finance é um aplicativo desktop **para Windows** de controle financeiro pessoal: transações, carteiras, metas, compras parceladas no cartão e empréstimos — com busca textual, filtros, exportação e tema claro/escuro.
 
-A versão 3.1 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão anterior era JavaFX e foi substituída por um aplicativo nativo mais leve: sem JVM, inicialização praticamente instantânea e distribuição em um único executável.
+A versão 3.2 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão anterior era JavaFX e foi substituída por um aplicativo nativo mais leve: sem JVM, inicialização praticamente instantânea e distribuição em um único executável.
 
 ## Funcionalidades
 
@@ -20,7 +20,7 @@ A versão 3.1 é uma **reescrita completa em C# / WPF (.NET 10)**. A versão ant
 
 Disponível somente para Windows 10/11.
 
-Baixe o `SmartFinance-Setup-3.1.0.exe` (instalador com atalhos e desinstalador) ou o `SmartFinance.exe` portátil na área de releases.
+Baixe o `SmartFinance-Setup-3.2.0.exe` (instalador com atalhos e desinstalador) ou o `SmartFinance.exe` portátil na área de releases. Testado no Windows 10; Windows 11 suportado pelo runtime, mas sem teste próprio.
 
 [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/AlessandroCoranFilho123/smart-finance)
 
@@ -87,7 +87,7 @@ docs/                        arquitetura e segurança
 
 ## Status do projeto
 
-Projeto acadêmico em evolução. A versão 3.1 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design e [docs/auditoria/AUDIT_REPORT.md](docs/auditoria/AUDIT_REPORT.md) para a auditoria técnica completa (10/11/2026).
+Projeto acadêmico em evolução. A versão 3.2 cobre o mesmo conjunto de funcionalidades da 2.x, com correções de bugs de parsing monetário, atomicidade transacional nas operações compostas e interface redesenhada. Também incorpora a triagem integral de uma auditoria externa estática (37 achados — `docs/auditoria/TRIAGEM_EXTERNA.md`). Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para as decisões de design e [docs/auditoria/AUDIT_REPORT.md](docs/auditoria/AUDIT_REPORT.md) para a auditoria técnica completa (10/11/2026).
 
 ## Backup automático
 

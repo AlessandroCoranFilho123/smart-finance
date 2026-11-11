@@ -33,6 +33,17 @@ public sealed class MetaService(MetaRepository metaRepository)
 
     public void DeletarMeta(Guid id)
     {
+        // D-01: meta com valor acumulado não pode ser excluída — o dinheiro aplicado
+        // saiu da carteira; excluí-la o destruiria. O usuário resgata antes de excluir.
+        Meta meta = metaRepository.BuscarPorId(id)
+            ?? throw new ArgumentException("Meta não encontrada");
+
+        if (meta.AtualCentavos > 0)
+        {
+            throw new ArgumentException(
+                $"A meta possui {Formatacao.Moeda(meta.AtualCentavos)} acumulados. Resgate o valor antes de excluir a meta.");
+        }
+
         metaRepository.Deletar(id);
     }
 

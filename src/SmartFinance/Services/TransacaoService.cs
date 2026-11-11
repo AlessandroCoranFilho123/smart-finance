@@ -7,6 +7,8 @@ namespace SmartFinance.Services;
 /// Regras de registro, atualização e exclusão de transações, incluindo o
 /// fluxo especial das categorias Aplicar/Resgatar meta. Todas as operações que
 /// combinam mais de um comando SQL são executadas atomicamente.
+/// O banco é a fonte da verdade: instâncias de Meta vindas da UI são recarregadas
+/// antes de qualquer uso (SF-004).
 /// </summary>
 public sealed class TransacaoService(
     Database db,
@@ -28,19 +30,24 @@ public sealed class TransacaoService(
             throw new ArgumentException("Valores devem ser positivos");
         }
 
+        if (!categoria.EhValidaPara(tipo))
+        {
+            throw new ArgumentException("Categoria incompatível com o tipo de transação");
+        }
+
         Guid carteiraEfetiva = carteiraId ?? carteiraService.CarteiraPadraoId();
 
         if (categoria == Categoria.AdicionarMeta)
         {
             ArgumentNullException.ThrowIfNull(meta);
-            db.EmTransacao(() => RegistrarAplicacaoMeta(meta, valorCentavos, comentario, data, carteiraEfetiva));
+            db.EmTransacao(() => RegistrarAplicacaoMeta(meta.Id, valorCentavos, comentario, data, carteiraEfetiva));
             return;
         }
 
         if (categoria == Categoria.RetirarMeta)
         {
             ArgumentNullException.ThrowIfNull(meta);
-            db.EmTransacao(() => RegistrarResgateMeta(meta, valorCentavos, comentario, data, carteiraEfetiva));
+            db.EmTransacao(() => RegistrarResgateMeta(meta.Id, valorCentavos, comentario, data, carteiraEfetiva));
             return;
         }
 
@@ -74,6 +81,11 @@ public sealed class TransacaoService(
             throw new ArgumentException("Valores devem ser positivos");
         }
 
+        if (!categoria.EhValidaPara(tipo))
+        {
+            throw new ArgumentException("Categoria incompatível com o tipo de transação");
+        }
+
         if (categoria is Categoria.AdicionarMeta or Categoria.RetirarMeta)
         {
             ArgumentNullException.ThrowIfNull(meta);
@@ -88,17 +100,18 @@ public sealed class TransacaoService(
         {
             // Remove a original (revertendo a meta quando aplicável) antes de
             // validar o saldo, para não contar duas vezes a mesma movimentação.
+            // Falha aqui derruba a transação SQL inteira (nada é alterado).
             ExcluirTransacaoInterna(original);
 
             if (categoria == Categoria.AdicionarMeta)
             {
-                RegistrarAplicacaoMeta(meta!, valorCentavos, comentario, data, carteiraEfetiva, idOriginal);
+                RegistrarAplicacaoMeta(meta!.Id, valorCentavos, comentario, data, carteiraEfetiva, idOriginal);
                 return;
             }
 
             if (categoria == Categoria.RetirarMeta)
             {
-                RegistrarResgateMeta(meta!, valorCentavos, comentario, data, carteiraEfetiva, idOriginal);
+                RegistrarResgateMeta(meta!.Id, valorCentavos, comentario, data, carteiraEfetiva, idOriginal);
                 return;
             }
 
@@ -140,8 +153,15 @@ public sealed class TransacaoService(
     public long CalcularDespesasMes(DateOnly primeiroDiaDoMes) =>
         transacaoRepository.CalcularTotalPorTipoEMes(TipoTransacao.Saida, primeiroDiaDoMes);
 
-    private void RegistrarAplicacaoMeta(Meta meta, long valorCentavos, string? comentario, DateOnly data, Guid carteiraId, Guid? id = null)
+    /// <summary>Recarrega a meta do banco: instâncias vindas da UI podem estar obsoletas (SF-004).</summary>
+    private Meta RecarregarMeta(Guid metaId) =>
+        metaRepository.BuscarPorId(metaId)
+        ?? throw new ArgumentException("Meta não encontrada");
+
+    private void RegistrarAplicacaoMeta(Guid metaId, long valorCentavos, string? comentario, DateOnly data, Guid carteiraId, Guid? id = null)
     {
+        Meta meta = RecarregarMeta(metaId);
+
         long permitido = Math.Min(valorCentavos, meta.RestanteParaAlvo);
         if (permitido <= 0)
         {
@@ -165,8 +185,10 @@ public sealed class TransacaoService(
             carteiraId));
     }
 
-    private void RegistrarResgateMeta(Meta meta, long valorCentavos, string? comentario, DateOnly data, Guid carteiraId, Guid? id = null)
+    private void RegistrarResgateMeta(Guid metaId, long valorCentavos, string? comentario, DateOnly data, Guid carteiraId, Guid? id = null)
     {
+        Meta meta = RecarregarMeta(metaId);
+
         long retirado = meta.Retirar(valorCentavos);
         if (retirado <= 0)
         {
@@ -193,23 +215,37 @@ public sealed class TransacaoService(
 
         if (t.MetaId is not null && categoriaEfetiva is Categoria.AdicionarMeta or Categoria.RetirarMeta)
         {
-            Meta? meta = metaRepository.BuscarPorId(t.MetaId.Value);
-            if (meta is not null)
+            Meta meta = RecarregarMeta(t.MetaId.Value);
+
+            if (categoriaEfetiva == Categoria.AdicionarMeta)
             {
-                if (categoriaEfetiva == Categoria.AdicionarMeta)
+                // A reversão precisa devolver o valor integral à meta; se parte já
+                // foi resgatada, excluir criaria dinheiro do nada (SF-006/D-05).
+                if (meta.AtualCentavos < t.ValorCentavos)
                 {
-                    meta.Retirar(t.ValorCentavos);
-                }
-                else
-                {
-                    meta.Adicionar(t.ValorCentavos);
+                    throw new ArgumentException(
+                        "Não é possível excluir: parte deste valor já foi resgatado da meta. Exclua primeiro os resgates mais recentes.");
                 }
 
-                metaRepository.Atualizar(meta);
+                meta.Retirar(t.ValorCentavos);
             }
+            else
+            {
+                meta.Adicionar(t.ValorCentavos);
+            }
+
+            metaRepository.Atualizar(meta);
         }
 
         transacaoRepository.Excluir(t.Id);
+
+        // Nenhuma operação pode deixar carteira com saldo negativo (SF-005/D-04):
+        // remover uma entrada reduz o saldo da carteira de origem.
+        if (t.Tipo == TipoTransacao.Entrada && t.CarteiraId is not null
+            && carteiraService.CalcularSaldoCarteiraCentavos(t.CarteiraId.Value) < 0)
+        {
+            throw new ArgumentException("Operação bloqueada: excluir esta entrada deixaria a carteira com saldo negativo.");
+        }
     }
 
     private void ValidarSaldoSuficienteParaSaida(TipoTransacao tipo, long valorCentavos, Guid carteiraId)

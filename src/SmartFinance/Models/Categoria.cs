@@ -29,4 +29,22 @@ public static class CategoriaExtensoes
         Categoria.RetirarMeta => "Resgatar meta",
         _ => categoria.ToString()
     };
+
+    /// <summary>Lista de categorias oferecida pela interface para cada tipo (mesma regra dos diálogos).</summary>
+    public static Categoria[] CategoriasValidas(TipoTransacao tipo) => tipo switch
+    {
+        TipoTransacao.Entrada =>
+            [Categoria.Salario, Categoria.Emprestimo, Categoria.RetirarMeta, Categoria.Outros],
+        TipoTransacao.Saida =>
+        [
+            Categoria.Emprestimo, Categoria.Alimentacao, Categoria.Aluguel, Categoria.Transporte,
+            Categoria.Internet, Categoria.Agua, Categoria.Luz, Categoria.Compras,
+            Categoria.Educacao, Categoria.AdicionarMeta, Categoria.Outros
+        ],
+        _ => []
+    };
+
+    /// <summary>Defesa no serviço contra tipo × categoria incoerentes (SF-029/SF-003).</summary>
+    public static bool EhValidaPara(this Categoria categoria, TipoTransacao tipo) =>
+        CategoriasValidas(tipo).Contains(categoria);
 }

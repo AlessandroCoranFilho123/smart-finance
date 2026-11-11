@@ -68,7 +68,7 @@ public class TransacaoServiceTests : IDisposable
         _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 500_00);
         _app.Transacoes.Registrar(TipoTransacao.Saida, Categoria.AdicionarMeta, 500_00, meta, "", Hoje);
 
-        Assert.Equal(1000_00, meta.AtualCentavos);
+        Assert.Equal(1000_00, _app.MetaRepo.BuscarPorId(meta.Id)!.AtualCentavos); // SF-004
         var transacao = _app.TransacaoRepo.ListarTodas().Single();
         Assert.Equal(100_00, transacao.ValorCentavos);
         Assert.Equal(TipoTransacao.Saida, transacao.Tipo);
@@ -94,7 +94,7 @@ public class TransacaoServiceTests : IDisposable
 
         _app.Transacoes.Registrar(TipoTransacao.Entrada, Categoria.RetirarMeta, 500_00, meta, "", Hoje);
 
-        Assert.Equal(0, meta.AtualCentavos);
+        Assert.Equal(0, _app.MetaRepo.BuscarPorId(meta.Id)!.AtualCentavos); // SF-004: banco é a fonte da verdade
         var transacao = _app.TransacaoRepo.ListarTodas().Single();
         Assert.Equal(300_00, transacao.ValorCentavos);
         Assert.Equal(TipoTransacao.Entrada, transacao.Tipo);
@@ -151,7 +151,7 @@ public class TransacaoServiceTests : IDisposable
 
         _app.Transacoes.Atualizar(id, TipoTransacao.Saida, Categoria.AdicionarMeta, 100_00, meta, "", Hoje);
 
-        Assert.Equal(500_00, meta.AtualCentavos);
+        Assert.Equal(500_00, _app.MetaRepo.BuscarPorId(meta.Id)!.AtualCentavos); // SF-004
         var atualizada = _app.TransacaoRepo.BuscarPorId(id)!;
         Assert.Equal(Categoria.AdicionarMeta, atualizada.Categoria);
         Assert.Equal(50_00, atualizada.ValorCentavos); // clamp ao restante
