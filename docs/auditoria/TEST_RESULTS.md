@@ -43,3 +43,14 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | SQL com entrada do usuário concatenada | PASSOU — toda entrada via `SqliteParameter`; única interpolação usa constante de classe |
 | Segredos hardcoded | PASSOU — nenhum |
 | Código morto / imports não usados | PASSOU — 0 warnings de build; sem classes órfãs |
+
+## Rodada 3 — auditoria externa (11/11/2026)
+
+| Execução | Escopo | Resultado |
+|---|---|---|
+| Suíte unitária pós-triagem externa | **115 testes** (87 métodos) | **PASSOU (115/115)** |
+| Suíte GUI (interação) | 6 testes | **PASSOU (6/6)** |
+| Suíte GUI (capturas de tela, 2 testes) | 10 imagens das telas nos dois temas + cenário SF-009 | **PASSOU (2/2)** |
+| CI GitHub Actions | build + 115 + 6 no runner Windows | **PASSOU** (`c70268c`) e (`e25dc75`) |
+| Verificação visual das capturas | SF-010/017/025 + layout geral | **PASSOU** — revelou e corrigiu o SF-038 |
+| Cenário físico SF-009 | banco corrompido → mensagem → `WaitForExit` | **PASSOU** |

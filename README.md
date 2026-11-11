@@ -22,6 +22,7 @@ Disponível somente para Windows 10/11.
 
 Baixe o `SmartFinance-Setup-3.2.0.exe` (instalador com atalhos e desinstalador) ou o `SmartFinance.exe` portátil na área de releases. Testado no Windows 10; Windows 11 suportado pelo runtime, mas sem teste próprio.
 
+[![CI](https://github.com/AlessandroCoranFilho123/smart-finance/actions/workflows/ci.yml/badge.svg)](https://github.com/AlessandroCoranFilho123/smart-finance/actions/workflows/ci.yml)
 [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/AlessandroCoranFilho123/smart-finance)
 
 > O antivirus pode pedir confirmação na primeira execução por se tratar de um executável novo. O primeiro início também extrai bibliotecas nativas para uma pasta temporária e é um pouco mais lento; nas próximas execuções a inicialização é praticamente imediata.
@@ -92,3 +93,12 @@ Projeto acadêmico em evolução. A versão 3.2 cobre o mesmo conjunto de funcio
 ## Backup automático
 
 A cada dia de uso o aplicativo gera um snapshot do banco em `%APPDATA%\SmartFinance\backups` (retenção de 7 cópias), usando a API de backup online do SQLite. Para restaurar: feche o aplicativo e copie um snapshot de volta para `%APPDATA%\SmartFinance\financas.db`.
+
+## Capturas de tela
+
+<p align="center">
+  <img src="docs/auditoria/imagens/01-dashboard-claro.png" width="820" alt="Dashboard">
+  <img src="docs/auditoria/imagens/02-transacoes-claro.png" width="820" alt="Transações">
+  <img src="docs/auditoria/imagens/06-dialogo-nova-transacao.png" width="420" alt="Nova transação">
+  <img src="docs/auditoria/imagens/04-cartao-claro.png" width="820" alt="Cartão">
+</p>

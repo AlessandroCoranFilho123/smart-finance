@@ -55,3 +55,11 @@ Detalhes, evidências e passos: BUG_REPORT.md · REGRESSION_REPORT.md.
 ## Conclusão
 
 O software está apto ao uso pessoal no escopo testado: os defeitos reproduzíveis encontrados foram corrigidos com regressão verde, e os riscos remanescentes estão documentados com plano de ação.
+
+## Rodada 3 — auditoria externa + verificação visual (11/11/2026)
+
+Auditoria externa estática de terceiros (29 achados + 8 novos, em `externa/`) triada **com execução**: 24 corrigidos, 5 refutados com evidência (sondagem do banco 2.x real e leitura do código), 8 encerrados por decisão registrada (`DECISOES_PRODUTO.md`). Detalhe completo em `TRIAGEM_EXTERNA.md`.
+
+Verificação visual com capturas de tela reais (`imagens/`): todas as telas e diálogos nos dois temas confirmados — e o exercício revelou o **SF-038 (crítico)**: o app não abria para quem tivesse meta cadastrada (binding TwoWay em propriedade somente leitura), invisível aos testes com banco vazio. Corrigido e coberto por `CapturaTests` (com dados populados), que também executa o cenário físico do SF-009 (banco corrompido → mensagem → processo encerra, assertado).
+
+Estado final: **115 testes unitários + 8 GUI, CI verde** (`e25dc75`), release 3.2.0 publicada.
