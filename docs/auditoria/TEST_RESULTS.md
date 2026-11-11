@@ -62,3 +62,12 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | Suíte unitária pós-rodada 4 | **132 testes** (94 métodos) | **PASSOU (132/132)** |
 | Suíte GUI completa (serializada) | **10 testes** (6 interação + 2 captura + 2 acessibilidade) | **PASSOU (10/10)** |
 | Smoke do binário 3.3.0 | startup ok com banco isolado | **PASSOU** |
+
+## Rodada 5 — atualização automática + campos de data (11/11/2026)
+
+| Execução | Escopo | Resultado |
+|---|---|---|
+| Suíte unitária pós-F6 | **136 testes** (F6: hash das notas, integridade SHA-256) | **PASSOU (136/136)** |
+| Suíte GUI completa (serializada) | **12 testes** | **PASSOU (12/12)** |
+| Campos de data da tela de transações | De/Até filtram de fato (3→2→0→3) | **PASSOU** — dúvida do usuário resolvida: nada faltava |
+| Upgrade silencioso local | instalar → atualizar sobre existente → reabertura automática | **PASSOU** |

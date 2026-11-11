@@ -53,3 +53,11 @@ Itens **encerrados** na rodada 3: verificação visual (capturas + análise), ce
 | F3 instância única | **IMPLEMENTADO** — mutex `Local\SmartFinance.SingleInstance`; segunda instância traz a original à frente e encerra |
 | F4 simulações | **PARCIALMENTE EXECUTADO** — varredura UIA de acessibilidade (o que leitores de tela anunciam) implementada como teste permanente (2/2); Windows 11 e suspensão/hibernação **ficam para "um dia"** (decisão do usuário) |
 | F5 auto-atualização | **IMPLEMENTADO** — checagem diária silenciosa via GitHub Releases; se houver versão nova, pergunta e abre a página de download; falha de rede ignorada; testes F5_* |
+
+## Rodada 5 (11/11/2026) — resposta às decisões do usuário (parte 2)
+
+| Pendência | Resultado |
+|---|---|
+| F6 atualização automática | **IMPLEMENTADO** — além da checagem diária, o aplicativo agora **se atualiza sozinho**: baixa o instalador da release, confere o SHA-256 publicado, fecha e reinstala silenciosamente (o instalador reabre o app ao terminar). Testado de ponta a ponta localmente (instalação silenciosa, upgrade sobre instalação existente e reabertura automática) |
+| Campos de data na tela de transações (dúvida do usuário) | **VERIFICADO — não faltava nada**: os campos De/Até existem, aceitam digitação e filtram de fato; a verificação virou teste permanente (`DataTransacoesTests`: 3 → 2 → 0 → 3 linhas conforme o intervalo) |
+| F4 (restante) | Windows 11 / suspensão / leitor de tela físico: mantido (não simulável nesta máquina — decisão do usuário: "quem sabe um dia") |
