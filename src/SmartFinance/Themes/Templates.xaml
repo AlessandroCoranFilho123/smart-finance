@@ -51,7 +51,7 @@
             <TextBlock Grid.Row="1" Text="{Binding TextoValores}" Style="{StaticResource TextoSecundario}"
                        Margin="0,2,0,0" />
 
-            <ProgressBar Grid.Row="2" Value="{Binding Progresso}" Maximum="1" Margin="0,7,0,0"
+            <ProgressBar Grid.Row="2" Value="{Binding Progresso, Mode=OneWay}" Maximum="1" Margin="0,7,0,0"
                          Foreground="{Binding CorProgresso}" />
         </Grid>
     </DataTemplate>

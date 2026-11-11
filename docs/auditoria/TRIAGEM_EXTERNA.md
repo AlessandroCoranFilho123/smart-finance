@@ -23,7 +23,7 @@
 | SF-015a | Parcela: arredondamento e teste com nome errado | PARTIALLY · LOW | **DECISÃO D-06** — regra mantida; teste renomeado (`ValorParcela_UsaArredondamentoPadrao`) | Renomeação no teste |
 | SF-015b | "Em aberto" não amortiza | PARTIALLY · LOW | **DECISÃO D-07** — modelagem de parcelas pagas é feature nova | REMAINING_ISSUES |
 | SF-016 | `Hoje` estático congela a data | VALID · LOW | **CORRIGIDO** — calculado a cada `Atualizar()` | `CartoesView.xaml.cs` |
-| SF-017 | `DatePickerTextBox` sem `PART_ContentHost` | INCONCLUSIVE | **CORRIGIDO preventivamente** — template com `ScrollViewer x:Name="PART_ContentHost"` | `Global.xaml` |
+| SF-017 | `DatePickerTextBox` sem `PART_ContentHost` | INCONCLUSIVE | **CONFIRMADO VISUALMENTE E CORRIGIDO** — captura mostrou a data invisível; o template customizado quebrava a renderização e foi removido (template padrão do WPF) | captura `06-dialogo-nova-transacao.png`: data `11/11/2026` visível |
 | SF-018 | Janela principal sem barra escura | VALID · LOW | **CORRIGIDO** — `MainWindow` aplica e reaplica (liga/desliga) no `TemaAlterado` | `MainWindow.xaml.cs`, `JanelaNativa.cs` |
 | SF-019 | DatePicker usa cultura do SO | VALID · LOW | **CORRIGIDO** — `pt-BR` fixado (independente do Windows) | `App.xaml.cs` |
 | SF-020 | CSV injection + catch faltando | PARTIALLY · LOW | **CORRIGIDO** (a, d) — prefixo `'` e `UnauthorizedAccessException`; (b, c) mantidos por **D-08** | Teste de injeção |
@@ -50,3 +50,20 @@
 - Confirmação **visual** de SF-010/017/025 (renderização de ícones, texto do DatePicker, contraste) — automação UIA valida existência/comportamento, não estética.
 - Encerramento do processo no cenário SF-009 (corromper banco e rodar o app) — o caminho de código (`Shutdown(1)`) está coberto por revisão; executar manualmente com **cópia** corrompida.
 - Windows 11, leitores de tela, suspensão/hibernação (já em REMAINING_ISSUES).
+
+## Novo achado da verificação visual (SF-038) — CRITICAL, corrigido
+
+**App não abria para quem tivesse meta cadastrada.** `ProgressBar.Value` é TwoWay por padrão no WPF; o template das metas fazia `{Binding Progresso}` contra uma propriedade somente leitura de `LinhaMeta` → `InvalidOperationException` no bootstrap. Invisível até então porque os testes GUI rodavam com banco vazio (template nunca instanciado) — **as capturas de tela com dados populados o revelaram** (a primeira imagem capturada era a própria caixa de erro).
+
+Correção: `Value="{Binding Progresso, Mode=OneWay}"` em `Themes/Templates.xaml`. Verificação: capturas `01-dashboard-claro.png` e `08-dashboard-escuro.png` mostram o dashboard com metas, progresso e percentuais renderizando nos dois temas.
+
+## Verificação visual executada (capturas em `docs/auditoria/imagens/`)
+
+| Captura | Verifica | Resultado |
+|---|---|---|
+| `01`/`08` dashboard claro/escuro | SF-025 contraste do item ativo, layout geral, metas com progresso | **OK** — texto branco legível sobre accent nos dois temas |
+| `02` transações | SF-001 (tela abre), ícones de categoria (SF-010) | **OK** — ícones renderizam |
+| `04` cartão | ícone na linha de compra | **OK** |
+| `06` diálogo nova transação | SF-010 ícone, SF-017 data visível, SF-002 carteira legível, SF-003 tipo marcado | **OK** após correções |
+| `07` diálogo transferência | SF-002 combos legíveis | **OK** |
+| `10` banco corrompido | SF-009 mensagem + processo encerra | **OK** — assertado (`WaitForExit`) |

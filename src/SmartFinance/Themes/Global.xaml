@@ -440,18 +440,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="DatePickerTextBox">
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="DatePickerTextBox">
-                    <Border Background="Transparent">
-                        <ContentPresenter />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <!-- ===== Listas ===== -->
     <Style TargetType="ListBox">
         <Setter Property="Background" Value="Transparent" />
