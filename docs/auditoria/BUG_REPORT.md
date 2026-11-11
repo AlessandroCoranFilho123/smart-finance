@@ -1,4 +1,18 @@
-# Relatório de bugs — auditoria 10/11/2026
+# Relatório de bugs — auditoria 10/11/2026 (atualizado na rodada 2)
+
+## AUD-008 — Tela de Transações quebrava ao abrir — **ALTO — CORRIGIDO (rodada 2)**
+
+- **Categoria:** Funcional/GUI
+- **Reprodutibilidade:** 100%
+- **Passos:** abrir o aplicativo → clicar em "Transações".
+- **Causa raiz:** `TransacoesView.xaml` declarava um `<ComboBoxItem>` dentro de `ComboCategoria` **e** o construtor atribuía `ItemsSource` → `InvalidOperationException: A coleção de itens deve estar vazia antes de utilizar ItemsSource` a cada abertura da tela. Descoberto pela suíte GUI automatizada (stack completo em `erro.log`).
+- **Correção:** itens removidos do XAML; o construtor popula "Todas" + categorias via código e pré-seleciona "Todas".
+- **Validação:** suíte GUI 6/6 (duas execuções consecutivas); log do aplicativo sem exceções.
+- **Nota:** a versão Java tinha o mesmo arranjo conceitual (itens no FXML + setAll no controller), onde `setAll` substitui a coleção sem conflito — a tradução direta para `ItemsSource` introduziu o defeito.
+
+## AUD-009 — Cliques por coordenada não registram com escala de DPI — **INFORMATIVO (ferramental de teste)**
+
+- `FlaUI` Click por coordenada não registrou nos RadioButtons da barra lateral nesta máquina (escala de DPI); `LegacyIAccessible.DoDefaultAction()` é o equivalente programático ao clique e funciona deterministicamente. Registrado como decisão da suíte de testes, não é defeito do aplicativo.
 
 ## AUD-001 — Busca com apenas símbolos quebra a aplicação — **ALTO — CORRIGIDO**
 

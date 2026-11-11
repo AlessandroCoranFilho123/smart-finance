@@ -51,12 +51,15 @@ public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable
 
             // Não usar GetMainWindow: o host .NET cria uma janela oculta com o nome do
             // exe, que pode ser retornada antes da janela real (falhou no CI). Espera
-            // explicitamente por uma janela de topo com o título do aplicativo.
+            // por uma janela de topo com o título do aplicativo; leitura de título é
+            // defensiva porque a janela oculta do host não suporta a propriedade Name.
             Janela = Retry.WhileNull(
                     () => Application.Attach(Processo)
                         .GetAllTopLevelWindows(Automation)
-                        .FirstOrDefault(w => w.Title == "Smart Finance"),
-                    TimeSpan.FromSeconds(40)).Result
+                        .FirstOrDefault(w => string.Equals(
+                            w.Properties.Name.ValueOrDefault, "Smart Finance", StringComparison.Ordinal)),
+                    TimeSpan.FromSeconds(40),
+                    ignoreException: true).Result
                 ?? throw new InvalidOperationException("janela principal não apareceu");
             Janela.WaitUntilClickable(TimeSpan.FromSeconds(10));
         }
@@ -129,6 +132,18 @@ public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable
         return dialogo;
     }
 
+    /// <summary>Busca elemento no diálogo com retry: o conteúdo pode ainda estar
+    /// sendo materializado na árvore UIA no instante em que a janela aparece.</summary>
+    private FlaUI.Core.AutomationElements.AutomationElement NoDialogo(
+        FlaUI.Core.AutomationElements.Window dialogo, string automationId)
+    {
+        return Retry.WhileNull(
+                () => dialogo.FindFirstDescendant(cf => cf.ByAutomationId(automationId)),
+                TimeSpan.FromSeconds(10),
+                ignoreException: true).Result
+            ?? throw new InvalidOperationException($"'{automationId}' não encontrado no diálogo");
+    }
+
     [Fact]
     public void JanelaPrincipal_Abre_ComDashboard()
     {
@@ -151,32 +166,48 @@ public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable
 
         foreach (var (navId, marcador) in visoes)
         {
-            Buscar(navId)!.Patterns.SelectionItem.Pattern.Select();
-            Assert.NotNull(BuscarPorNome(marcador, 10));
+            ClicarNav(navId);
+            Assert.True(BuscarPorNome(marcador, 10) is not null,
+                $"marcador '{marcador}' não apareceu após clicar {navId}");
         }
 
-        Buscar("NavInicio")!.Patterns.SelectionItem.Pattern.Select();
+        ClicarNav("NavInicio");
         Assert.NotNull(BuscarPorNome("Saldo disponível"));
+    }
+
+    /// <summary>Ativa um item da navegação. Cliques por coordenada falham com escala
+    /// de DPI e RadioButtons do WPF não expõem Invoke; o default action do
+    /// LegacyIAccessible é o equivalente programático ao clique e funciona sempre.</summary>
+    private void ClicarNav(string navId)
+    {
+        var botao = Buscar(navId) ?? throw new InvalidOperationException($"{navId} não encontrado");
+
+        if (botao.Patterns.LegacyIAccessible.IsSupported)
+        {
+            botao.Patterns.LegacyIAccessible.Pattern.DoDefaultAction();
+        }
+        else
+        {
+            botao.Click();
+        }
     }
 
     [Fact]
     public void NovaTransacao_ViaUi_PersisteNoBanco()
     {
-        Buscar("NavTransacoes")!.Patterns.SelectionItem.Pattern.Select();
+        ClicarNav("NavTransacoes");
         int antes = _fx.ContarTransacoes();
 
-        var dialogo = AbrirDialogo("Nova transação");
+        var dialogo = AbrirDialogo("+ Nova transação");
 
-        dialogo.FindFirstDescendant(cf => cf.ByAutomationId("CampoValor"))
-            .AsTextBox().Text = "42,50";
-        dialogo.FindFirstDescendant(cf => cf.ByAutomationId("CampoComentario"))
-            .AsTextBox().Text = "compra gui teste";
+        NoDialogo(dialogo, "CampoValor").AsTextBox().Text = "42,50";
+        NoDialogo(dialogo, "CampoComentario").AsTextBox().Text = "compra gui teste";
 
-        var categoria = dialogo.FindFirstDescendant(cf => cf.ByAutomationId("ComboCategoria")).AsComboBox();
+        var categoria = NoDialogo(dialogo, "ComboCategoria").AsComboBox();
         categoria.Expand();
         categoria.Select(0); // Salário
 
-        dialogo.FindFirstDescendant(cf => cf.ByAutomationId("BotaoSalvar")).AsButton().Invoke();
+        NoDialogo(dialogo, "BotaoSalvar").AsButton().Invoke();
 
         Retry.WhileTrue(() => _fx.DialogoAtivo() is not null, TimeSpan.FromSeconds(5));
 
@@ -192,7 +223,7 @@ public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable
     [Fact]
     public void Dialogo_FechaComEscape()
     {
-        var dialogo = AbrirDialogo("Nova transação");
+        var dialogo = AbrirDialogo("+ Nova transação");
         dialogo.Focus();
         Keyboard.Press(VirtualKeyShort.ESC);
         Keyboard.Release(VirtualKeyShort.ESC);
@@ -204,10 +235,10 @@ public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable
     [Fact]
     public void CarteirasDialog_AbreEFechaComEscape()
     {
-        Buscar("NavInicio")!.Patterns.SelectionItem.Pattern.Select();
+        Buscar("NavInicio")!.Click();
         var dialogo = AbrirDialogo("Carteiras");
 
-        dialogo.FindFirstDescendant(cf => cf.ByAutomationId("CampoBanco")).Focus();
+        NoDialogo(dialogo, "CampoBanco").Focus();
         Keyboard.Press(VirtualKeyShort.ESC);
         Keyboard.Release(VirtualKeyShort.ESC);
 

@@ -15,14 +15,11 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <NoWarn>$(NoWarn);CS8602</NoWarn>
 
-    <!-- Publicação: exe único self-contained com compilação antecipada (startup rápido).
-         Propriedades afetam somente `dotnet publish` (SelfContained/RID condicionados
-         para não interferir em builds comuns de desenvolvimento/CI). -->
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <SelfContained Condition="'$(PublishSingleFile)' == 'true'">true</SelfContained>
-    <RuntimeIdentifier Condition="'$(PublishSingleFile)' == 'true'">win-x64</RuntimeIdentifier>
+    <!-- Publicação via linha de comando (ver README): dotnet publish com
+         -r win-x64, -self-contained true, PublishSingleFile, PublishReadyToRun
+         e IncludeNativeLibrariesForSelfExtract. Essas propriedades NÃO ficam no
+         csproj: PublishSingleFile no projeto altera o runtimeconfig dos builds
+         comuns e quebra o exe de saída. -->
   </PropertyGroup>
 
   <ItemGroup>

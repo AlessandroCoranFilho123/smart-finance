@@ -8,5 +8,7 @@
 | AUD-003 DatePicker en-US | `OverrideMetadata` de Language para cultura atual | Suíte completa + correção estrutural; visual NÃO EXECUTADO | PASSOU (suíte) |
 | AUD-005 Escape não fechava diálogos | `IsCancel="True"` nos 6 diálogos | Compilação + revisão; interação real NÃO EXECUTADA | PASSOU (build) |
 | Asserção frágil de CSV (CRLF) no próprio teste | Asserção reescrita | `ExporterTests` + `AuditoriaTests.Csv_ComentarioComQuebraDeLinha_Escapado` | PASSOU |
+| AUD-008 tela de Transações quebrada (ItemsSource + item XAML) | Itens removidos do XAML; combo populado via código com "Todas" pré-selecionado | Suíte GUI `GuiTests` (6/6 ×2) — navegação + criação de transação na tela corrigida | PASSOU |
+| Publish quebrando exe de build comum (PublishSingleFile no csproj) | Propriedades de publish movidas para a linha de comando (README) | Build Release + execução do binário de teste | PASSOU |
 
 Regressão completa executada após cada correção: **79/79** no estado final. Nenhuma funcionalidade existente regrediu (comportamentos validados nos 65 testes originais permanecem verdes).

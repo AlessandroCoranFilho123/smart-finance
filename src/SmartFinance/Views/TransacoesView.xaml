@@ -55,9 +55,7 @@
 
                     <StackPanel Grid.Column="2" Margin="12,0,0,0">
                         <TextBlock Text="Categoria" Style="{StaticResource RotuloForm}" />
-                        <ComboBox x:Name="ComboCategoria" MinWidth="160" SelectionChanged="AoMudarFiltro">
-                            <ComboBoxItem IsSelected="True" Content="Todas" />
-                        </ComboBox>
+                        <ComboBox x:Name="ComboCategoria" MinWidth="160" SelectionChanged="AoMudarFiltro" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="3" Margin="12,0,0,0">

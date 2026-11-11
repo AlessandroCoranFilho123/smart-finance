@@ -54,7 +54,9 @@ dotnet run --project src/SmartFinance
 dotnet test tests/SmartFinance.Tests
 
 # publicar executável único autocontido (win-x64)
-dotnet publish src/SmartFinance -c Release -o dist
+dotnet publish src/SmartFinance -c Release -r win-x64 --self-contained true \
+  -p:PublishSingleFile=true -p:PublishReadyToRun=true \
+  -p:IncludeNativeLibrariesForSelfExtract=true -o dist
 ```
 
 Para apontar o aplicativo para outro banco durante o desenvolvimento:

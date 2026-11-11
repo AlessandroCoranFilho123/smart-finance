@@ -19,15 +19,21 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
     public TransacoesView()
     {
         InitializeComponent();
-        ComboCategoria.ItemsSource = Enum.GetValues<Models.Categoria>()
-            .Select(c => new ItemCombo(c.NomeExibicao(), c))
-            .ToList();
+
+        // "Todas" + categorias; não declarar itens no XAML (coleção populada conflita
+        // com ItemsSource — InvalidOperationException).
+        var itens = new List<ItemCombo> { new("Todas", null) };
+        itens.AddRange(Enum.GetValues<Models.Categoria>()
+            .Select(c => new ItemCombo(c.NomeExibicao(), c)));
+        ComboCategoria.ItemsSource = itens;
+        ComboCategoria.SelectedIndex = 0;
+
         Atualizar();
     }
 
     public void Atualizar() => AplicarFiltros();
 
-    private sealed record ItemCombo(string Rotulo, Models.Categoria Valor)
+    private sealed record ItemCombo(string Rotulo, Models.Categoria? Valor)
     {
         public override string ToString() => Rotulo;
     }
