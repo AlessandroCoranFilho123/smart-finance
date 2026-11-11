@@ -167,6 +167,7 @@ public class RecursosNovosTests : IDisposable
     [Fact]
     public void F5_DeveVerificarHoje_MarcaUmaVezPorDia()
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(AtualizacaoService.CaminhoControle)!);
         File.Delete(AtualizacaoService.CaminhoControle); // estado limpo, independente da máquina
 
         Assert.True(AtualizacaoService.DeveVerificarHoje()); // sem arquivo de controle
