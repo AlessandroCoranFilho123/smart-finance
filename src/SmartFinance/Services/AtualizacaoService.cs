@@ -20,7 +20,7 @@ public static class AtualizacaoService
     private const string UrlLatest =
         "https://api.github.com/repos/AlessandroCoranFilho123/smart-finance/releases/latest";
 
-    private static readonly string CaminhoControle = Path.Combine(
+    internal static readonly string CaminhoControle = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "SmartFinance", "atualizacao.json");
 

@@ -14,8 +14,10 @@ using Xunit.Abstractions;
 namespace SmartFinance.GuiTests;
 
 /// <summary>
-/// Captura telas reais do aplicativo para verificação visual (SF-010/017/025)
-/// e para o README. Executa com banco isolado populado com dados de exemplo.
+/// Captura TODAS as telas e diálogos nos temas claro e escuro, com banco
+/// populado cobrindo os estados visuais (metas em três faixas de progresso,
+/// compras vencida/próxima/distante, empréstimos nos dois tipos) — base para
+/// verificação de cores, contraste e uniformidade dos cartões.
 /// </summary>
 [Trait("Category", "Captura")]
 public class CapturaTests : IDisposable
@@ -24,6 +26,8 @@ public class CapturaTests : IDisposable
     private readonly string _dirTemp;
     private readonly string _caminhoBanco;
     private readonly string _pastaCapturas;
+    private readonly string _caminhoConfig;
+    private readonly string _configOriginal;
     private readonly Process _processo;
     private readonly UIA3Automation _automation;
     private readonly Window _janela;
@@ -37,6 +41,10 @@ public class CapturaTests : IDisposable
         _pastaCapturas = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "..", "docs", "auditoria", "imagens"));
         Directory.CreateDirectory(_pastaCapturas);
+        _caminhoConfig = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "SmartFinance", "settings.json");
+        _configOriginal = File.Exists(_caminhoConfig) ? File.ReadAllText(_caminhoConfig) : "";
 
         PopularBancoDeExemplo(_caminhoBanco);
 
@@ -59,50 +67,33 @@ public class CapturaTests : IDisposable
     }
 
     [Fact]
-    public void CapturarTelasDoAplicativo()
+    public void CapturarTodasAsTelasNosDoisTemas()
     {
-        // tema claro
-        CapturarTelaAtual("01-dashboard-claro");
+        AplicarTema("escuro");
+        CapturarTodasAsTelas("escuro");
 
-        Navegar("NavTransacoes");
-        CapturarTelaAtual("02-transacoes-claro");
+        AplicarTema("claro");
+        CapturarTodasAsTelas("claro");
 
-        Navegar("NavMetas");
-        CapturarTelaAtual("03-metas-claro");
+        // restaura a preferência original do usuário
+        File.WriteAllText(_caminhoConfig, _configOriginal);
+    }
 
-        Navegar("NavCartoes");
-        CapturarTelaAtual("04-cartao-claro");
+    [Fact]
+    public void CapturarDialogosNosDoisTemas()
+    {
+        AplicarTema("escuro");
+        CapturarDialogos("escuro");
 
-        Navegar("NavEmprestimos");
-        CapturarTelaAtual("05-emprestimos-claro");
+        AplicarTema("claro");
+        CapturarDialogos("claro");
 
-        // diálogos: SF-002 combos legíveis, SF-017 data visível, SF-010 ícones
-        Navegar("NavInicio");
-        var dialogoTransacao = AbrirDialogo("+ Nova transação");
-        CapturarJanela(dialogoTransacao, "06-dialogo-nova-transacao");
-        FecharDialogo(dialogoTransacao);
-
-        var dialogoTransferencia = AbrirDialogo("Transferir");
-        CapturarJanela(dialogoTransferencia, "07-dialogo-transferencia");
-        FecharDialogo(dialogoTransferencia);
-
-        // tema escuro (SF-025 contraste)
-        var tema = Buscar("BotaoTema")!;
-        tema.Patterns.Invoke.Pattern.Invoke();
-        Thread.Sleep(600);
-        CapturarTelaAtual("08-dashboard-escuro");
-        Navegar("NavTransacoes");
-        CapturarTelaAtual("09-transacoes-escuro");
-        tema.Patterns.Invoke.Pattern.Invoke();
-        Thread.Sleep(400);
-
-        _saida.WriteLine($"Capturas salvas em: {_pastaCapturas}");
+        File.WriteAllText(_caminhoConfig, _configOriginal);
     }
 
     [Fact]
     public void CapturarCenarioDeBancoCorrompido_ESF009_Encerra()
     {
-        // SF-009: falha no bootstrap → mensagem + processo encerra
         string corrompido = Path.Combine(_dirTemp, "corrompido.db");
         File.WriteAllBytes(corrompido, new byte[] { 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x01 });
 
@@ -121,7 +112,7 @@ public class CapturaTests : IDisposable
             TimeSpan.FromSeconds(20), ignoreException: true).Result
             ?? throw new InvalidOperationException("mensagem de erro não apareceu");
 
-        CapturarJanela(caixa, "10-erro-banco-corrompido");
+        CapturarJanela(caixa, "20-erro-banco-corrompido");
 
         caixa.FindFirstDescendant(cf => cf.ByName("OK"))!.AsButton().Invoke();
         bool encerrou = processo.WaitForExit(10_000);
@@ -130,6 +121,79 @@ public class CapturaTests : IDisposable
     }
 
     // ── apoio ─────────────────────────────────────────────────────────────
+
+    private void CapturarTodasAsTelas(string sufixo)
+    {
+        CapturarTelaAtual($"01-dashboard-{sufixo}");
+        Navegar("NavTransacoes");
+        CapturarTelaAtual($"02-transacoes-{sufixo}");
+        Navegar("NavMetas");
+        CapturarTelaAtual($"03-metas-{sufixo}");
+        Navegar("NavCartoes");
+        CapturarTelaAtual($"04-cartao-{sufixo}");
+        Navegar("NavEmprestimos");
+        CapturarTelaAtual($"05-emprestimos-{sufixo}");
+        Navegar("NavInicio");
+    }
+
+    private void CapturarDialogos(string sufixo)
+    {
+        Navegar("NavTransacoes");
+        var transacao = AbrirDialogo("+ Nova transação");
+        CapturarJanela(transacao, $"06-dialogo-nova-transacao-{sufixo}");
+        FecharDialogo(transacao);
+
+        Navegar("NavInicio");
+        var transferencia = AbrirDialogo("Transferir");
+        CapturarJanela(transferencia, $"07-dialogo-transferencia-{sufixo}");
+        FecharDialogo(transferencia);
+
+        Navegar("NavMetas");
+        var meta = AbrirDialogo("+ Nova meta");
+        CapturarJanela(meta, $"08-dialogo-nova-meta-{sufixo}");
+        FecharDialogo(meta);
+
+        Navegar("NavInicio");
+        var carteiras = AbrirDialogo("Carteiras");
+        CapturarJanela(carteiras, $"09-dialogo-carteiras-{sufixo}");
+        FecharDialogo(carteiras);
+    }
+
+    /// <summary>Alterna o tema pelo próprio app até alcançar o desejado
+    /// (lê o settings.json que o aplicativo grava).</summary>
+    private void AplicarTema(string desejado)
+    {
+        if (LerTema() == desejado)
+        {
+            return;
+        }
+
+        Buscar("BotaoTema")!.Patterns.Invoke.Pattern.Invoke();
+        Thread.Sleep(600);
+
+        if (LerTema() != desejado)
+        {
+            Buscar("BotaoTema")!.Patterns.Invoke.Pattern.Invoke();
+            Thread.Sleep(600);
+        }
+
+        Assert.Equal(desejado, LerTema());
+        _janela.SetForeground();
+        Thread.Sleep(400);
+    }
+
+    private string LerTema()
+    {
+        if (!File.Exists(_caminhoConfig))
+        {
+            return "sistema";
+        }
+
+        var texto = File.ReadAllText(_caminhoConfig);
+        return texto.Contains("\"escuro\"") ? "escuro"
+            : texto.Contains("\"claro\"") ? "claro"
+            : "sistema";
+    }
 
     private void PopularBancoDeExemplo(string caminho)
     {
@@ -153,11 +217,15 @@ public class CapturaTests : IDisposable
         repo.Inserir(new Transacao(Guid.NewGuid(), "Freela", "", 800_00,
             TipoTransacao.Entrada, hoje.AddDays(-1), null, Categoria.Outros, Database.CarteiraDinheiroFisicoId));
 
-        metaRepo.Inserir(new Meta(Guid.NewGuid(), "Notebook novo", 5000_00, 2100_00));
-        metaRepo.Inserir(new Meta(Guid.NewGuid(), "Viagem de férias", 3000_00, 2750_00));
+        // metas nas três faixas de cor da barra de progresso
+        metaRepo.Inserir(new Meta(Guid.NewGuid(), "Notebook novo", 5000_00, 2100_00));   // 42% — vermelho
+        metaRepo.Inserir(new Meta(Guid.NewGuid(), "Viagem de férias", 3000_00, 2750_00)); // 92% — verde
+        metaRepo.Inserir(new Meta(Guid.NewGuid(), "Reserva de emergência", 8000_00, 4800_00)); // 60% — laranja
 
-        cartaoRepo.Inserir(new CompraCartaoCredito(Guid.NewGuid(), "Notebook", 4800_00, 12, hoje.AddDays(3)));
+        // compras: vencida (vermelho), próxima (laranja), distante (verde)
+        cartaoRepo.Inserir(new CompraCartaoCredito(Guid.NewGuid(), "Notebook", 4800_00, 12, hoje.AddDays(3), 4));
         cartaoRepo.Inserir(new CompraCartaoCredito(Guid.NewGuid(), "Curso", 600_00, 6, hoje.AddDays(20)));
+        cartaoRepo.Inserir(new CompraCartaoCredito(Guid.NewGuid(), "Fone", 250_00, 2, hoje.AddDays(-2), 1));
 
         emprestimoRepo.Inserir(new Emprestimo(Guid.NewGuid(), TipoEmprestimo.Emprestei, "Ana", 200_00, hoje.AddDays(10)));
         emprestimoRepo.Inserir(new Emprestimo(Guid.NewGuid(), TipoEmprestimo.PediEmprestado, "Carlos", 150_00, hoje.AddDays(-3)));
@@ -205,16 +273,11 @@ public class CapturaTests : IDisposable
     {
         janela.SetForeground();
         Thread.Sleep(350);
-        var retangulo = janela.BoundingRectangle;
-        using var bitmap = new System.Drawing.Bitmap((int)retangulo.Width, (int)retangulo.Height);
-        using (var g = System.Drawing.Graphics.FromImage(bitmap))
-        {
-            g.CopyFromScreen((int)retangulo.X, (int)retangulo.Y, 0, 0,
-                new System.Drawing.Size((int)retangulo.Width, (int)retangulo.Height));
-        }
-
+        // PrintWindow (via Capture): fotografa o conteúdo da janela mesmo com
+        // outras janelas sobrepostas — imune ao uso simultâneo da máquina.
+        using var bitmap = janela.Capture();
         bitmap.Save(Path.Combine(_pastaCapturas, nomeArquivo + ".png"), ImageFormat.Png);
-        _saida.WriteLine($"captura: {nomeArquivo}.png ({(int)retangulo.Width}x{(int)retangulo.Height})");
+        _saida.WriteLine($"captura: {nomeArquivo}.png ({bitmap.Width}x{bitmap.Height})");
     }
 
     public void Dispose()
@@ -231,6 +294,7 @@ public class CapturaTests : IDisposable
         _processo.Dispose();
         try
         {
+            File.WriteAllText(_caminhoConfig, _configOriginal);
             Directory.Delete(_dirTemp, recursive: true);
         }
         catch (IOException)

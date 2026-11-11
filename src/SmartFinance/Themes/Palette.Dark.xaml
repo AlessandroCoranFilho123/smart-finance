@@ -2,19 +2,23 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Paleta escura -->
-    <Color x:Key="ColorAccent">#6C8CFF</Color>
+    <!-- Paleta escura (meio azulado) — todos os pares texto/fundo com contraste
+         WCAG AA ≥ 4,5:1 (verificado por ContrasteTests). O accent tem duas peças:
+         BrushAccent (fundo de botões/navegação, escuro o bastante para texto
+         branco) e BrushAccentTexto (claro, para textos/links sobre cartões). -->
+    <Color x:Key="ColorAccent">#4062F2</Color>
     <Color x:Key="ColorShadow">#000000</Color>
 
     <SolidColorBrush x:Key="BrushBg" Color="#0F131C" />
     <SolidColorBrush x:Key="BrushSidebar" Color="#121724" />
     <SolidColorBrush x:Key="BrushCard" Color="#171D2B" />
-    <SolidColorBrush x:Key="BrushCardBorder" Color="#242C3F" />
+    <SolidColorBrush x:Key="BrushCardBorder" Color="#2E3750" />
     <SolidColorBrush x:Key="BrushDivider" Color="#222A3C" />
     <SolidColorBrush x:Key="BrushTextPrimary" Color="#E9EDF6" />
     <SolidColorBrush x:Key="BrushTextSecondary" Color="#97A1B8" />
-    <SolidColorBrush x:Key="BrushAccent" Color="#6C8CFF" />
-    <SolidColorBrush x:Key="BrushAccentHover" Color="#5876E8" />
+    <SolidColorBrush x:Key="BrushAccent" Color="#4062F2" />
+    <SolidColorBrush x:Key="BrushAccentHover" Color="#3555DB" />
+    <SolidColorBrush x:Key="BrushAccentTexto" Color="#8FA6FF" />
     <SolidColorBrush x:Key="BrushAccentSoft" Color="#24304F" />
     <SolidColorBrush x:Key="BrushAccentForeground" Color="#FFFFFF" />
     <SolidColorBrush x:Key="BrushEntrada" Color="#33C98D" />
@@ -22,9 +26,9 @@
     <SolidColorBrush x:Key="BrushAviso" Color="#F5B23F" />
     <SolidColorBrush x:Key="BrushErro" Color="#F16A70" />
     <SolidColorBrush x:Key="BrushFieldBg" Color="#1C2434" />
-    <SolidColorBrush x:Key="BrushFieldBorder" Color="#2A3448" />
+    <SolidColorBrush x:Key="BrushFieldBorder" Color="#39445C" />
     <SolidColorBrush x:Key="BrushHover" Color="#1E2637" />
-    <SolidColorBrush x:Key="BrushTrack" Color="#232B3D" />
+    <SolidColorBrush x:Key="BrushTrack" Color="#1C2333" />
 
     <sys:Double x:Key="ShadowOpacity">0.35</sys:Double>
 </ResourceDictionary>

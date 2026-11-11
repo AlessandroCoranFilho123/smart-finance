@@ -2,27 +2,29 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Paleta clara -->
-    <Color x:Key="ColorAccent">#4C6FFF</Color>
+    <!-- Paleta clara — todos os pares texto/fundo com contraste WCAG AA ≥ 4,5:1
+         (verificado por ContrasteTests). Mesmos matizes, profundidade ajustada. -->
+    <Color x:Key="ColorAccent">#3D5BE0</Color>
     <Color x:Key="ColorShadow">#1A2030</Color>
 
     <SolidColorBrush x:Key="BrushBg" Color="#F4F6FB" />
     <SolidColorBrush x:Key="BrushSidebar" Color="#FFFFFF" />
     <SolidColorBrush x:Key="BrushCard" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="BrushCardBorder" Color="#E4E9F2" />
+    <SolidColorBrush x:Key="BrushCardBorder" Color="#D4DBE7" />
     <SolidColorBrush x:Key="BrushDivider" Color="#EDF0F7" />
     <SolidColorBrush x:Key="BrushTextPrimary" Color="#17203A" />
-    <SolidColorBrush x:Key="BrushTextSecondary" Color="#69738E" />
-    <SolidColorBrush x:Key="BrushAccent" Color="#4C6FFF" />
-    <SolidColorBrush x:Key="BrushAccentHover" Color="#3D5BE0" />
+    <SolidColorBrush x:Key="BrushTextSecondary" Color="#5D6880" />
+    <SolidColorBrush x:Key="BrushAccent" Color="#3D5BE0" />
+    <SolidColorBrush x:Key="BrushAccentHover" Color="#3149C8" />
+    <SolidColorBrush x:Key="BrushAccentTexto" Color="#3D5BE0" />
     <SolidColorBrush x:Key="BrushAccentSoft" Color="#E6EBFF" />
     <SolidColorBrush x:Key="BrushAccentForeground" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="BrushEntrada" Color="#17A34A" />
-    <SolidColorBrush x:Key="BrushSaida" Color="#E5484D" />
-    <SolidColorBrush x:Key="BrushAviso" Color="#E78A00" />
-    <SolidColorBrush x:Key="BrushErro" Color="#E5484D" />
+    <SolidColorBrush x:Key="BrushEntrada" Color="#15803D" />
+    <SolidColorBrush x:Key="BrushSaida" Color="#D13438" />
+    <SolidColorBrush x:Key="BrushAviso" Color="#B45309" />
+    <SolidColorBrush x:Key="BrushErro" Color="#D13438" />
     <SolidColorBrush x:Key="BrushFieldBg" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="BrushFieldBorder" Color="#D5DBE8" />
+    <SolidColorBrush x:Key="BrushFieldBorder" Color="#C3CBDC" />
     <SolidColorBrush x:Key="BrushHover" Color="#EEF2FA" />
     <SolidColorBrush x:Key="BrushTrack" Color="#E9EDF5" />
 

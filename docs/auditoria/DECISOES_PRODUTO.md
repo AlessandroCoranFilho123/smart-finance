@@ -27,3 +27,5 @@ Data: 11/11/2026 · Registradas antes da implementação, conforme `16_GLM_HANDO
 | **U1** | **Sem certificado digital** — decisão do usuário (projeto não opera dinheiro real). Pendência encerrada; SmartScreen pode exibir aviso na primeira execução. |
 | **U2** | **D-01…D-09 APROVADAS pelo usuário em 11/11/2026** ("concordo com tudo") — regras consolidadas; qualquer revisão futura é revertível mediante solicitação. |
 | **F5** | Verificação automática de atualização via GitHub API, **1× por dia**, silenciosa em falha, com consentimento implícito de rede apenas para checagem de versão (nenhum dado é enviado). |
+
+| **D-12** (rodada 5) | **Contraste WCAG AA obrigatório** nas duas paletas (15 pares ≥ 4,5:1, verificado automaticamente por `ContrasteTests`); bordas de cartões/campos são decorativas (relatadas sem reprovar). Barras de progresso usam as partes nomeadas do WPF. Cartões do dashboard com larguras iguais. |

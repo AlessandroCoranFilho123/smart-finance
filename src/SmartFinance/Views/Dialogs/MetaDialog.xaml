@@ -47,7 +47,7 @@
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Progresso" Style="{StaticResource TextoSecundario}" />
                     <TextBlock x:Name="TxtProgresso" Text="0%" FontWeight="Bold"
-                               Foreground="{DynamicResource BrushAccent}" Margin="0,3,0,0" />
+                               Foreground="{DynamicResource BrushAccentTexto}" Margin="0,3,0,0" />
                 </StackPanel>
             </Grid>
         </StackPanel>

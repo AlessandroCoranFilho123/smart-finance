@@ -69,3 +69,17 @@ Correção: `Value="{Binding Progresso, Mode=OneWay}"` em `Themes/Templates.xaml
 | `06` diálogo nova transação | SF-010 ícone, SF-017 data visível, SF-002 carteira legível, SF-003 tipo marcado | **OK** após correções |
 | `07` diálogo transferência | SF-002 combos legíveis | **OK** |
 | `10` banco corrompido | SF-009 mensagem + processo encerra | **OK** — assertado (`WaitForExit`) |
+
+## Rodada 5 — verificação visual completa (capturas nos dois temas)
+
+Metodologia: banco populado cobrindo todos os estados visuais (metas em 3 faixas de progresso, compras vencida/próxima/distante, empréstimos nos dois tipos), **10 capturas por tema** via PrintWindow (imune a janelas sobrepostas) + varredura de acessibilidade + cálculo WCAG programático (ContrasteTests lê as paletas e verifica 15 pares texto/fundo + 2 gráficos).
+
+| Verificação | Resultado | Correção aplicada |
+|---|---|---|
+| Contraste WCAG (15 pares × 2 temas) | **7 falhas na clara, 1 na escura** | Paletas ajustadas no mesmo tom (clara: verde/vermelho/âmbar/accent/secundário escurecidos; escura: accent dividido em fundo × texto) — **tudo ≥ 4,5:1** |
+| Barras de progresso das metas | **Sempre vazias** (template sem PART_Track/PART_Indicator) | Template corrigido — preenchimento proporcional (42%/60%/92% nas capturas) |
+| Tamanhos dos cartões do dashboard | Iguais por construção (`*,18,*`) e conferidos nas capturas | Mantido |
+| Ícones/datas/combos legíveis | Confirmado nas capturas | — |
+| SF-009 físico (banco corrompido) | Mensagem + processo encerra | Assertado com WaitForExit |
+
+Novo achado: **SF-039 (médio/alto, visual)** — barras de progresso nunca preenchiam (template sem as partes nomeadas exigidas pelo WPF); invisível em banco vazio e mascarado pela subtilez da track. Corrigido e coberto pelas capturas.
