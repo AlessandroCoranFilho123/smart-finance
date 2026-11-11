@@ -47,7 +47,7 @@ Itens **encerrados** na rodada 3: verificação visual (capturas + análise), ce
 | Pendência | Resultado |
 |---|---|
 | U1 assinatura digital | **ENCERRADA** — usuário decidiu não adquirir certificado (projeto não opera dinheiro real); SmartScreen pode avisar na 1ª execução |
-| U2 decisões D-01…D-09 | **EXPLICADAS ao usuário** (resumo em texto na conversa; detalhe em `DECISOES_PRODUTO.md`) — revertíveis mediante solicitação |
+| U2 decisões D-01…D-09 | **APROVADAS pelo usuário** ("concordo com tudo", 11/11/2026) — consolidadas em `DECISOES_PRODUTO.md`; revertíveis mediante solicitação |
 | F1 parcelas pagas | **IMPLEMENTADO** — coluna `parcelas_pagas` (migration compatível), campo no diálogo, "Em aberto" e "Parcelas por mês" amortizam; testes F1_* |
 | F2 cartão/empréstimos → carteiras | **IMPLEMENTADO** (D-10) — compra gera saída do total na carteira escolhida; "Emprestei" saída; "Pedi" entrada; exclusão estorna; edição reajusta (vínculo `transacao_id`); testes F2_* |
 | F3 instância única | **IMPLEMENTADO** — mutex `Local\SmartFinance.SingleInstance`; segunda instância traz a original à frente e encerra |
