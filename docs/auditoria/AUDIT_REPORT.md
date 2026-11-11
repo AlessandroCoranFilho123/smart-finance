@@ -21,7 +21,8 @@ Aplicativo desktop Smart Finance 3.0 (C#/WPF/SQLite): camadas Data/Services/View
 | Interação | **PASSOU** (2ª rodada) | Teclado (Escape), cliques via padrões UIA (Invoke/Select), foco verificado nos diálogos; persistência após ações validada por consulta direta ao banco |
 | Persistência e integridade | **PASSOU** | Transações atômicas com rollback testado; banco vazio/corrompido/tipo inválido falham de forma identificável; Unicode/emoji idempotentes; WAL recupera após 5 kills forçados |
 | Desempenho | **PASSOU** | Warm start 69–114ms; RAM 132–134MB estável; 10k registros: listagem e FTS dentro dos limites |
-| Estabilidade/concorrência | **PASSOU (recorte)** | 2 instâncias simultâneas OK; kill-restart ×5 OK; memória estável; soak de 30 min OK (rodada 2) |
+| Estabilidade/concorrência | **PASSOU (recorte)** | 2 instâncias simultâneas OK; kill-restart ×5 OK; memória estável; soak de 30 min com o binário final OK (rodada 2) |
+| Qualidade de código | **PASSOU** | 0 warnings, sem código morto, camadas coerentes; duplicação de handlers de erro nos diálogos registrada como dívida aceitável |
 | Segurança | **PASSOU** | SQL parametrizado, sem rede, sem segredos, dependências íntegras, logs sem dados sensíveis; riscos aceitos: banco sem criptografia em repouso, exe não assinado |
 | Windows (plataforma) | **PASSOU (recorte)** | Caminhos com espaços/Unicode/longos OK; usuário comum OK; Defender/SmartScreen não verificáveis nesta sessão |
 | Instalação/distribuição | **PASSOU (2ª rodada)** | Instalador Inno Setup com ciclo instalar→executar→desinstalar testado; dados do usuário preservados; alternativa portátil mantida |
@@ -32,7 +33,6 @@ Aplicativo desktop Smart Finance 3.0 (C#/WPF/SQLite): camadas Data/Services/View
 | Exploratório | **PARCIAL — NÃO EXECUTADO** | Uso como usuário real não foi possível sem automação; investigação de código cobriu sequências incomuns |
 | Recuperação/falhas | **PASSOU (recorte)** | Kill forçado durante operação → WAL recupera; banco corrompido falha com erro claro |
 | Concorrência | **PASSOU** | Multi-instância e lock com busy_timeout testados (unidade + runtime) |
-| Qualidade de código | **PASSOU** | 0 warnings, sem código morto, camadas coerentes; duplicação de handlers de erro nos diálogos registrada como dívida aceitável |
 | Observabilidade | **PASSOU (mínimo viável)** | `erro.log` com stack completo + `startup ok`; rotação pendente (P8) |
 
 ## Problemas encontrados e correções

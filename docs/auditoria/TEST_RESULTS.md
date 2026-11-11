@@ -31,7 +31,7 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | T9 | Estabilidade de memória (30s ocioso pós ciclos) | Estabilidade | PASSOU | 132MB → 132MB (sem crescimento) |
 | T10 | Exe final com cópia do banco real do usuário | Funcional | PASSOU | `startup ok`, 0 exceções (mesmo banco que causava o crash pré-1a8bf16) |
 | T11 | Interação real com UI — suíte FlaUI (6 testes: navegação nas 5 visões, criação de transação persistida, Escape, tema) | GUI/Interação | **PASSOU** — 6/6 duas execuções locais consecutivas + CI | `tests/SmartFinance.GuiTests`; rodada 2; encontrou AUD-008 |
-| T12 | Soak 30 min com exe publicado (processo vivo, log limpo, memória estável) | Estabilidade | **PASSOU** | 20:17–20:48 locais, isolated DB; ver PERF |
+| T12 | Soak 30 min com o exe final (janela minimizada, banco isolado) | Estabilidade | **PASSOU** | 21:28–21:58: processo vivo o tempo todo, WorkingSet/Private estáveis (213/171MB entre o minuto 11 e o 30 — sem crescimento), 0 exceções no log |
 | T13 | Instalador: instalar → executar instalado → desinstalar | Distribuição | **PASSOU** | Inno Setup, /VERYSILENT em dir isolado; dados %APPDATA% preservados |
 | T14 | Suspensão/hibernação/troca de usuário | Estabilidade | NÃO EXECUTADO | requer controle do SO indisponível nesta sessão |
 
