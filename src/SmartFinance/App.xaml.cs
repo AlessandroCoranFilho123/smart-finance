@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using SmartFinance.Views;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Threading;
@@ -14,10 +15,27 @@ public partial class App : Application
     public static Servicos? Servicos { get; private set; }
 
     private const long LimiteLogBytes = 1_000_000;
+    private static Mutex? _instanciaUnica;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // F3: uma única instância do aplicativo (evita corrida no SQLite).
+        _instanciaUnica = new Mutex(true, @"Local\SmartFinance.SingleInstance", out bool primeiraInstancia);
+        if (!primeiraInstancia)
+        {
+            JanelaNativa.TrazerExistenteParaFrente();
+            MessageBox.Show(
+                "O Smart Finance já está em execução.",
+                "Smart Finance",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            Shutdown(1);
+            return;
+        }
+
+        GC.KeepAlive(_instanciaUnica);
 
         // WPF usa en-US como cultura padrão de elementos (datas do DatePicker, por exemplo);
         // o aplicativo é pt-BR, então fixa a cultura independentemente do Windows (SF-019).
@@ -74,8 +92,8 @@ public partial class App : Application
             new TransacaoService(db, transacaoRepo, metaRepo, carteiras),
             carteiras,
             new MetaService(metaRepo),
-            new CartaoCreditoService(new CartaoCreditoRepository(db)),
-            new EmprestimoService(new EmprestimoRepository(db)));
+            new CartaoCreditoService(db, new CartaoCreditoRepository(db), transacaoRepo),
+            new EmprestimoService(db, new EmprestimoRepository(db), transacaoRepo));
 
         TemaManager.Inicializar();
 

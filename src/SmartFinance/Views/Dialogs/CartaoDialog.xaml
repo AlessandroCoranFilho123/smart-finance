@@ -32,8 +32,18 @@
         <TextBlock Text="Meses parcelados" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
         <TextBox x:Name="CampoParcelas" />
 
+        <TextBlock Text="Parcelas já pagas" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
+        <TextBox x:Name="CampoPagas" />
+
         <TextBlock Text="Vencimento da próxima parcela" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-        <DatePicker x:Name="CampoVencimento" />
+        <DatePicker x:Name="CampoVencimento" AutomationProperties.Name="Vencimento da próxima parcela" />
+
+        <TextBlock Text="Carteira" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
+        <ComboBox x:Name="ComboCarteira" DisplayMemberPath="Nome" />
+
+        <TextBlock Style="{StaticResource TextoSecundario}" Margin="2,10,0,0"
+                   TextWrapping="Wrap"
+                   Text="Salvar gera uma saída do valor total na carteira escolhida (o dinheiro fica comprometido com o cartão)." />
 
         <TextBlock x:Name="TxtErro" Style="{StaticResource TextoErro}" Margin="2,14,0,0"
                    Visibility="Collapsed" TextWrapping="Wrap" />

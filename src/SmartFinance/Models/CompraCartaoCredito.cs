@@ -5,9 +5,15 @@ public sealed record CompraCartaoCredito(
     string Nome,
     long ValorTotalCentavos,
     int Parcelas,
-    DateOnly Vencimento)
+    DateOnly Vencimento,
+    int ParcelasPagas = 0,
+    Guid? CarteiraId = null,
+    Guid? TransacaoId = null)
 {
     public long ValorParcelaCentavos => Parcelas <= 0 ? 0 : (long)Math.Round(ValorTotalCentavos / (double)Parcelas, MidpointRounding.AwayFromZero);
+
+    /// <summary>Parcelas que ainda não foram pagas (D-11): base dos totais em aberto.</summary>
+    public int ParcelasRestantes => Math.Max(0, Parcelas - Math.Max(0, ParcelasPagas));
 
     public long DiasAteVencimento(DateOnly hoje) => Vencimento.DayNumber - hoje.DayNumber;
 
@@ -44,4 +50,6 @@ public sealed record Emprestimo(
     TipoEmprestimo Tipo,
     string Nome,
     long ValorCentavos,
-    DateOnly DataPagamento);
+    DateOnly DataPagamento,
+    Guid? CarteiraId = null,
+    Guid? TransacaoId = null);

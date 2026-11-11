@@ -19,7 +19,47 @@ public partial class MainWindow : Window
         JanelaNativa.AoFonteInicializada(this);
         TemaManager.TemaAlterado += () => JanelaNativa.Aplicar(this);
 
+        Loaded += (_, _) => VerificarAtualizacaoSeNecessario();
+
         AreaConteudo.Content = new DashboardView();
+    }
+
+    /// <summary>F5: checagem diária de nova versão, fora da thread de UI.</summary>
+    private async void VerificarAtualizacaoSeNecessario()
+    {
+        if (!Services.AtualizacaoService.DeveVerificarHoje())
+        {
+            return;
+        }
+
+        var informacao = await Services.AtualizacaoService.VerificarNovaVersaoAsync();
+        Services.AtualizacaoService.MarcarVerificadoHoje();
+
+        if (informacao is null || !Dispatcher.CheckAccess())
+        {
+            if (informacao is not null)
+            {
+                await Dispatcher.InvokeAsync(() => NotificarAtualizacao(informacao));
+            }
+
+            return;
+        }
+
+        NotificarAtualizacao(informacao);
+    }
+
+    private void NotificarAtualizacao(Services.InformacaoAtualizacao informacao)
+    {
+        var resposta = MessageBox.Show(
+            $"Nova versão {informacao.VersaoNova} disponível (atual: {Services.AtualizacaoService.VersaoAtual.ToString(3)}).\nAbrir a página de download?",
+            "Atualização disponível",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Information);
+
+        if (resposta == MessageBoxResult.Yes)
+        {
+            Services.AtualizacaoService.AbrirPaginaDownload(informacao.UrlDownload);
+        }
     }
 
     private void AoNavegar(object sender, RoutedEventArgs e)

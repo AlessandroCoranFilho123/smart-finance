@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SmartFinance.Data;
 using SmartFinance.Models;
 using SmartFinance.Services;
 
@@ -21,9 +22,13 @@ public partial class CartaoDialog : Window
     {
         _emEdicao = compra;
 
+        ComboCarteira.ItemsSource = _servicos.Carteiras.ListarCarteiras();
+
         if (compra is null)
         {
             CampoVencimento.SelectedDate = DateTime.Today.AddMonths(1);
+            CampoPagas.Text = "0";
+            ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource).FirstOrDefault();
             return;
         }
 
@@ -32,7 +37,10 @@ public partial class CartaoDialog : Window
         CampoNome.Text = compra.Nome;
         CampoValor.Text = (compra.ValorTotalCentavos / 100m).ToString("N2", Formatacao.CulturaBr);
         CampoParcelas.Text = compra.Parcelas.ToString();
+        CampoPagas.Text = compra.ParcelasPagas.ToString();
         CampoVencimento.SelectedDate = compra.Vencimento.ToDateTime(TimeOnly.MinValue);
+        ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource)
+            .FirstOrDefault(c => c.Id == (compra.CarteiraId ?? Database.CarteiraBancoId));
         BotaoSalvar.Content = "Atualizar";
         BotaoExcluir.Visibility = Visibility.Visible;
     }
@@ -58,12 +66,27 @@ public partial class CartaoDialog : Window
                 return;
             }
 
+            if (!int.TryParse(CampoPagas.Text.Trim(), out int pagas))
+            {
+                MostrarErro("Informe quantas parcelas já foram pagas (0 se nenhuma)");
+                return;
+            }
+
+            var carteira = (Carteira?)ComboCarteira.SelectedItem;
+            if (carteira is null)
+            {
+                MostrarErro("Selecione a carteira de onde sai o valor");
+                return;
+            }
+
             _servicos.Cartao.Salvar(
                 _emEdicao?.Id,
                 CampoNome.Text,
                 ValorMonetario.ParseCentavos(CampoValor.Text),
                 parcelas,
-                DateOnly.FromDateTime(CampoVencimento.SelectedDate.Value));
+                pagas,
+                DateOnly.FromDateTime(CampoVencimento.SelectedDate.Value),
+                carteira.Id);
 
             DialogResult = true;
         }

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SmartFinance.Data;
 using SmartFinance.Models;
 using SmartFinance.Services;
 
@@ -22,9 +23,12 @@ public partial class EmprestimoDialog : Window
     {
         _emEdicao = emprestimo;
 
+        ComboCarteira.ItemsSource = _servicos.Carteiras.ListarCarteiras();
+
         if (emprestimo is null)
         {
             BotaoEmprestei.IsChecked = true;
+            ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource).FirstOrDefault();
             return;
         }
 
@@ -33,6 +37,8 @@ public partial class EmprestimoDialog : Window
         CampoNome.Text = emprestimo.Nome;
         CampoValor.Text = (emprestimo.ValorCentavos / 100m).ToString("N2", Formatacao.CulturaBr);
         CampoData.SelectedDate = emprestimo.DataPagamento.ToDateTime(TimeOnly.MinValue);
+        ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource)
+            .FirstOrDefault(c => c.Id == (emprestimo.CarteiraId ?? Database.CarteiraBancoId));
         BotaoSalvar.Content = "Atualizar";
         BotaoExcluir.Visibility = Visibility.Visible;
         BotaoEmprestei.IsChecked = emprestimo.Tipo == TipoEmprestimo.Emprestei;
@@ -80,12 +86,20 @@ public partial class EmprestimoDialog : Window
                 return;
             }
 
+            var carteira = (Carteira?)ComboCarteira.SelectedItem;
+            if (carteira is null)
+            {
+                MostrarErro("Selecione a carteira da movimentação");
+                return;
+            }
+
             _servicos.Emprestimos.Salvar(
                 _emEdicao?.Id,
                 TipoAtual,
                 CampoNome.Text,
                 ValorMonetario.ParseCentavos(CampoValor.Text),
-                DateOnly.FromDateTime(CampoData.SelectedDate.Value));
+                DateOnly.FromDateTime(CampoData.SelectedDate.Value),
+                carteira.Id);
 
             DialogResult = true;
         }

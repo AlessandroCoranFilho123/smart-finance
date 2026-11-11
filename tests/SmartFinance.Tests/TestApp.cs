@@ -37,8 +37,8 @@ internal sealed class TestApp : IDisposable
         Carteiras = new CarteiraService(CarteiraRepo, TransacaoRepo);
         Transacoes = new TransacaoService(Db, TransacaoRepo, MetaRepo, Carteiras);
         Metas = new MetaService(MetaRepo);
-        Cartao = new CartaoCreditoService(CartaoRepo);
-        Emprestimos = new EmprestimoService(EmprestimoRepo);
+        Cartao = new CartaoCreditoService(Db, CartaoRepo, TransacaoRepo);
+        Emprestimos = new EmprestimoService(Db, EmprestimoRepo, TransacaoRepo);
     }
 
     public void Dispose()

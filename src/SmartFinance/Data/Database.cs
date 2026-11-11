@@ -117,6 +117,7 @@ public sealed class Database : IDisposable
         {
             CriarTabelas(conn);
             MigrarColunasTransacao(conn);
+            MigrarColunasPlanejamento(conn);
             CriarIndices(conn);
             CriarBuscaTextual(conn);
         });
@@ -169,7 +170,10 @@ public sealed class Database : IDisposable
                 nome                 TEXT    NOT NULL,
                 valor_total_centavos INTEGER NOT NULL,
                 parcelas             INTEGER NOT NULL,
-                vencimento           TEXT    NOT NULL
+                vencimento           TEXT    NOT NULL,
+                parcelas_pagas       INTEGER NOT NULL DEFAULT 0,
+                carteira_id          TEXT    DEFAULT '00000000-0000-0000-0000-000000000001',
+                transacao_id         TEXT
             )
             """);
 
@@ -179,7 +183,9 @@ public sealed class Database : IDisposable
                 tipo           TEXT    NOT NULL,
                 nome           TEXT    NOT NULL,
                 valor_centavos INTEGER NOT NULL,
-                data_pagamento TEXT    NOT NULL
+                data_pagamento TEXT    NOT NULL,
+                carteira_id    TEXT    DEFAULT '00000000-0000-0000-0000-000000000001',
+                transacao_id   TEXT
             )
             """);
 
@@ -195,6 +201,41 @@ public sealed class Database : IDisposable
                 FOREIGN KEY (destino_carteira_id) REFERENCES carteira (id) ON DELETE CASCADE
             )
             """);
+    }
+
+    /// <summary>Migrations das tabelas de cartão e empréstimo (D-10/D-11): colunas de
+    /// carteira, vínculo com a transação gerada e parcelas pagas. Default preserva
+    /// registros legados (sem movimentação, nada pago).</summary>
+    private static void MigrarColunasPlanejamento(SqliteConnection conn)
+    {
+        AdicionarColunaSeFaltar(conn, "compra_cartao_credito", "parcelas_pagas", "INTEGER NOT NULL DEFAULT 0");
+        AdicionarColunaSeFaltar(conn, "compra_cartao_credito", "carteira_id", "TEXT DEFAULT '00000000-0000-0000-0000-000000000001'");
+        AdicionarColunaSeFaltar(conn, "compra_cartao_credito", "transacao_id", "TEXT");
+        AdicionarColunaSeFaltar(conn, "emprestimo", "carteira_id", "TEXT DEFAULT '00000000-0000-0000-0000-000000000001'");
+        AdicionarColunaSeFaltar(conn, "emprestimo", "transacao_id", "TEXT");
+    }
+
+    private static void AdicionarColunaSeFaltar(SqliteConnection conn, string tabela, string coluna, string definicao)
+    {
+        bool existe = false;
+        using (var comando = conn.CreateCommand())
+        {
+            comando.CommandText = $"PRAGMA table_info({tabela})";
+            using var reader = comando.ExecuteReader();
+            while (reader.Read())
+            {
+                if (string.Equals(reader.GetString(1), coluna, StringComparison.OrdinalIgnoreCase))
+                {
+                    existe = true;
+                    break;
+                }
+            }
+        }
+
+        if (!existe)
+        {
+            Executar(conn, $"ALTER TABLE {tabela} ADD COLUMN {coluna} {definicao}");
+        }
     }
 
     /// <summary>Migrations de bancos criados pela versão Java 2.0 (colunas incrementais).</summary>

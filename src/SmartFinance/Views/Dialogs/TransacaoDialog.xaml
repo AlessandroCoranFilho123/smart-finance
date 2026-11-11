@@ -42,7 +42,7 @@
         <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" LostFocus="FormatarValorAoSair" />
 
         <TextBlock Text="Data" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-        <DatePicker x:Name="CampoData" />
+        <DatePicker x:Name="CampoData" AutomationProperties.Name="Data da transação" />
 
         <TextBlock Text="Categoria" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
         <ComboBox x:Name="ComboCategoria" SelectionChanged="AoMudarCategoria" />
