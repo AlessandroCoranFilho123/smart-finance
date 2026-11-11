@@ -24,7 +24,8 @@ public partial class MainWindow : Window
         AreaConteudo.Content = new DashboardView();
     }
 
-    /// <summary>F5: checagem diária de nova versão, fora da thread de UI.</summary>
+    /// <summary>F5/F6: checagem diária de nova versão; se houver instalador
+    /// publicado, oferece baixar e atualizar automaticamente.</summary>
     private async void VerificarAtualizacaoSeNecessario()
     {
         if (!Services.AtualizacaoService.DeveVerificarHoje())
@@ -35,31 +36,93 @@ public partial class MainWindow : Window
         var informacao = await Services.AtualizacaoService.VerificarNovaVersaoAsync();
         Services.AtualizacaoService.MarcarVerificadoHoje();
 
-        if (informacao is null || !Dispatcher.CheckAccess())
+        if (informacao is null)
         {
-            if (informacao is not null)
-            {
-                await Dispatcher.InvokeAsync(() => NotificarAtualizacao(informacao));
-            }
-
             return;
         }
 
-        NotificarAtualizacao(informacao);
+        await Dispatcher.InvokeAsync(() => OferecerAtualizacao(informacao));
     }
 
-    private void NotificarAtualizacao(Services.InformacaoAtualizacao informacao)
+    private async void OferecerAtualizacao(Services.InformacaoAtualizacao informacao)
     {
-        var resposta = MessageBox.Show(
-            $"Nova versão {informacao.VersaoNova} disponível (atual: {Services.AtualizacaoService.VersaoAtual.ToString(3)}).\nAbrir a página de download?",
-            "Atualização disponível",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Information);
+        bool comInstalador = !string.IsNullOrEmpty(informacao.UrlInstalador);
+        string pergunta = comInstalador
+            ? $"Nova versão {informacao.VersaoNova} disponível (atual: {Services.AtualizacaoService.VersaoAtual.ToString(3)}).\n\nBaixar e instalar agora? O aplicativo será fechado e reaberto automaticamente."
+            : $"Nova versão {informacao.VersaoNova} disponível (atual: {Services.AtualizacaoService.VersaoAtual.ToString(3)}).\n\nAbrir a página de download?";
 
-        if (resposta == MessageBoxResult.Yes)
+        var resposta = MessageBox.Show(pergunta, "Atualização disponível",
+            MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+        if (resposta != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        if (!comInstalador)
         {
             Services.AtualizacaoService.AbrirPaginaDownload(informacao.UrlDownload);
+            return;
         }
+
+        // baixa com janela de progresso
+        var janelaBaixando = CriarJanelaBaixando(informacao.VersaoNova);
+        janelaBaixando.Show();
+        string caminhoSetup;
+        try
+        {
+            caminhoSetup = await Services.AtualizacaoService
+                .BaixarInstaladorAsync(informacao.UrlInstalador!, informacao.VersaoNova);
+        }
+        catch (Exception ex)
+        {
+            janelaBaixando.Close();
+            MessageBox.Show($"Falha ao baixar a atualização:\n{ex.Message}", "Atualização",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        janelaBaixando.Close();
+
+        // integridade: se o hash do instalador foi publicado, confere antes de executar
+        if (informacao.HashInstalador is not null
+            && !Services.AtualizacaoService.VerificarIntegridade(caminhoSetup, informacao.HashInstalador))
+        {
+            MessageBox.Show("O arquivo baixado não confere com o hash publicado. A atualização foi cancelada.",
+                "Atualização", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var instalar = MessageBox.Show(
+            "Download concluído e verificado. Instalar agora? O aplicativo será fechado e reaberto automaticamente.",
+            "Atualização pronta", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+
+        if (instalar != MessageBoxResult.OK)
+        {
+            return;
+        }
+
+        Services.AtualizacaoService.InstalarAtualizacao(caminhoSetup);
+        Application.Current.Shutdown();
+    }
+
+    private static Window CriarJanelaBaixando(string versaoNova)
+    {
+        return new Window
+        {
+            Title = "Atualização",
+            Width = 380,
+            Height = 140,
+            WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            ResizeMode = ResizeMode.NoResize,
+            Content = new System.Windows.Controls.TextBlock
+            {
+                Text = $"Baixando a versão {versaoNova}…\nO instalador tem cerca de 45 MB.",
+                Margin = new Thickness(20),
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 13
+            }
+        };
     }
 
     private void AoNavegar(object sender, RoutedEventArgs e)

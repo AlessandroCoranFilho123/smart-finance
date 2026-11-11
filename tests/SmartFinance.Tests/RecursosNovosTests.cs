@@ -197,5 +197,36 @@ public class RecursosNovosTests : IDisposable
         Assert.Equal(ladoDireito, ladoEsquerdo);
     }
 
-    public void Dispose() => _app.Dispose();
+    // ── F6: atualização automática (hash + integridade) ──────────────────────
+
+    [Fact]
+    public void F6_ExtrairHashSetup_DoCorpoDasNotas()
+    {
+        const string corpo = """
+            ## Verificação de integridade
+
+            SHA-256 do `SmartFinance.exe`: `1111111111111111111111111111111111111111111111111111111111111111`
+            SHA-256 do `SmartFinance-Setup-3.4.0.exe`: `2222222222222222222222222222222222222222222222222222222222222222`
+            """;
+
+        Assert.Equal(new string('2', 64), AtualizacaoService.ExtrairHashSetup(corpo));
+        Assert.Null(AtualizacaoService.ExtrairHashSetup("notas sem hash"));
+        Assert.Null(AtualizacaoService.ExtrairHashSetup(null));
+    }
+
+    [Fact]
+    public void F6_VerificarIntegridade_ConfereSha256()
+    {
+        string arquivo = Path.Combine(Path.GetTempPath(), "sf-f6-" + Guid.NewGuid().ToString("N"));
+        File.WriteAllText(arquivo, "conteúdo de teste");
+
+        using var sha = System.Security.Cryptography.SHA256.Create();
+        string hashReal = Convert.ToHexString(sha.ComputeHash(File.ReadAllBytes(arquivo))).ToLowerInvariant();
+
+        Assert.True(AtualizacaoService.VerificarIntegridade(arquivo, hashReal));
+        Assert.False(AtualizacaoService.VerificarIntegridade(arquivo, new string('0', 64)));
+        File.Delete(arquivo);
+    }
+
+        public void Dispose() => _app.Dispose();
 }
