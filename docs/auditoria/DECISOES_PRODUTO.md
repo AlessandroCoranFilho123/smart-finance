@@ -17,3 +17,12 @@ Data: 11/11/2026 · Registradas antes da implementação, conforme `16_GLM_HANDO
 | — (SF-024) | **Documentar** preferência por instância única; sem `BEGIN IMMEDIATE`. | Uso pessoal; corrida exige duas instâncias simultâneas. Registrado em REMAINING_ISSUES. |
 | — (SF-026) | **Remover** `NoWarn CS8602` e o código morto listado; `MetaService` mantém os métodos de progresso (API de domínio exercitada pelos testes). | Qualidade e honestidade da documentação. |
 | — (SF-036) | **Manter** Cartão/Empréstimos desconectados de carteiras. | Igual à versão Java; conectar é feature nova (REMAINING_ISSUES). |
+
+## Rodada 4 (11/11/2026) — resposta do usuário às pendências U/F
+
+| ID | Decisão |
+|---|---|
+| **D-10** (F2) | Compras no cartão e empréstimos **geram movimentação na carteira no ato do cadastro**: compra = saída do valor total na carteira escolhida; "Emprestei" = saída; "Pedi emprestado" = entrada. Exclusão estorna a movimentação; edição a reajusta. A transação gerada fica vinculada (`transacao_id`) à origem. Cartões parcelados: o valor total sai no cadastro (modelo de comprometimento) e "Total em aberto" passa a rastrear a dívida restante com o cartão. |
+| **D-11** (F1) | Parcelas pagas são um **campo explícito** (`parcelas_pagas`, migração com default 0 — compatível com 2.x). "Total em aberto" = parcelas restantes × valor da parcela; "Parcelas por mês" soma apenas compras com parcelas restantes. |
+| **U1** | **Sem certificado digital** — decisão do usuário (projeto não opera dinheiro real). Pendência encerrada; SmartScreen pode exibir aviso na primeira execução. |
+| **F5** | Verificação automática de atualização via GitHub API, **1× por dia**, silenciosa em falha, com consentimento implícito de rede apenas para checagem de versão (nenhum dado é enviado). |

@@ -54,3 +54,11 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | CI GitHub Actions | build + 115 + 6 no runner Windows | **PASSOU** (`c70268c`) e (`e25dc75`) |
 | Verificação visual das capturas | SF-010/017/025 + layout geral | **PASSOU** — revelou e corrigiu o SF-038 |
 | Cenário físico SF-009 | banco corrompido → mensagem → `WaitForExit` | **PASSOU** |
+
+## Rodada 4 — recursos F1–F5 (11/11/2026)
+
+| Execução | Escopo | Resultado |
+|---|---|---|
+| Suíte unitária pós-rodada 4 | **132 testes** (94 métodos) | **PASSOU (132/132)** |
+| Suíte GUI completa (serializada) | **10 testes** (6 interação + 2 captura + 2 acessibilidade) | **PASSOU (10/10)** |
+| Smoke do binário 3.3.0 | startup ok com banco isolado | **PASSOU** |

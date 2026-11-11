@@ -13,7 +13,7 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     [Fact]
     public void SalvarCompra_Nova_InsereComIdGerado()
     {
-        _app.Cartao.Salvar(null, "Notebook", 1200_00, 12, Hoje);
+        _app.Cartao.Salvar(null, "Notebook", 1200_00, 12, 0, Hoje, Database.CarteiraBancoId);
 
         var compra = _app.Cartao.ListarTodas().Single();
         Assert.Equal("Notebook", compra.Nome);
@@ -23,10 +23,10 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     [Fact]
     public void SalvarCompra_Existente_Atualiza()
     {
-        _app.Cartao.Salvar(null, "Notebook", 1200_00, 12, Hoje);
+        _app.Cartao.Salvar(null, "Notebook", 1200_00, 12, 0, Hoje, Database.CarteiraBancoId);
         var id = _app.Cartao.ListarTodas().Single().Id;
 
-        _app.Cartao.Salvar(id, "Notebook gamer", 1500_00, 10, Hoje);
+        _app.Cartao.Salvar(id, "Notebook gamer", 1500_00, 10, 0, Hoje, Database.CarteiraBancoId);
 
         var compra = _app.Cartao.ListarTodas().Single();
         Assert.Equal("Notebook gamer", compra.Nome);
@@ -36,9 +36,9 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     [Fact]
     public void SalvarCompra_Validacoes()
     {
-        Assert.Throws<ArgumentException>(() => _app.Cartao.Salvar(null, "", 100_00, 1, Hoje));
-        Assert.Throws<ArgumentException>(() => _app.Cartao.Salvar(null, "X", 0, 1, Hoje));
-        Assert.Throws<ArgumentException>(() => _app.Cartao.Salvar(null, "X", 100_00, 0, Hoje));
+        Assert.Throws<ArgumentException>(() => _app.Cartao.Salvar(null, "", 100_00, 1, 0, Hoje, Database.CarteiraBancoId));
+        Assert.Throws<ArgumentException>(() => _app.Cartao.Salvar(null, "X", 0, 1, 0, Hoje, Database.CarteiraBancoId));
+        Assert.Throws<ArgumentException>(() => _app.Cartao.Salvar(null, "X", 100_00, 0, 0, Hoje, Database.CarteiraBancoId));
     }
 
     [Fact]
@@ -69,8 +69,8 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     [Fact]
     public void TotaisDoCartao_SomamValoresCorretos()
     {
-        _app.Cartao.Salvar(null, "A", 300_00, 3, Hoje.AddDays(2));
-        _app.Cartao.Salvar(null, "B", 500_00, 5, Hoje.AddDays(10));
+        _app.Cartao.Salvar(null, "A", 300_00, 3, 0, Hoje.AddDays(2), Database.CarteiraBancoId);
+        _app.Cartao.Salvar(null, "B", 500_00, 5, 0, Hoje.AddDays(10), Database.CarteiraBancoId);
 
         Assert.Equal(800_00, _app.Cartao.CalcularTotalAbertoCentavos());
         Assert.Equal(200_00, _app.Cartao.CalcularTotalParcelasMesCentavos());
@@ -83,9 +83,9 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     [Fact]
     public void Emprestimos_TotaisPorTipo()
     {
-        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", 100_00, Hoje);
-        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Bruno", 50_00, Hoje);
-        _app.Emprestimos.Salvar(null, TipoEmprestimo.PediEmprestado, "Carlos", 200_00, Hoje);
+        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", 100_00, Hoje, Database.CarteiraBancoId);
+        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Bruno", 50_00, Hoje, Database.CarteiraBancoId);
+        _app.Emprestimos.Salvar(null, TipoEmprestimo.PediEmprestado, "Carlos", 200_00, Hoje, Database.CarteiraBancoId);
 
         Assert.Equal(150_00, _app.Emprestimos.TotalPorTipoCentavos(TipoEmprestimo.Emprestei));
         Assert.Equal(200_00, _app.Emprestimos.TotalPorTipoCentavos(TipoEmprestimo.PediEmprestado));
@@ -95,17 +95,17 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     [Fact]
     public void Emprestimos_Validacoes()
     {
-        Assert.Throws<ArgumentException>(() => _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "", 100_00, Hoje));
-        Assert.Throws<ArgumentException>(() => _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", -1, Hoje));
+        Assert.Throws<ArgumentException>(() => _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "", 100_00, Hoje, Database.CarteiraBancoId));
+        Assert.Throws<ArgumentException>(() => _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", -1, Hoje, Database.CarteiraBancoId));
     }
 
     [Fact]
     public void Emprestimos_EditarEExcluir()
     {
-        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", 100_00, Hoje);
+        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", 100_00, Hoje, Database.CarteiraBancoId);
         var id = _app.Emprestimos.ListarTodas().Single().Id;
 
-        _app.Emprestimos.Salvar(id, TipoEmprestimo.PediEmprestado, "Ana", 150_00, Hoje);
+        _app.Emprestimos.Salvar(id, TipoEmprestimo.PediEmprestado, "Ana", 150_00, Hoje, Database.CarteiraBancoId);
         Assert.Equal(150_00, _app.Emprestimos.ListarTodas().Single().ValorCentavos);
 
         _app.Emprestimos.Deletar(id);

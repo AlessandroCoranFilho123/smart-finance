@@ -67,7 +67,7 @@ public sealed class LinhaCompra
     {
         Compra = compra;
         Nome = compra.Nome;
-        Detalhe = $"{compra.Parcelas}x de {Formatacao.Moeda(compra.ValorParcelaCentavos)} · total {Formatacao.Moeda(compra.ValorTotalCentavos)} · vence em {Formatacao.Data(compra.Vencimento)}";
+        Detalhe = $"{compra.Parcelas}x de {Formatacao.Moeda(compra.ValorParcelaCentavos)} · pagas {compra.ParcelasPagas}/{compra.Parcelas} · total {Formatacao.Moeda(compra.ValorTotalCentavos)} · vence em {Formatacao.Data(compra.Vencimento)}";
 
         var status = compra.CalcularStatusVencimento(hoje);
         CorAviso = Icones.BrushDeRecurso(status switch
