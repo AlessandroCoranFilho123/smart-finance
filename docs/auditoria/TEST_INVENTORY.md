@@ -1,6 +1,6 @@
 # Inventário de testes — Smart Finance
 
-Atualizado: 11/11/2026 (rodada 3 — auditoria externa) · Suítes: `tests/SmartFinance.Tests` (**115 execuções**, 87 métodos) e `tests/SmartFinance.GuiTests` (6, categoria GUI).
+Atualizado: 11/11/2026 (rodada 3) · Suítes: `tests/SmartFinance.Tests` (**115 execuções**, 87 métodos) e `tests/SmartFinance.GuiTests` (**8 execuções** — 6 interação + 2 captura de telas, categoria GUI/Captura).
 
 | Classe | Categoria | Métodos | Objetivo | Qualidade | Observações |
 |---|---|---|---|---|---|

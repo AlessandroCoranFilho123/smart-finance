@@ -45,11 +45,13 @@
 | SF-036 | Cartão/Empréstimos não afetam carteiras | (novo) | **DECISÃO** — igual à versão Java; feature futura | REMAINING_ISSUES |
 | SF-037 | Testes de moeda dependem de ICU | (novo) | **REFUTADO** — testes e app usam cultura explícita `pt-BR` (`Formatacao.CulturaBr`) | Código dos testes |
 
-## Não executado nesta rodada
+## Verificação visual executada nesta rodada
 
-- Confirmação **visual** de SF-010/017/025 (renderização de ícones, texto do DatePicker, contraste) — automação UIA valida existência/comportamento, não estética.
-- Encerramento do processo no cenário SF-009 (corromper banco e rodar o app) — o caminho de código (`Shutdown(1)`) está coberto por revisão; executar manualmente com **cópia** corrompida.
-- Windows 11, leitores de tela, suspensão/hibernação (já em REMAINING_ISSUES).
+As três verificações e o cenário físico pendentes foram executados com capturas de tela reais (imagens em `imagens/`, tabela em `TRIAGEM_EXTERNA.md` §verificação visual):
+
+- SF-010/017/025: ícones, texto da data (`11/11/2026`) e contraste da navegação — **confirmados nos dois temas**, revelando e corrigindo o SF-038 (crash com metas)
+- SF-009: banco corrompido → mensagem com erro e caminho → processo **encerrou** após OK (assertado)
+- Restante não executável: Windows 11, leitores de tela, suspensão/hibernação (REMAINING_ISSUES)
 
 ## Novo achado da verificação visual (SF-038) — CRITICAL, corrigido
 

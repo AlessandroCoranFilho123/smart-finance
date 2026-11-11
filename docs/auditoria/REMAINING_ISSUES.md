@@ -27,3 +27,17 @@ Cada item da lista original recebeu implementação ou encerramento justificado.
 
 - A suíte GUI requer sessão interativa (mouse/teclado): em máquina em uso ativo pelo usuário, a automação compete por foco. Recomendação prática: rodar via CI ou em janela de inatividade (`dotnet test --filter Category=GUI`).
 - `dotnet sln add` do SDK 11 RC falha com .slnx em pastas de solução — solução editada em XML diretamente (bug da ferramenta, não do projeto).
+
+## Pendências restantes após a rodada 3 (estado final em 11/11/2026)
+
+Itens **encerrados** na rodada 3: verificação visual (capturas + análise), cenário físico SF-009, todos os 37 achados da auditoria externa (`TRIAGEM_EXTERNA.md`).
+
+| # | Pendência | Tipo | Próxima ação |
+|---|---|---|---|
+| U1 | **Assinatura digital do executável** | **DECISÃO DO USUÁRIO** — exige comprar certificado code-signing (OV/EV, custo anual) | Ao decidir: `signtool sign /fd SHA256 /tr <timestamp>` no exe e no instalador; antes disso o SmartScreen exibirá aviso na primeira execução |
+| U2 | Revisão das decisões D-01…D-09 | **DECISÃO DO USUÁRIO** — foram registradas e aplicadas por delegação ("faça tudo"); qualquer mudança de regra (ex.: D-01 bloquear exclusão de meta, D-03 parsing estrito) é revertível com edição pequena + testes | Ler `DECISOES_PRODUTO.md`; discordou? registrar e reabrir o item |
+| F1 | Parcelas pagas no cartão (D-07) | Feature nova | Modelar baixa de parcelas; "Total em aberto" passa a amortizar |
+| F2 | Cartão/Empréstimos conectados a carteiras (SF-036/D) | Feature nova | Decidir se compras/empréstimos geram movimentos em carteiras |
+| F3 | Instância única (mutex) ou `BEGIN IMMEDIATE` (SF-024) | Robustez | Mutex global no bootstrap é a opção mais simples |
+| F4 | Windows 11, leitores de tela completos, suspensão/hibernação | Ambiente | Executar em máquina/equipamento com o cenário |
+| F5 | Auto-atualização via GitHub API | Feature nova | Verificar versão na inicialização; hoje é manual via releases |
