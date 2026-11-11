@@ -52,7 +52,7 @@ public sealed class LinhaMeta
     {
         if (meta.SemAlvo)
         {
-            return Icones.BrushDeRecurso("BrushAccent");
+            return Icones.BrushDeRecurso("BrushAccentTexto");
         }
 
         double p = meta.Progresso;
