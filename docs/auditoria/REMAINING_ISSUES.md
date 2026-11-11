@@ -35,7 +35,7 @@ Itens **encerrados** na rodada 3: verificação visual (capturas + análise), ce
 | # | Pendência | Tipo | Próxima ação |
 |---|---|---|---|
 | U1 | **Assinatura digital do executável** | **DECISÃO DO USUÁRIO** — exige comprar certificado code-signing (OV/EV, custo anual) | Ao decidir: `signtool sign /fd SHA256 /tr <timestamp>` no exe e no instalador; antes disso o SmartScreen exibirá aviso na primeira execução |
-| U2 | Revisão das decisões D-01…D-09 | **DECISÃO DO USUÁRIO** — foram registradas e aplicadas por delegação ("faça tudo"); qualquer mudança de regra (ex.: D-01 bloquear exclusão de meta, D-03 parsing estrito) é revertível com edição pequena + testes | Ler `DECISOES_PRODUTO.md`; discordou? registrar e reabrir o item |
+| U2 | Revisão das decisões D-01…D-09 | **ENCERRADA** — aprovadas pelo usuário em 11/11/2026 ("concordo com tudo"). Revertíveis mediante solicitação. |
 | F1 | Parcelas pagas no cartão (D-07) | Feature nova | Modelar baixa de parcelas; "Total em aberto" passa a amortizar |
 | F2 | Cartão/Empréstimos conectados a carteiras (SF-036/D) | Feature nova | Decidir se compras/empréstimos geram movimentos em carteiras |
 | F3 | Instância única (mutex) ou `BEGIN IMMEDIATE` (SF-024) | Robustez | Mutex global no bootstrap é a opção mais simples |
@@ -51,5 +51,5 @@ Itens **encerrados** na rodada 3: verificação visual (capturas + análise), ce
 | F1 parcelas pagas | **IMPLEMENTADO** — coluna `parcelas_pagas` (migration compatível), campo no diálogo, "Em aberto" e "Parcelas por mês" amortizam; testes F1_* |
 | F2 cartão/empréstimos → carteiras | **IMPLEMENTADO** (D-10) — compra gera saída do total na carteira escolhida; "Emprestei" saída; "Pedi" entrada; exclusão estorna; edição reajusta (vínculo `transacao_id`); testes F2_* |
 | F3 instância única | **IMPLEMENTADO** — mutex `Local\SmartFinance.SingleInstance`; segunda instância traz a original à frente e encerra |
-| F4 simulações | **PARCIALMENTE EXECUTADO** — varredura UIA de acessibilidade (o que leitores de tela anunciam) implementada como teste permanente (2/2); Windows 11 e suspensão/hibernação **permanecem pendentes** (não simuláveis nesta máquina) |
+| F4 simulações | **PARCIALMENTE EXECUTADO** — varredura UIA de acessibilidade (o que leitores de tela anunciam) implementada como teste permanente (2/2); Windows 11 e suspensão/hibernação **ficam para "um dia"** (decisão do usuário) |
 | F5 auto-atualização | **IMPLEMENTADO** — checagem diária silenciosa via GitHub Releases; se houver versão nova, pergunta e abre a página de download; falha de rede ignorada; testes F5_* |
