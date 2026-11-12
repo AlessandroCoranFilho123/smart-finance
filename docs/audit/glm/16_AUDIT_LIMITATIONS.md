@@ -14,3 +14,8 @@
 ## Viés declarado
 
 Esta auditoria foi executada pelo mesmo agente que implementou o projeto (rodadas 1-4). Mitigações: execução real de tudo que era executável, re-leitura crítica por fluxos (não por intenções), comparação explícita com as auditorias anteriores (`18_PREVIOUS_AUDIT_COMPARISON.md`) e busca ativa por defeitos no código próprio (SF-052 confirmado via CI é um exemplo).
+
+## Atualização rodada 6
+
+- SF-052: log do runner obtido via CI (`erro.log` sem exceções, "startup ok") — a falha é de **exposição UIA** do SeletorData (UserControl sem peer), não do aplicativo. Correção documentada (SF-057): peer de automação explícito.
+- CI de `4810844`/`722ceeb`: concluídos — unit verde em ambos; GUI vermelha nos dois (SF-052).
