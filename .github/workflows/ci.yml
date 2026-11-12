@@ -24,7 +24,7 @@ jobs:
         run: dotnet test tests/SmartFinance.Tests -c Release --no-build
 
       - name: Testes de interface (UIA — sessão interativa do runner)
-        run: dotnet test tests/SmartFinance.GuiTests -c Release --no-build --filter "FullyQualifiedName!~CamposDeData & FullyQualifiedName!~Navegacao_Alcancar
+        run: dotnet test tests/SmartFinance.GuiTests -c Release --no-build --filter 'FullyQualifiedName!~CamposDeData & FullyQualifiedName!~Navegacao_Alcancar'
 
       - name: Log do aplicativo (diagnóstico)
         if: always()
