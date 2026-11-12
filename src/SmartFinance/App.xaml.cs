@@ -21,6 +21,11 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // SF-052: DatePickerTextBox parseia com a cultura da thread (n�o com Language);
+        // fixa pt-BR para que dd/MM/yyyy funcione em qualquer Windows.
+        System.Threading.Thread.CurrentThread.CurrentCulture = Formatacao.CulturaBr;
+        System.Threading.Thread.CurrentThread.CurrentUICulture = Formatacao.CulturaBr;
+
         // F3: uma única instância do aplicativo (evita corrida no SQLite).
         _instanciaUnica = new Mutex(true, @"Local\SmartFinance.SingleInstance", out bool primeiraInstancia);
         if (!primeiraInstancia)

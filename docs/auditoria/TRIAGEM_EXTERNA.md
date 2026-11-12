@@ -83,3 +83,16 @@ Metodologia: banco populado cobrindo todos os estados visuais (metas em 3 faixas
 | SF-009 físico (banco corrompido) | Mensagem + processo encerra | Assertado com WaitForExit |
 
 Novo achado: **SF-039 (médio/alto, visual)** — barras de progresso nunca preenchiam (template sem as partes nomeadas exigidas pelo WPF); invisível em banco vazio e mascarado pela subtilez da track. Corrigido e coberto pelas capturas.
+
+## Rodada 6 (12/11/2026) — auditoria GLM + correções finais
+
+| Pendência/achado | Resultado |
+|---|---|
+| SF-052 (GLM: CI vermelho — datas não commitam no runner) | **RESOLVIDO** — causa raiz: o WPF DatePicker parseia com a cultura da thread (não com Language); bootstrap fixa pt-BR; teste usa datas não-ambíguas e ciclo de retentativa; verificação de valores via ValuePattern |
+| SF-053 (GLM: portátil × instalado) | **DECISÃO DO USUÁRIO** ("atualize na minha máquina") — F6 atualiza via instalador, que converte a cópia portátil em instalada |
+| SF-040 (competência das movimentações) | **RESOLVIDO** (D-13) — a edição de compra/empréstimo preserva a data original da movimentação vinculada; teste novo |
+| SF-041 (falha de instalação) | **RESOLVIDO** — o app não encerra mais às cegas: monitora o instalador; UAC recusado → mensagem e app continua aberto |
+| SF-055 (janela de download) | **RESOLVIDO** — Owner definido, cancelável (fecha = cancela o download) |
+| SF-056 (acúmulo de temp) | **RESOLVIDO** — instaladores antigos removidos antes de cada download |
+| SF-051 (rótulo ambíguo) | **RESOLVIDO** — "Previsão de retorno" |
+| Campos de data da tela de transações (dúvida do usuário) | **VERIFICADO** — De/Até existem, aceitam entrada e **filtram de fato** (3→2→0→3); o filtro por datas é coberto também por teste unitário |

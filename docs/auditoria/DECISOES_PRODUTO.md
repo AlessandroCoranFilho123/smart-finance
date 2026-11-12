@@ -29,3 +29,6 @@ Data: 11/11/2026 · Registradas antes da implementação, conforme `16_GLM_HANDO
 | **F5** | Verificação automática de atualização via GitHub API, **1× por dia**, silenciosa em falha, com consentimento implícito de rede apenas para checagem de versão (nenhum dado é enviado). |
 
 | **D-12** (rodada 5) | **Contraste WCAG AA obrigatório** nas duas paletas (15 pares ≥ 4,5:1, verificado automaticamente por `ContrasteTests`); bordas de cartões/campos são decorativas (relatadas sem reprovar). Barras de progresso usam as partes nomeadas do WPF. Cartões do dashboard com larguras iguais. |
+
+| **D-13** (rodada 6, SF-040) | Competência das movimentações geradas: **criação** = data do dia; **edição** = preserva a data original da movimentação vinculada (o histórico não "salta" ao editar). |
+| **D-14** (rodada 6, SF-053) | Atualização automática sempre via **instalador** (converte cópia portátil em instalada — decisão do usuário: "atualize na minha máquina"). |
