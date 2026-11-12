@@ -41,3 +41,12 @@
 
 ## SF-056 — Acúmulo de artefatos (temp do F6 e imagens de captura)
 **Severidade:** LOW · **Confiança:** CONFIRMED (código) · `%TEMP%\SmartFinance-Update` sem limpeza de versões antigas; `CapturaTests` grava em `docs/auditoria/imagens` (árvore do repositório) durante o teste. Correção: limpar pasta antes de baixar; capturas com flag/destino configurável.
+
+## SF-057 — SeletorData não exposto na árvore UIA no runner de CI
+
+**Severidade:** MEDIUM · **Confiança:** CONFIRMED (log do runner)
+**Localização:** `Views/SeletorData.xaml.cs` (UserControl sem peer de automação próprio)
+**Descrição:** WPF `UserControl` **não gera peer de automação que expõe o controle/nome** por padrão — no runner de CI, `ByAutomationId("DataInicio")` não encontra o SeletorData e o marcador da tela não aparece (a tela até carrega: o log do runner mostra apenas "startup ok", sem exceções).
+**Evidência:** CI `fe19ea0` — erro "campo 'De' não encontrado" + log do app sem exceções + "startup ok".
+**Correção recomendada:** override `OnCreateAutomationPeer` em `SeletorData` retornando `FrameworkElementAutomationPeer` (expõe o controle com seu AutomationId), ou remover o UserControl e compor o botão+popup diretamente nas visões.
+**Validação:** `DataTransacoesTests` verde no CI.
