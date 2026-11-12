@@ -38,6 +38,11 @@ public partial class SeletorData : UserControl
         AtualizarTexto();
     }
 
+    // UserControl sem peer de automação próprio: sem isto, o controle não aparece
+    // na árvore UIA por AutomationId (SF-057).
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+        => new System.Windows.Automation.Peers.FrameworkElementAutomationPeer(this);
+
     private void AbrirCalendario(object sender, RoutedEventArgs e)
     {
         Calendario.DisplayDate = DataSelecionada ?? DateTime.Today;
