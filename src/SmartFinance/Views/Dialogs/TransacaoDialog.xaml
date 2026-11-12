@@ -1,6 +1,7 @@
 <Window x:Class="SmartFinance.Views.Dialogs.TransacaoDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:SmartFinance.Views"
         Title="Nova transação"
         Width="520" SizeToContent="Height"
         MaxWidth="560"
@@ -42,7 +43,7 @@
         <TextBox x:Name="CampoValor" PreviewTextInput="ValidarDigitoValor" LostFocus="FormatarValorAoSair" />
 
         <TextBlock Text="Data" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
-        <DatePicker x:Name="CampoData" AutomationProperties.Name="Data da transação" />
+        <views:SeletorData x:Name="CampoData" AutomationProperties.Name="Data da transação" />
 
         <TextBlock Text="Categoria" Style="{StaticResource RotuloForm}" Margin="0,14,0,4" />
         <ComboBox x:Name="ComboCategoria" SelectionChanged="AoMudarCategoria" />

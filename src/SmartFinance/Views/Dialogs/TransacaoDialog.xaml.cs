@@ -39,7 +39,7 @@ public partial class TransacaoDialog : Window
 
         if (transacao is null)
         {
-            CampoData.SelectedDate = DateTime.Today;
+            CampoData.DataSelecionada = DateTime.Today;
             BotaoSalvar.Content = "Salvar";
             BotaoExcluir.Visibility = Visibility.Collapsed;
             BotaoEntrada.IsChecked = true;
@@ -49,7 +49,7 @@ public partial class TransacaoDialog : Window
         {
             TxtTitulo.Text = "Detalhes da transação";
             Title = "Detalhes da transação";
-            CampoData.SelectedDate = transacao.Data.ToDateTime(TimeOnly.MinValue);
+            CampoData.DataSelecionada = transacao.Data.ToDateTime(TimeOnly.MinValue);
             CampoValor.Text = (transacao.ValorCentavos / 100m).ToString("N2", Formatacao.CulturaBr);
             CampoComentario.Text = transacao.Comentario;
             ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource)
@@ -184,7 +184,7 @@ public partial class TransacaoDialog : Window
                 return;
             }
 
-            if (CampoData.SelectedDate is null)
+            if (CampoData.DataSelecionada is null)
             {
                 MostrarErro("Selecione uma data");
                 return;
@@ -212,7 +212,7 @@ public partial class TransacaoDialog : Window
                 return;
             }
 
-            DateOnly data = DateOnly.FromDateTime(CampoData.SelectedDate.Value);
+            DateOnly data = DateOnly.FromDateTime(CampoData.DataSelecionada.Value);
 
             if (_emEdicao is null)
             {

@@ -16,7 +16,7 @@ public partial class EmprestimoDialog : Window
     {
         InitializeComponent();
         JanelaNativa.AoFonteInicializada(this);
-        CampoData.SelectedDate = DateTime.Today;
+        CampoData.DataSelecionada = DateTime.Today;
     }
 
     public void Configurar(Emprestimo? emprestimo)
@@ -36,7 +36,7 @@ public partial class EmprestimoDialog : Window
         Title = "Detalhes do empréstimo";
         CampoNome.Text = emprestimo.Nome;
         CampoValor.Text = (emprestimo.ValorCentavos / 100m).ToString("N2", Formatacao.CulturaBr);
-        CampoData.SelectedDate = emprestimo.DataPagamento.ToDateTime(TimeOnly.MinValue);
+        CampoData.DataSelecionada = emprestimo.DataPagamento.ToDateTime(TimeOnly.MinValue);
         ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource)
             .FirstOrDefault(c => c.Id == (emprestimo.CarteiraId ?? Database.CarteiraBancoId));
         BotaoSalvar.Content = "Atualizar";
@@ -80,7 +80,7 @@ public partial class EmprestimoDialog : Window
         MostrarErro(null);
         try
         {
-            if (CampoData.SelectedDate is null)
+            if (CampoData.DataSelecionada is null)
             {
                 MostrarErro("Selecione a data de pagamento");
                 return;
@@ -98,7 +98,7 @@ public partial class EmprestimoDialog : Window
                 TipoAtual,
                 CampoNome.Text,
                 ValorMonetario.ParseCentavos(CampoValor.Text),
-                DateOnly.FromDateTime(CampoData.SelectedDate.Value),
+                DateOnly.FromDateTime(CampoData.DataSelecionada.Value),
                 carteira.Id);
 
             DialogResult = true;
