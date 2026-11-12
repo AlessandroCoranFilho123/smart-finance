@@ -71,3 +71,11 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 | Suíte GUI completa (serializada) | **12 testes** | **PASSOU (12/12)** |
 | Campos de data da tela de transações | De/Até filtram de fato (3→2→0→3) | **PASSOU** — dúvida do usuário resolvida: nada faltava |
 | Upgrade silencioso local | instalar → atualizar sobre existente → reabertura automática | **PASSOU** |
+
+## Rodada 6 — auditoria GLM + correções finais (12/11/2026)
+
+| Execução | Escopo | Resultado |
+|---|---|---|
+| Unitária pós-correções | **136 testes** (inclui D-13 competência + migração de compra/emprestimo NT-2) | **PASSOU (136/136)** |
+| GUI completa (serializada) | **12 testes** | **PASSOU (12/12)** |
+| Smoke binário 3.4.1 | startup ok | **PASSOU** |
