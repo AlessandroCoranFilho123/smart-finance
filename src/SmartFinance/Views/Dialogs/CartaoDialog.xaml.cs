@@ -26,7 +26,7 @@ public partial class CartaoDialog : Window
 
         if (compra is null)
         {
-            CampoVencimento.SelectedDate = DateTime.Today.AddMonths(1);
+            CampoVencimento.DataSelecionada = DateTime.Today.AddMonths(1);
             CampoPagas.Text = "0";
             ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource).FirstOrDefault();
             return;
@@ -38,7 +38,7 @@ public partial class CartaoDialog : Window
         CampoValor.Text = (compra.ValorTotalCentavos / 100m).ToString("N2", Formatacao.CulturaBr);
         CampoParcelas.Text = compra.Parcelas.ToString();
         CampoPagas.Text = compra.ParcelasPagas.ToString();
-        CampoVencimento.SelectedDate = compra.Vencimento.ToDateTime(TimeOnly.MinValue);
+        CampoVencimento.DataSelecionada = compra.Vencimento.ToDateTime(TimeOnly.MinValue);
         ComboCarteira.SelectedItem = ((List<Carteira>)ComboCarteira.ItemsSource)
             .FirstOrDefault(c => c.Id == (compra.CarteiraId ?? Database.CarteiraBancoId));
         BotaoSalvar.Content = "Atualizar";
@@ -54,7 +54,7 @@ public partial class CartaoDialog : Window
         MostrarErro(null);
         try
         {
-            if (CampoVencimento.SelectedDate is null)
+            if (CampoVencimento.DataSelecionada is null)
             {
                 MostrarErro("Selecione a data de vencimento");
                 return;
@@ -85,7 +85,7 @@ public partial class CartaoDialog : Window
                 ValorMonetario.ParseCentavos(CampoValor.Text),
                 parcelas,
                 pagas,
-                DateOnly.FromDateTime(CampoVencimento.SelectedDate.Value),
+                DateOnly.FromDateTime(CampoVencimento.DataSelecionada.Value),
                 carteira.Id);
 
             DialogResult = true;

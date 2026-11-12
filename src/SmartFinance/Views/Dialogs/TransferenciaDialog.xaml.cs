@@ -20,7 +20,7 @@ public partial class TransferenciaDialog : Window
         ComboDestino.ItemsSource = _servicos.Carteiras.ListarCarteiras();
         ComboOrigem.SelectedItem = ((List<Carteira>)ComboOrigem.ItemsSource).FirstOrDefault(c => c.Id == Database.CarteiraBancoId);
         ComboDestino.SelectedItem = ((List<Carteira>)ComboDestino.ItemsSource).FirstOrDefault(c => c.Id == Database.CarteiraDinheiroFisicoId);
-        CampoData.SelectedDate = DateTime.Today;
+        CampoData.DataSelecionada = DateTime.Today;
     }
 
     private void ValidarDigitoValor(object sender, TextCompositionEventArgs e) => MascaraValor.ValidarDigitos(sender, e);
@@ -41,7 +41,7 @@ public partial class TransferenciaDialog : Window
                 return;
             }
 
-            if (CampoData.SelectedDate is null)
+            if (CampoData.DataSelecionada is null)
             {
                 MostrarErro("Selecione uma data");
                 return;
@@ -51,7 +51,7 @@ public partial class TransferenciaDialog : Window
                 origem.Id,
                 destino.Id,
                 ValorMonetario.ParseCentavos(CampoValor.Text),
-                DateOnly.FromDateTime(CampoData.SelectedDate.Value),
+                DateOnly.FromDateTime(CampoData.DataSelecionada.Value),
                 CampoComentario.Text);
 
             DialogResult = true;

@@ -60,8 +60,8 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
             CampoBusca.Text,
             TipoSelecionado,
             CategoriaSelecionada,
-            DataInicio.SelectedDate is null ? null : DateOnly.FromDateTime(DataInicio.SelectedDate.Value),
-            DataFim.SelectedDate is null ? null : DateOnly.FromDateTime(DataFim.SelectedDate.Value));
+            DataInicio.DataSelecionada is null ? null : DateOnly.FromDateTime(DataInicio.DataSelecionada.Value),
+            DataFim.DataSelecionada is null ? null : DateOnly.FromDateTime(DataFim.DataSelecionada.Value));
 
         _resultado = _servicos.Transacoes.ListarPorFiltro(filtro);
 
@@ -85,8 +85,8 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
         CampoBusca.Text = "";
         ComboTipo.SelectedIndex = 0;
         ComboCategoria.SelectedIndex = 0;
-        DataInicio.SelectedDate = null;
-        DataFim.SelectedDate = null;
+        DataInicio.DataSelecionada = null;
+        DataFim.DataSelecionada = null;
         AplicarFiltros();
     }
 
