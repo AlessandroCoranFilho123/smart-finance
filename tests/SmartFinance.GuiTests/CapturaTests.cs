@@ -238,14 +238,11 @@ public class CapturaTests : IDisposable
 
         for (int tentativa = 1; tentativa <= 3; tentativa++)
         {
-            try
-            {
-                botao.Patterns.LegacyIAccessible.Pattern.DoDefaultAction();
-            }
-            catch (Exception)
-            {
-                botao.Click();
-            }
+            // clique real com a janela em primeiro plano (método mais confiável
+            // para RadioButton no runner de CI)
+            _janela.SetForeground();
+            Thread.Sleep(200);
+            botao.Click();
             Thread.Sleep(700);
 
             // navegação confirmada quando a tela alvo aparece
