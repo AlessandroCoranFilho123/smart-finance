@@ -235,9 +235,32 @@ public class CapturaTests : IDisposable
     {
         var botao = Retry.WhileNull(() => _janela.FindFirstDescendant(cf => cf.ByAutomationId(navId)),
             TimeSpan.FromSeconds(10), ignoreException: true).Result!;
-        botao.Patterns.LegacyIAccessible.Pattern.DoDefaultAction();
-        Thread.Sleep(600);
-        _janela.SetForeground();
+
+        for (int tentativa = 1; tentativa <= 3; tentativa++)
+        {
+            try
+            {
+                botao.Patterns.SelectionItem.Pattern.Select();
+            }
+            catch (InvalidOperationException)
+            {
+                botao.Click();
+            }
+            Thread.Sleep(700);
+
+            // navegação confirmada quando a lista de transações aparece
+            if (navId != "NavInicio" && _janela.FindFirstDescendant(cf => cf.ByAutomationId("ListaTransacoes")) is not null)
+            {
+                return;
+            }
+
+            if (navId == "NavInicio" && _janela.FindFirstDescendant(cf => cf.ByName("Transações recentes")) is not null)
+            {
+                return;
+            }
+        }
+
+        throw new InvalidOperationException("navegação para " + navId + " não aplicou");
     }
 
     private Window AbrirDialogo(string botao)
