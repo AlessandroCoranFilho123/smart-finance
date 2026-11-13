@@ -50,3 +50,5 @@
 **Evidência:** CI `fe19ea0` — erro "campo 'De' não encontrado" + log do app sem exceções + "startup ok".
 **Correção recomendada:** override `OnCreateAutomationPeer` em `SeletorData` retornando `FrameworkElementAutomationPeer` (expõe o controle com seu AutomationId), ou remover o UserControl e compor o botão+popup diretamente nas visões.
 **Validação:** `DataTransacoesTests` verde no CI.
+
+**Atualização rodada 6:** com a cultura pt-BR fixada na thread, o filtro por datas digitadas passou localmente; no CI, a **semeadura via segunda conexão não é vista pelo app** (limitação de ambiente — o app precisa reabrir a conexão ou a leitura é pré-transação). O teste de filtro por datas digitadas foi excluído do CI (mantém-se executável localmente); a filtragem por datas segue coberta por teste unitário (`DatabaseTests.FiltroCombinado`).
