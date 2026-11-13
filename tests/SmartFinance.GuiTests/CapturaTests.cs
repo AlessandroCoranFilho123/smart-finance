@@ -250,7 +250,7 @@ public class CapturaTests : IDisposable
             {
                 "NavTransacoes" => "Todas as transações",
                 "NavMetas" => "Metas",
-                "NavCartoes" => "Nova compra",
+                "NavCartoes" => "Cartão de crédito",
                 "NavEmprestimos" => "Emprestei pra alguém",
                 _ => "Transações recentes"
             };

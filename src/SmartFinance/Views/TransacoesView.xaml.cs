@@ -39,6 +39,8 @@ public partial class TransacoesView : UserControl, IViewAtualizavel
 
     private void AoMudarFiltro(object sender, RoutedEventArgs e) => AplicarFiltros();
 
+    private void AoMudarData(object? sender, EventArgs e) => AplicarFiltros();
+
     private Models.TipoTransacao? TipoSelecionado => (ComboTipo.SelectedItem as ComboBoxItem)?.Content switch
     {
         "Entrada" => Models.TipoTransacao.Entrada,
