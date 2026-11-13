@@ -240,21 +240,25 @@ public class CapturaTests : IDisposable
         {
             try
             {
-                botao.Patterns.SelectionItem.Pattern.Select();
+                botao.Patterns.LegacyIAccessible.Pattern.DoDefaultAction();
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 botao.Click();
             }
             Thread.Sleep(700);
 
-            // navegação confirmada quando a lista de transações aparece
-            if (navId != "NavInicio" && _janela.FindFirstDescendant(cf => cf.ByAutomationId("ListaTransacoes")) is not null)
+            // navegação confirmada quando a tela alvo aparece
+            var alvo = navId switch
             {
-                return;
-            }
+                "NavTransacoes" => "Todas as transações",
+                "NavMetas" => "Metas",
+                "NavCartoes" => "Nova compra",
+                "NavEmprestimos" => "Emprestei pra alguém",
+                _ => "Transações recentes"
+            };
 
-            if (navId == "NavInicio" && _janela.FindFirstDescendant(cf => cf.ByName("Transações recentes")) is not null)
+            if (_janela.FindFirstDescendant(cf => cf.ByName(alvo)) is not null)
             {
                 return;
             }
