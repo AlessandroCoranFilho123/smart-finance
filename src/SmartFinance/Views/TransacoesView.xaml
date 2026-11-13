@@ -60,12 +60,12 @@
 
                     <StackPanel Grid.Column="3" Margin="12,0,0,0">
                         <TextBlock Text="De" Style="{StaticResource RotuloForm}" />
-                        <views:SeletorData x:Name="DataInicio" DataAlterada="AoMudarFiltro" />
+                        <views:SeletorData x:Name="DataInicio" DataAlterada="AoMudarData" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="4" Margin="12,0,0,0">
                         <TextBlock Text="Até" Style="{StaticResource RotuloForm}" />
-                        <views:SeletorData x:Name="DataFim" DataAlterada="AoMudarFiltro" />
+                        <views:SeletorData x:Name="DataFim" DataAlterada="AoMudarData" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="5" Margin="12,0,0,0" VerticalAlignment="Bottom">
