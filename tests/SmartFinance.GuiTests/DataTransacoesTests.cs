@@ -83,8 +83,13 @@ public class DataTransacoesTests : IClassFixture<GuiTests.AppFixture>, IDisposab
     {
         var botao = Retry.WhileNull(() => _fx.Janela.FindFirstDescendant(cf => cf.ByAutomationId(navId)),
             TimeSpan.FromSeconds(10), ignoreException: true).Result!;
-        botao.Patterns.LegacyIAccessible.Pattern.DoDefaultAction();
-        Thread.Sleep(600);
+
+        // clique real: no runner do CI o app é a única janela, então o clique
+        // da UIA chega; DoDefaultAction no RadioButton não navega no runner
+        _fx.Janela.SetForeground();
+        Thread.Sleep(300);
+        botao.Click();
+        Thread.Sleep(700);
     }
 
     private AutomationElement? Buscar(string automationId)
