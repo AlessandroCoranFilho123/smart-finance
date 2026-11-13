@@ -10,7 +10,7 @@
     <AssemblyName>SmartFinance</AssemblyName>
     <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>3.4.1</Version>
+    <Version>3.4.2</Version>
     <Authors>Alessandro Coran Filho</Authors>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 

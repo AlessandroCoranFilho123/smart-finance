@@ -154,27 +154,26 @@
         <Setter Property="Foreground" Value="{DynamicResource BrushSaida}" />
     </Style>
 
-    <!-- Botão de ação destrutiva/cancelamento: contorno vermelho, legível nos dois temas -->
+    <!-- Botão de ação destrutiva/cancelamento: vermelho sólido com texto branco -->
     <Style x:Key="BotaoPerigo" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Foreground" Value="{DynamicResource BrushSaida}" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="{DynamicResource BrushSaida}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="fundo"
                             Background="{TemplateBinding Background}"
-                            BorderBrush="{DynamicResource BrushSaida}"
-                            BorderThickness="1"
                             CornerRadius="10"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccentSoft}" />
+                            <Setter TargetName="fundo" Property="Opacity" Value="0.85" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="fundo" Property="Opacity" Value="0.8" />
+                            <Setter TargetName="fundo" Property="Opacity" Value="0.7" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.45" />
