@@ -32,8 +32,11 @@ $iss = "$raiz\setup\SmartFinance.iss"
 (Get-Content $iss -Raw) -replace '#define VersaoApp "[^"]+"', "#define VersaoApp `"$Versao`"" |
     Set-Content $iss -NoNewline
 $manifest = "$raiz\src\SmartFinance\app.manifest"
-$versaoManifest = 'version="' + $Versao + '.0"'
-(Get-Content $manifest -Raw) -replace 'version="[0-9.]+\.0"', $versaoManifest |
+# apenas o assemblyIdentity: o -replace troca TODAS as ocorrências e o
+# manifest tem version="1.0" na declaração XML e no manifestVersion — trocar
+# esses quebra o manifest e o exe não inicia (bug da 3.4.5)
+$versaoManifest = '${1}' + $Versao + '.0${2}'
+(Get-Content $manifest -Raw) -replace '(<assemblyIdentity[^>]*version=")[0-9.]+(")', $versaoManifest |
     Set-Content $manifest -NoNewline
 git add $csproj $iss $manifest
 if (git status --porcelain -- $csproj $iss $manifest) {
