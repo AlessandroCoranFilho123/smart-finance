@@ -32,7 +32,11 @@ $iss = "$raiz\setup\SmartFinance.iss"
 (Get-Content $iss -Raw) -replace '#define VersaoApp "[^"]+"', "#define VersaoApp `"$Versao`"" |
     Set-Content $iss -NoNewline
 git add $csproj $iss
-git commit -m "Bump version to $Versao"
+if (git status --porcelain -- $csproj $iss) {
+    git commit -m "Bump version to $Versao"
+} else {
+    Write-Host "versão já está em $Versao (nada a commitar)"
+}
 
 Passo "Build Release e testes unitários"
 dotnet build SmartFinance.slnx -c Release
@@ -62,7 +66,8 @@ git push origin main
 if ($LASTEXITCODE -ne 0) { throw "push falhou" }
 
 Passo "Criando release $Versao no GitHub"
-$cr = "`n" | git credential fill 2>$null
+$entrada = "protocol=https`nhost=github.com`n`n"
+$cr = $entrada | git credential fill 2>$null
 $token = ($cr | Where-Object { $_ -like 'password=*' }) -replace '^password=', ''
 if (-not $token) { throw "credencial GitHub não encontrada no Git Credential Manager" }
 
