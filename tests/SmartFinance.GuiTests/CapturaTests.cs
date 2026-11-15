@@ -85,9 +85,11 @@ public class CapturaTests : IDisposable
     {
         AplicarTema("escuro");
         CapturarDialogos("escuro");
+        CapturarDialogoEdicao("escuro");
 
         AplicarTema("claro");
         CapturarDialogos("claro");
+        CapturarDialogoEdicao("claro");
 
         File.WriteAllText(_caminhoConfig, _configOriginal);
     }
@@ -136,6 +138,59 @@ public class CapturaTests : IDisposable
 
     // ── apoio ─────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Regressão de contraste (o calendário chegou a ficar transparente/ilegível
+    /// no tema escuro): amostra pixels da captura recém-gerada e exige as cores
+    /// da paleta no cartão do popup, na célula do dia de hoje e no campo de data.
+    /// </summary>
+    private void VerificarCoresDoCalendario(string sufixo, AutomationElement popup, AutomationElement seletor)
+    {
+        bool escuro = sufixo == "escuro";
+        var corCard = escuro ? System.Drawing.Color.FromArgb(0x17, 0x1D, 0x2B) : System.Drawing.Color.FromArgb(0xFF, 0xFF, 0xFF);
+        var corHoje = escuro ? System.Drawing.Color.FromArgb(0x24, 0x30, 0x4F) : System.Drawing.Color.FromArgb(0xE6, 0xEB, 0xFF);
+        var corCampo = escuro ? System.Drawing.Color.FromArgb(0x1C, 0x24, 0x34) : System.Drawing.Color.FromArgb(0xFF, 0xFF, 0xFF);
+
+        // Capture() do popup devolve a região da janela principal: capturar a
+        // própria janela garante uma única referência de coordenadas
+        using var captura = _janela.Capture();
+        var retJanela = _janela.BoundingRectangle;
+
+        // margem interna do cartão do popup (padding entre a borda e a grade)
+        var calendario = popup.FindFirstDescendant(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Calendar))
+            ?? throw new InvalidOperationException("calendário não encontrado no popup");
+        var retCalendario = calendario.BoundingRectangle;
+        Assert.Equal(corCard, PixelDoBitmap(captura, retJanela,
+            retCalendario.Left - 4, retCalendario.Top + retCalendario.Height / 2));
+
+        // célula do dia de hoje: fundo BrushAccentSoft (amostra fora do número)
+        var hoje = DateTime.Today.Day.ToString();
+        var celulaHoje = popup.FindFirstDescendant(cf => cf.ByName(hoje))
+            ?? throw new InvalidOperationException($"célula do dia {hoje} não encontrada no calendário");
+        var retHoje = celulaHoje.BoundingRectangle;
+        Assert.Equal(corHoje, PixelDoBitmap(captura, retJanela,
+            retHoje.Left + retHoje.Width * 0.12, retHoje.Top + retHoje.Height / 2));
+
+        // campo de data na janela principal: fundo BrushFieldBg (lado direito, sem texto)
+        var botaoCampo = seletor.FindFirstDescendant(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))
+            ?? throw new InvalidOperationException("botão de data não encontrado");
+        var retCampo = botaoCampo.BoundingRectangle;
+        Assert.Equal(corCampo, PixelDoBitmap(captura, retJanela,
+            retCampo.Right - 12, retCampo.Top + retCampo.Height / 2));
+    }
+
+    /// <summary>Amostra um pixel de tela na captura da janela, convertendo
+    /// coordenadas (com escala de DPI entre o retângulo UIA e o bitmap).</summary>
+    private static System.Drawing.Color PixelDoBitmap(
+        System.Drawing.Bitmap bitmap, System.Drawing.Rectangle janela, double xTela, double yTela)
+    {
+        double escala = bitmap.Width / janela.Width;
+        int x = (int)((xTela - janela.Left) * escala);
+        int y = (int)((yTela - janela.Top) * escala);
+        return bitmap.GetPixel(
+            Math.Min(Math.Max(x, 0), bitmap.Width - 1),
+            Math.Min(Math.Max(y, 0), bitmap.Height - 1));
+    }
+
     /// <summary>Abre o calendário do filtro de transações e fotografa o popup
     /// (janela de topo separada do processo, como em DataTransacoesTests).</summary>
     private void CapturarCalendario(string sufixo)
@@ -158,6 +213,7 @@ public class CapturaTests : IDisposable
             ?? throw new InvalidOperationException("popup do calendário não abriu");
         Thread.Sleep(400);
         CapturarJanela(popup, $"10-calendario-{sufixo}");
+        VerificarCoresDoCalendario(sufixo, popup, seletor);
 
         // visão de meses: clicar no cabeçalho ("novembro de 2026") alterna o modo
         var cabecalho = popup.FindFirstDescendant(cf => cf.ByName("novembro de 2026"));
@@ -221,6 +277,33 @@ public class CapturaTests : IDisposable
         var carteiras = AbrirDialogo("Carteiras");
         CapturarJanela(carteiras, $"09-dialogo-carteiras-{sufixo}");
         FecharDialogo(carteiras);
+    }
+
+    /// <summary>Diálogo em modo EDIÇÃO (duplo clique na lista), onde o botão
+    /// Excluir fica visível — estado não coberto pelas capturas de criação.</summary>
+    private void CapturarDialogoEdicao(string sufixo)
+    {
+        Navegar("NavTransacoes");
+        var primeiraLinha = Retry.WhileNull(
+                () => _janela.FindFirstDescendant(cf => cf.ByAutomationId("ListaTransacoes"))
+                    .FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.ListItem))
+                    .FirstOrDefault(),
+            TimeSpan.FromSeconds(5), ignoreException: true).Result
+            ?? throw new InvalidOperationException("nenhuma transação na lista para editar");
+
+        // duplo clique abre a edição (MouseDoubleClick da lista)
+        var retangulo = primeiraLinha.BoundingRectangle;
+        FlaUI.Core.Input.Mouse.MoveTo((int)(retangulo.X + retangulo.Width / 2), (int)(retangulo.Y + retangulo.Height / 2));
+        FlaUI.Core.Input.Mouse.DoubleClick(FlaUI.Core.Input.MouseButton.Left);
+
+        var dialogo = Retry.WhileNull(() => _janela.ModalWindows.FirstOrDefault(),
+            TimeSpan.FromSeconds(5), ignoreException: true).Result
+            ?? throw new InvalidOperationException("diálogo de edição não abriu");
+        Thread.Sleep(400);
+        CapturarJanela(dialogo, $"12-dialogo-editar-transacao-{sufixo}");
+
+        dialogo.FindFirstDescendant(cf => cf.ByName("Cancelar"))?.AsButton().Invoke();
+        Thread.Sleep(400);
     }
 
     /// <summary>Alterna o tema pelo próprio app até alcançar o desejado

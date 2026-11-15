@@ -151,7 +151,9 @@
         </Setter>
     </Style>
 
-    <Style x:Key="BotaoExcluir" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+    <!-- Excluir nos diálogos: mesmo tamanho/linha dos outros botões (visual de
+         campo, como BotaoSecundario) com texto vermelho para ação destrutiva. -->
+    <Style x:Key="BotaoExcluir" TargetType="Button" BasedOn="{StaticResource BotaoSecundario}">
         <Setter Property="Foreground" Value="{DynamicResource BrushSaida}" />
     </Style>
 
@@ -279,8 +281,11 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="10">
-                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
-                                      VerticalAlignment="Center" Focusable="False" />
+                        <!-- Sem Margin=Padding: o TextBoxView interno já aplica o
+                             Padding do controle; aplicá-lo aqui também dobraria o
+                             espaçamento e deixaria o campo mais alto que os outros
+                             (ComboBox/SeletorData) da mesma linha. -->
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Focusable="False" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
