@@ -31,7 +31,7 @@ $iss = "$raiz\setup\SmartFinance.iss"
     Set-Content $csproj -NoNewline
 (Get-Content $iss -Raw) -replace '#define VersaoApp "[^"]+"', "#define VersaoApp `"$Versao`"" |
     Set-Content $iss -NoNewline
-$manifest = "$raiz\src\SmartFinance\pp.manifest"
+$manifest = "$raiz\src\SmartFinance\app.manifest"
 $versaoManifest = 'version="' + $Versao + '.0"'
 (Get-Content $manifest -Raw) -replace 'version="[0-9.]+\.0"', $versaoManifest |
     Set-Content $manifest -NoNewline
