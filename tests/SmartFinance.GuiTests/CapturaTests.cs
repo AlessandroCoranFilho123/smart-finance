@@ -364,11 +364,19 @@ public class CapturaTests : IDisposable
 
         for (int tentativa = 1; tentativa <= 3; tentativa++)
         {
-            // clique real com a janela em primeiro plano (método mais confiável
-            // para RadioButton no runner de CI)
+            // alterna os dois métodos: o clique real e o Invoke falham em
+            // contextos diferentes (local × runner de CI — ver SF-058)
             _janela.SetForeground();
             Thread.Sleep(200);
-            botao.Click();
+            if (tentativa % 2 == 1)
+            {
+                botao.Click();
+            }
+            else
+            {
+                botao.AsButton().Invoke();
+            }
+
             Thread.Sleep(700);
 
             // navegação confirmada quando a tela alvo aparece
