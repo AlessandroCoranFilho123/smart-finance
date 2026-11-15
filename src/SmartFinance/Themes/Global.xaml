@@ -126,13 +126,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="fundo"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{DynamicResource BrushFieldBorder}"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border x:Name="fundo"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{DynamicResource BrushFieldBorder}"
+                                            BorderThickness="1"
+                                            CornerRadius="10"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -416,59 +417,234 @@
         </Setter>
     </Style>
 
-    <!-- ===== DatePicker ===== -->
-    <Style TargetType="DatePicker">
-        <Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}" />
-        <Setter Property="FontSize" Value="{StaticResource FonteNormal}" />
-        <Setter Property="CalendarStyle" Value="{x:Null}" />
+    <!-- ===== Calendário (SeletorData) ===== -->
+    <!-- O template padrão do WPF usa texto preto sobre fundo transparente:
+         no tema escuro o calendário fica ilegível. O Calendar e o CalendarItem
+         recebem estilos implícitos (criados fora de template); os botões de
+         dia/mês são criados em código DENTRO da árvore do template do
+         CalendarItem, onde estilos implícitos de app não são aplicados — por
+         isso entram pelas propriedades CalendarDayButtonStyle/CalendarButtonStyle. -->
+    <Style x:Key="BotaoDiaCalendario" TargetType="CalendarDayButton">
+        <Setter Property="MinWidth" Value="28" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="DatePicker">
+                <ControlTemplate TargetType="CalendarDayButton">
                     <Grid>
-                        <ToggleButton x:Name="PART_Button" Focusable="False" ClickMode="Press">
-                            <ToggleButton.Template>
-                                <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="fundo"
-                                            Background="{DynamicResource BrushFieldBg}"
-                                            BorderBrush="{DynamicResource BrushFieldBorder}"
-                                            BorderThickness="1"
-                                            CornerRadius="10">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="30" />
-                                            </Grid.ColumnDefinitions>
-                                            <Path Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                  Data="M 1 2 H 9 M 1 5 H 9 M 3 0 V 2 M 7 0 V 2 M 1 5 C 1 7, 3 8, 5 8 C 7 8, 9 7, 9 5"
-                                                  Stroke="{DynamicResource BrushTextSecondary}" StrokeThickness="1" Fill="Transparent" />
-                                        </Grid>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="fundo" Property="BorderBrush" Value="{DynamicResource BrushTextSecondary}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </ToggleButton.Template>
-                        </ToggleButton>
-
-                        <DatePickerTextBox x:Name="PART_TextBox"
-                                           Margin="12,8,30,8"
-                                           VerticalAlignment="Center"
-                                           Background="Transparent"
-                                           BorderThickness="0"
-                                           Foreground="{DynamicResource BrushTextPrimary}" />
-
-                        <Popup x:Name="PART_Popup"
-                               AllowsTransparency="True"
-                               Placement="Bottom"
-                               StaysOpen="False"
-                               PopupAnimation="Fade" />
+                        <Border x:Name="fundo" Background="Transparent" CornerRadius="7" />
+                        <ContentPresenter x:Name="texto" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Margin="3"
+                                          TextElement.Foreground="{DynamicResource BrushTextPrimary}" />
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushTextSecondary}" />
+                            <Setter TargetName="texto" Property="Opacity" Value="0.55" />
+                        </Trigger>
+                        <Trigger Property="IsBlackedOut" Value="True">
+                            <Setter TargetName="texto" Property="Opacity" Value="0.25" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushHover}" />
+                        </Trigger>
+                        <Trigger Property="IsToday" Value="True">
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccentSoft}" />
+                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushAccentTexto}" />
+                            <Setter TargetName="texto" Property="TextElement.FontWeight" Value="Bold" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccentHover}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccent}" />
+                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushAccentForeground}" />
+                            <Setter TargetName="texto" Property="TextElement.FontWeight" Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="BotaoMesCalendario" TargetType="CalendarButton">
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarButton">
+                    <Grid>
+                        <Border x:Name="fundo" Background="Transparent" CornerRadius="7" />
+                        <ContentPresenter x:Name="texto" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Margin="3"
+                                          TextElement.Foreground="{DynamicResource BrushTextPrimary}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushHover}" />
+                        </Trigger>
+                        <Trigger Property="HasSelectedDays" Value="True">
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccentSoft}" />
+                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushAccentTexto}" />
+                            <Setter TargetName="texto" Property="TextElement.FontWeight" Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Calendar">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}" />
+        <Setter Property="CalendarDayButtonStyle" Value="{StaticResource BotaoDiaCalendario}" />
+        <Setter Property="CalendarButtonStyle" Value="{StaticResource BotaoMesCalendario}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Calendar">
+                    <CalendarItem x:Name="PART_CalendarItem"
+                                  Style="{DynamicResource {x:Type CalendarItem}}"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  Foreground="{TemplateBinding Foreground}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CalendarItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarItem">
+                    <ControlTemplate.Resources>
+                        <DataTemplate x:Key="{x:Static CalendarItem.DayTitleTemplateResourceKey}">
+                            <TextBlock Text="{Binding}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       FontSize="11" FontWeight="SemiBold" Margin="2,4"
+                                       Foreground="{DynamicResource BrushTextSecondary}" />
+                        </DataTemplate>
+                        <ControlTemplate x:Key="BotaoSetaAnterior" TargetType="Button">
+                            <Border x:Name="fundo" Background="Transparent" CornerRadius="6">
+                                <Path Data="M 9 2 L 3 9 L 9 16" StrokeThickness="2"
+                                      
+                                      Stroke="{DynamicResource BrushTextSecondary}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushHover}" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                        <ControlTemplate x:Key="BotaoSetaProxima" TargetType="Button">
+                            <Border x:Name="fundo" Background="Transparent" CornerRadius="6">
+                                <Path Data="M 3 2 L 9 9 L 3 16" StrokeThickness="2"
+                                      
+                                      Stroke="{DynamicResource BrushTextSecondary}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushHover}" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                        <ControlTemplate x:Key="BotaoCabecalho" TargetType="Button">
+                            <Border x:Name="fundo" Background="Transparent" CornerRadius="6" Padding="10,2">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  TextElement.Foreground="{DynamicResource BrushTextPrimary}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushHover}" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ControlTemplate.Resources>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="2,2,2,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="PART_PreviousButton" Grid.Column="0" Width="28" Height="24"
+                                    Focusable="False" Template="{StaticResource BotaoSetaAnterior}" />
+                            <Button x:Name="PART_HeaderButton" Grid.Column="1" Height="24"
+                                    FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                    Focusable="False" Template="{StaticResource BotaoCabecalho}" />
+                            <Button x:Name="PART_NextButton" Grid.Column="2" Width="28" Height="24"
+                                    Focusable="False" Template="{StaticResource BotaoSetaProxima}" />
+                        </Grid>
+                        <Grid x:Name="PART_MonthView" Grid.Row="1" Margin="4,2,4,2" Visibility="Visible">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                        <Grid x:Name="PART_YearView" Grid.Row="1" Margin="4,2,4,2" Visibility="Hidden">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- A troca de visão é feita pelo template (como no padrão
+                             do WPF): DataTrigger no DisplayMode do Calendar ancestral —
+                             o CalendarItem não tem essa propriedade. -->
+                        <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource AncestorType={x:Type Calendar}}}" Value="Year">
+                            <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_YearView" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource AncestorType={x:Type Calendar}}}" Value="Decade">
+                            <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_YearView" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <!-- ===== Listas ===== -->
     <Style TargetType="ListBox">

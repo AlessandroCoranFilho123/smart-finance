@@ -4,6 +4,7 @@
     <Grid>
         <Button x:Name="BotaoData"
                 Click="AbrirCalendario"
+                Style="{StaticResource BotaoSecundario}"
                 HorizontalContentAlignment="Left"
                 Padding="10,8"
                 Cursor="Hand"

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Tools;
@@ -92,6 +93,19 @@ public class CapturaTests : IDisposable
     }
 
     [Fact]
+    public void CapturarCalendarioNosDoisTemas()
+    {
+        AplicarTema("escuro");
+        CapturarCalendario("escuro");
+
+        AplicarTema("claro");
+        CapturarCalendario("claro");
+
+        // restaura a preferência original do usuário
+        File.WriteAllText(_caminhoConfig, _configOriginal);
+    }
+
+    [Fact]
     public void CapturarCenarioDeBancoCorrompido_ESF009_Encerra()
     {
         string corrompido = Path.Combine(_dirTemp, "corrompido.db");
@@ -121,6 +135,56 @@ public class CapturaTests : IDisposable
     }
 
     // ── apoio ─────────────────────────────────────────────────────────────
+
+    /// <summary>Abre o calendário do filtro de transações e fotografa o popup
+    /// (janela de topo separada do processo, como em DataTransacoesTests).</summary>
+    private void CapturarCalendario(string sufixo)
+    {
+        // recria a view (clicar no próprio RadioButton já marcado não dispara
+        // AoNavegar): garante popup recém-instanciado em cada tema
+        Navegar("NavInicio");
+        Navegar("NavTransacoes");
+        var seletor = Buscar("DataInicio")
+            ?? throw new InvalidOperationException("seletor de data não encontrado");
+        seletor.FindFirstDescendant(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))!
+            .AsButton().Invoke();
+
+        var app = FlaUI.Core.Application.Attach(_processo);
+        var popup = Retry.WhileNull(() => app.GetAllTopLevelWindows(_automation)
+                .FirstOrDefault(w => !w.Properties.IsOffscreen.ValueOrDefault
+                    && w.FindAllDescendants(
+                        cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Calendar)).Length > 0),
+            TimeSpan.FromSeconds(5), ignoreException: true).Result
+            ?? throw new InvalidOperationException("popup do calendário não abriu");
+        Thread.Sleep(400);
+        CapturarJanela(popup, $"10-calendario-{sufixo}");
+
+        // visão de meses: clicar no cabeçalho ("novembro de 2026") alterna o modo
+        var cabecalho = popup.FindFirstDescendant(cf => cf.ByName("novembro de 2026"));
+        if (cabecalho is not null)
+        {
+            cabecalho.AsButton().Invoke();
+            var janeiro = Retry.WhileNull(() => popup.FindFirstDescendant(cf => cf.ByName("jan")),
+                TimeSpan.FromSeconds(5), ignoreException: true).Result;
+            if (janeiro is null)
+            {
+                var nomes = popup.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))
+                    .Select(b => b.Properties.Name.ValueOrDefault)
+                    .Where(n => !string.IsNullOrEmpty(n));
+                throw new InvalidOperationException(
+                    $"visão de meses não abriu ao clicar no cabeçalho; botões visíveis: {string.Join(", ", nomes)}");
+            }
+
+            CapturarJanela(popup, $"11-calendario-meses-{sufixo}");
+        }
+
+        FlaUI.Core.Input.Keyboard.Press(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESC);
+        FlaUI.Core.Input.Keyboard.Release(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESC);
+        Thread.Sleep(300);
+        FlaUI.Core.Input.Keyboard.Press(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESC);
+        FlaUI.Core.Input.Keyboard.Release(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESC);
+        Thread.Sleep(300);
+    }
 
     private void CapturarTodasAsTelas(string sufixo)
     {
