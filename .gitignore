@@ -45,3 +45,5 @@ Thumbs.db
 # Locais do usuário (não versionar)
 /.ai/
 /installer/
+# instaladores gerados localmente pelo Inno Setup
+setup/Output/

@@ -1,4 +1,4 @@
-# Publicação completa do Smart Finance (ver docs/ARQUITETURA.md > Publicação).
+﻿# Publicação completa do Smart Finance (ver docs/ARQUITETURA.md > Publicação).
 # Uso: powershell -File setup/Publicar.ps1 -Versao 3.4.4 [-Resumo "texto das notas"]
 # Requisitos: worktree da main com árvore limpa; .NET SDK; Inno Setup 6;
 # credencial GitHub no Git Credential Manager.
