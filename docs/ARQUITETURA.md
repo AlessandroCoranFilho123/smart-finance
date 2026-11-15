@@ -45,9 +45,18 @@ Toda operação que combina mais de um comando (aplicar/resgatar meta, atualizar
 ## UI e temas
 
 - Paletas em `Themes/Palette.Light.xaml` e `Palette.Dark.xaml`; `TemaManager` troca o dicionário de recursos em tempo de execução e persiste a escolha em `settings.json` (padrão: seguir o sistema, via registro do Windows).
-- `Themes/Global.xaml` concentra estilos (botões, campos, ComboBox, DatePicker, listas, barra de progresso, scrollbar fina); os componentes usam `DynamicResource`, então a troca de tema é instantânea.
+- `Themes/Global.xaml` concentra estilos (botões, campos, ComboBox, calendário, listas, barra de progresso, scrollbar fina); os componentes usam `DynamicResource`, então a troca de tema é instantânea.
 - Barra de título acompanha o modo escuro do Windows via `DwmSetWindowAttribute` (`Views/JanelaNativa.cs`), com fallback silencioso.
 - Ícones reaproveitam os PNGs da versão JavaFX (empacotados como recursos).
+
+### Convenções e pegadinhas de template (protegidas por teste)
+
+- **Calendar** (`Views/SeletorData`): o template padrão do WPF usa texto preto sobre fundo transparente e fica ilegível no tema escuro. Os estilos do calendário vivem em `Global.xaml`. Dois detalhes que o template padrão exige:
+  - Os botões de dia/mês (`CalendarDayButton`/`CalendarButton`) são criados em código **dentro da árvore do template do `CalendarItem`**, onde estilos implícitos de aplicativo não são aplicados — por isso entram pelas propriedades `Calendar.CalendarDayButtonStyle` e `Calendar.CalendarButtonStyle` (chaves `BotaoDiaCalendario`/`BotaoMesCalendario`).
+  - A troca visão de dias ↔ visão de meses/anos é feita por **`DataTrigger` no `DisplayMode` do `Calendar` ancestral** (`RelativeSource FindAncestor`), pois `CalendarItem` não tem essa propriedade; o `CalendarItem` só popula as grades `PART_MonthView`/`PART_YearView` (nomes obrigatórios).
+- **TextBox**: o `TextBoxView` interno já aplica o `Padding` do controle — o template NÃO deve repetir o padding como `Margin` no `PART_ContentHost`, senão o campo fica ~18px mais alto que ComboBox/SeletorData na mesma linha.
+- **Botões de diálogo**: `Excluir` usa `BotaoExcluir` (base `BotaoSecundario` + texto vermelho) para compartilhar tamanho e linha com Cancelar/Salvar.
+- Esses pontos têm regressão coberta por testes de GUI: `AlinhamentoTests` (alturas/alinhamento via retângulos UIA) e `CapturaTests` (cores do calendário amostradas por pixel nas capturas dos dois temas).
 
 ## Testes
 
@@ -60,8 +69,29 @@ Toda operação que combina mais de um comando (aplicar/resgatar meta, atualizar
 - regras de cartão, empréstimos e metas;
 - formatos dos exportadores CSV/TXT.
 
-A interface não tem testes automatizados; a validação de UI é manual (smoke test de inicialização + uso).
+`tests/SmartFinance.GuiTests` exercita a interface real via UIA/FlaUI (app com banco isolado em `%TEMP%`):
+
+- `GuiTests` — navegação, criação de transação pela UI, diálogos, teclado, persistência;
+- `DataTransacoesTests` — seletores de data da tela de transações (o filtro por datas é coberto em unitários; **excluído do CI**: semear o banco por segunda conexão SQLite não é visível para a conexão WAL já aberta pelo app — limitação de ambiente documentada em SF-058);
+- `AlinhamentoTests` — alturas/alinhamento dos campos do filtro e da linha de botões do diálogo de edição;
+- `CapturaTests` — captura todas as telas/diálogos e o calendário nos dois temas em `docs/auditoria/imagens` (base para verificação visual) e **asserta cores por pixel** (cartão do popup, dia de hoje, campo de data) para prevenir regressão de contraste;
+- `AcessibilidadeTests` — varredura de árvore UIA.
+
+Os testes de GUI exigem sessão interativa do Windows (no CI rodam apenas os unitários, com três testes GUI sensíveis a ambiente excluídos — ver `ci.yml`).
 
 ## Publicação
 
 `dotnet publish src/SmartFinance -c Release -o dist` produz um único `SmartFinance.exe` autocontido (`win-x64`, ReadyToRun, bibliotecas nativas embutidas — extraídas para `%TEMP%\.net` na primeira execução).
+
+### Release completa (automatizada)
+
+`powershell -File setup/Publicar.ps1 -Versao 3.4.4` (a partir do worktree da `main`, árvore limpa) executa o fluxo inteiro:
+
+1. bump da versão em `SmartFinance.csproj` e `setup/SmartFinance.iss` + commit;
+2. build Release + testes unitários;
+3. publicação do exe (`dist/`) e geração do instalador com Inno Setup (`setup/Output/SmartFinance-Setup-<versão>.exe`);
+4. push do `main`;
+5. criação da release no GitHub (via API, usando a credencial do Git Credential Manager) com o instalador como asset e os hashes SHA-256 do exe e do instalador nas notas — é esse hash que o auto-atualizador confere (`AtualizacaoService.ExtrairHashSetup`);
+6. verificação ponta a ponta: `releases/latest` apontando para a nova versão, hash parseável nas notas e SHA-256 do asset baixado igual ao publicado.
+
+O aplicativo verifica atualização 1× por dia (`AtualizacaoService`): release publicada = atualização entregue automaticamente. Requisitos locais: .NET SDK, Inno Setup 6 e credencial GitHub do `git-credential-manager`.

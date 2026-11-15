@@ -60,6 +60,11 @@ dotnet publish src/SmartFinance -c Release -r win-x64 --self-contained true \
   -p:IncludeNativeLibrariesForSelfExtract=true -o dist
 ```
 
+Para publicar uma versão completa (bump, testes, push e release no GitHub com
+o instalador e os hashes — o app se auto-atualiza a partir da release), use
+`powershell -File setup/Publicar.ps1 -Versao X.Y.Z`; detalhes em
+`docs/ARQUITETURA.md` (Publicação).
+
 Para apontar o aplicativo para outro banco durante o desenvolvimento:
 
 ```bash
