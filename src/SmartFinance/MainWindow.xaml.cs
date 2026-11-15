@@ -46,7 +46,10 @@ public partial class MainWindow : Window
 
     private async void OferecerAtualizacao(Services.InformacaoAtualizacao informacao)
     {
-        bool comInstalador = !string.IsNullOrEmpty(informacao.UrlInstalador);
+        // Sem hash publicado nas notas, o instalador não é verificado (SF-047):
+        // nesse caso NÃO instala silenciosamente — só abre a página da release.
+        bool comInstalador = !string.IsNullOrEmpty(informacao.UrlInstalador)
+            && informacao.HashInstalador is not null;
         string pergunta = comInstalador
             ? $"Nova versão {informacao.VersaoNova} disponível (atual: {Services.AtualizacaoService.VersaoAtual.ToString(3)}).\n\nBaixar e instalar agora? O aplicativo será fechado e reaberto automaticamente."
             : $"Nova versão {informacao.VersaoNova} disponível (atual: {Services.AtualizacaoService.VersaoAtual.ToString(3)}).\n\nAbrir a página de download?";

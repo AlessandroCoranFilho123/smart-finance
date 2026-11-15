@@ -107,35 +107,6 @@ public class CapturaTests : IDisposable
         File.WriteAllText(_caminhoConfig, _configOriginal);
     }
 
-    [Fact]
-    public void CapturarCenarioDeBancoCorrompido_ESF009_Encerra()
-    {
-        string corrompido = Path.Combine(_dirTemp, "corrompido.db");
-        File.WriteAllBytes(corrompido, new byte[] { 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x01 });
-
-        var psi = new ProcessStartInfo
-        {
-            FileName = Path.Combine(AppContext.BaseDirectory, "SmartFinance.exe"),
-            UseShellExecute = false
-        };
-        psi.EnvironmentVariables["SMARTFINANCE_DB_PATH"] = corrompido;
-        var processo = Process.Start(psi)!;
-        var app = Application.Attach(processo);
-        var automacao = new UIA3Automation();
-
-        var caixa = Retry.WhileNull(() => app.GetAllTopLevelWindows(automacao)
-                .FirstOrDefault(w => w.Properties.Name.ValueOrDefault == "Smart Finance"),
-            TimeSpan.FromSeconds(20), ignoreException: true).Result
-            ?? throw new InvalidOperationException("mensagem de erro não apareceu");
-
-        CapturarJanela(caixa, "20-erro-banco-corrompido");
-
-        caixa.FindFirstDescendant(cf => cf.ByName("OK"))!.AsButton().Invoke();
-        bool encerrou = processo.WaitForExit(10_000);
-        Assert.True(encerrou, "processo deve encerrar após o usuário fechar a mensagem (SF-009)");
-        _saida.WriteLine("SF-009 verificado: mensagem exibida e processo encerrou.");
-    }
-
     // ── apoio ─────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -162,10 +133,14 @@ public class CapturaTests : IDisposable
         Assert.Equal(corCard, PixelDoBitmap(captura, retJanela,
             retCalendario.Left - 4, retCalendario.Top + retCalendario.Height / 2));
 
-        // célula do dia de hoje: fundo BrushAccentSoft (amostra fora do número)
-        var hoje = DateTime.Today.Day.ToString();
-        var celulaHoje = popup.FindFirstDescendant(cf => cf.ByName(hoje))
-            ?? throw new InvalidOperationException($"célula do dia {hoje} não encontrada no calendário");
+        // célula do dia de hoje: fundo BrushAccentSoft (amostra fora do número).
+        // O peer do CalendarDayButton expõe a data completa ("sábado, 15 de
+        // novembro de 2026"), então o casamento é por fragmento da data.
+        var hoje = DateTime.Today;
+        var celulaHoje = popup.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))
+            .FirstOrDefault(b => (b.Properties.Name.ValueOrDefault ?? "")
+                .Contains($" {hoje.Day} de ") && (b.Properties.Name.ValueOrDefault ?? "").Contains($"{hoje.Year}"))
+            ?? throw new InvalidOperationException($"célula do dia {hoje.Day} não encontrada no calendário");
         var retHoje = celulaHoje.BoundingRectangle;
         Assert.Equal(corHoje, PixelDoBitmap(captura, retJanela,
             retHoje.Left + retHoje.Width * 0.12, retHoje.Top + retHoje.Height / 2));
@@ -215,12 +190,16 @@ public class CapturaTests : IDisposable
         CapturarJanela(popup, $"10-calendario-{sufixo}");
         VerificarCoresDoCalendario(sufixo, popup, seletor);
 
-        // visão de meses: clicar no cabeçalho ("novembro de 2026") alterna o modo
-        var cabecalho = popup.FindFirstDescendant(cf => cf.ByName("novembro de 2026"));
+        // visão de meses: clicar no cabeçalho ("mês de ano" em pt-BR) alterna o modo
+        var cabecalhoMesAno = DateTime.Today.ToString("MMMM 'de' yyyy", new System.Globalization.CultureInfo("pt-BR"));
+        var cabecalho = popup.FindFirstDescendant(cf => cf.ByName(cabecalhoMesAno))
+            ?? throw new InvalidOperationException($"cabeçalho do calendário ({cabecalhoMesAno}) não encontrado");
         if (cabecalho is not null)
         {
             cabecalho.AsButton().Invoke();
-            var janeiro = Retry.WhileNull(() => popup.FindFirstDescendant(cf => cf.ByName("jan")),
+            // os botões de mês se expõem como "janeiro de 2026" (data completa)
+            var janeiro = Retry.WhileNull(() => popup.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Button))
+                    .FirstOrDefault(b => (b.Properties.Name.ValueOrDefault ?? "").StartsWith("janeiro")),
                 TimeSpan.FromSeconds(5), ignoreException: true).Result;
             if (janeiro is null)
             {

@@ -30,15 +30,7 @@ public sealed class EmprestimoRepository(Database db) : RepositoryBase(db)
         comando.ExecuteNonQuery();
     }
 
-    public void DefinirTransacaoVinculada(Guid id, Guid? transacaoId)
-    {
-        using var comando = Comando("UPDATE emprestimo SET transacao_id = $transacaoId WHERE id = $id");
-        comando.Parameters.AddWithValue("$transacaoId", (object?)transacaoId?.ToString() ?? DBNull.Value);
-        comando.Parameters.AddWithValue("$id", id.ToString());
-        comando.ExecuteNonQuery();
-    }
-
-    public void Deletar(Guid id)
+public void Deletar(Guid id)
     {
         using var comando = Comando("DELETE FROM emprestimo WHERE id = $id");
         comando.Parameters.AddWithValue("$id", id.ToString());

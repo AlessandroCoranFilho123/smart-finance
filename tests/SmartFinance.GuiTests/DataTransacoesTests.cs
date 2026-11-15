@@ -33,6 +33,7 @@ public class DataTransacoesTests : IClassFixture<GuiTests.AppFixture>, IDisposab
         // ver SF-052; o comportamento é verificado visualmente nas capturas)
         var botaoDe = CampoDeData(de);
         botaoDe.AsButton().Invoke();
+        Assert.True(AguardarCalendario(), "popup do calendário não abriu");
         Thread.Sleep(500);
 
         // fechar com Escape e abrir o do campo Até
@@ -108,11 +109,14 @@ public class DataTransacoesTests : IClassFixture<GuiTests.AppFixture>, IDisposab
     private bool AguardarCalendario()
     {
         // o popup do calendário é um HWND separado: procurar em TODAS as janelas
-        // de topo do processo, não só sob a janela principal
+        // de topo do processo, não só sob a janela principal (mesmo padrão do
+        // CapturaTests — janela visível e contendo um Calendar)
         var app = FlaUI.Core.Application.Attach(_fx.Processo);
-        return Retry.WhileTrue(() => !app.GetAllTopLevelWindows(_fx.Automation)
-                .Any(w => w.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Calendar)).Length > 0),
-            TimeSpan.FromSeconds(5), ignoreException: true).Result == false;
+        var popup = Retry.WhileNull(() => app.GetAllTopLevelWindows(_fx.Automation)
+                .FirstOrDefault(w => !w.Properties.IsOffscreen.ValueOrDefault
+                    && w.FindAllDescendants(cf => cf.ByControlType(FlaUI.Core.Definitions.ControlType.Calendar)).Length > 0),
+            TimeSpan.FromSeconds(8), ignoreException: true).Result;
+        return popup is not null;
     }
 
     private bool AguardarLinhas(int esperado)

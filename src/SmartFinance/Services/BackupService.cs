@@ -25,8 +25,10 @@ public sealed class BackupService(string caminhoBanco, string pastaBackups, int 
             return null;
         }
 
-        using var origem = new SqliteConnection($"Data Source={caminhoBanco};Mode=ReadOnly;Pooling=false");
-        using var backupConn = new SqliteConnection($"Data Source={destino};Pooling=false");
+        var origemStr = new SqliteConnectionStringBuilder { DataSource = caminhoBanco, Mode = SqliteOpenMode.ReadOnly, Pooling = false };
+        var destinoStr = new SqliteConnectionStringBuilder { DataSource = destino, Pooling = false };
+        using var origem = new SqliteConnection(origemStr.ConnectionString);
+        using var backupConn = new SqliteConnection(destinoStr.ConnectionString);
         origem.Open();
         backupConn.Open();
         origem.BackupDatabase(backupConn);

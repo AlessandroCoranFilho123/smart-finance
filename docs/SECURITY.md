@@ -8,7 +8,7 @@ O SmartFinance é um aplicativo desktop local com banco SQLite. O banco fica em:
 %APPDATA%\SmartFinance\financas.db
 ```
 
-O arquivo é protegido pelas permissões padrão do perfil do usuário do Windows (outros usuários da máquina não têm acesso ao perfil). O aplicativo não envia dados para a internet — não há rede, telemetria nem sincronização.
+O arquivo é protegido pelas permissões padrão do perfil do usuário do Windows (outros usuários da máquina não têm acesso ao perfil). **Nenhum dado financeiro sai da máquina** — não há telemetria nem sincronização. O único tráfego de rede é a verificação de atualização (uma consulta diária ao `api.github.com`) e, com consentimento do usuário, o download do instalador da nova versão.
 
 ## Medidas aplicadas
 
@@ -27,12 +27,19 @@ O arquivo é protegido pelas permissões padrão do perfil do usuário do Window
 A versão JavaFX 2.x continha uma **fundação** de criptografia (AES-256-GCM com chave no Windows Credential Manager), porém ela não era invocada por nenhum fluxo — o banco nunca foi criptografado. A reescrita removeu esse código morto. Ou seja:
 
 - **O banco não é criptografado em repouso.** Quem tiver acesso ao arquivo (por exemplo, acesso ao disco) lê os dados.
-- Não há backup automático embutido; exportar `.csv`/`.txt` ou copiar `financas.db` (com o app fechado) é o meio de backup atual.
+- Não há exportação de backup protegida por senha; exportar `.csv`/`.txt` ou copiar `financas.db` (com o app fechado) é o meio de cópia manual.
+
+## Atualização automática (F5/F6)
+
+- Checagem diária silenciosa em `https://api.github.com/repos/.../releases/latest` (HTTPS, sem envio de dados).
+- O instalador só é baixado e executado **com consentimento do usuário** e somente se o SHA-256 do instalador estiver publicado nas notas da release — o hash é conferido antes de executar.
+- Se a release não publicar o hash (ou estiver em formato inesperado), o aplicativo **recusa a instalação silenciosa** e apenas abre a página da release para download manual.
+- Risco residual documentado (SF-047): o hash reside no mesmo canal (GitHub) que o instalador — comprometimento da conta anularia a verificação.
 
 ## Próximos passos
 
 1. Criptografia em repouso do arquivo (SQLCipher ou criptografia por campo com chave via DPAPI/Credential Manager) — requer decisão sobre a busca FTS, que indexa texto claro.
-2. Backup automático agendado do `financas.db` com opção de exportação protegida por senha (derivação PBKDF2/Argon2id).
+2. Exportação de backup protegida por senha (derivação PBKDF2/Argon2id).
 3. Revisão de permissão do arquivo do banco (ACL restritiva) na criação.
 4. Evitar logs com valores financeiros, comentários ou identificadores sensíveis.
 

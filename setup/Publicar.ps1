@@ -31,8 +31,11 @@ $iss = "$raiz\setup\SmartFinance.iss"
     Set-Content $csproj -NoNewline
 (Get-Content $iss -Raw) -replace '#define VersaoApp "[^"]+"', "#define VersaoApp `"$Versao`"" |
     Set-Content $iss -NoNewline
-git add $csproj $iss
-if (git status --porcelain -- $csproj $iss) {
+$manifest = "$raiz\src\SmartFinancepp.manifest"
+(Get-Content $manifest -Raw) -replace 'version="[0-9.]+\.[0-9]+\.0"', "version=\"$Versao.0\"" |
+    Set-Content $manifest -NoNewline
+git add $csproj $iss $manifest
+if (git status --porcelain -- $csproj $iss $manifest) {
     git commit -m "Bump version to $Versao"
 } else {
     Write-Host "versão já está em $Versao (nada a commitar)"

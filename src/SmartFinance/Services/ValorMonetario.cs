@@ -10,7 +10,9 @@ namespace SmartFinance.Services;
 /// </summary>
 public static partial class ValorMonetario
 {
-    [GeneratedRegex(@"^\d{1,3}(\.\d{3})*,\d{1,2}$")]
+    // Parte inteira: grupos de milhar com ponto OU 4+ dígitos seguidos ("1234,56"
+    // é inequívoco em pt-BR e era recusado indevidamente — D-03).
+    [GeneratedRegex(@"^(?:\d{1,3}(\.\d{3})*|\d{4,}),\d{1,2}$")]
     private static partial Regex MilharComDecimal();
 
     [GeneratedRegex(@"^\d+\.\d{1,2}$")]
@@ -64,7 +66,18 @@ public static partial class ValorMonetario
             throw new ArgumentException("Valor inválido");
         }
 
-        decimal centavos = valor * 100m;
+        decimal centavos;
+        try
+        {
+            // número de 28 dígitos com vírgula estoura o decimal antes do
+            // guard abaixo — converte para o ArgumentException esperado
+            centavos = valor * 100m;
+        }
+        catch (OverflowException)
+        {
+            throw new ArgumentException("Valor inválido");
+        }
+
         if (centavos < 0m || centavos > long.MaxValue)
         {
             throw new ArgumentException("Valor inválido");

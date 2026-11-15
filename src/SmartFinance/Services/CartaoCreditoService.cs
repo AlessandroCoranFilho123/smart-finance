@@ -12,7 +12,8 @@ namespace SmartFinance.Services;
 public sealed class CartaoCreditoService(
     Database db,
     CartaoCreditoRepository repository,
-    TransacaoRepository transacaoRepository)
+    TransacaoRepository transacaoRepository,
+    TransacaoService transacoes)
 {
     public void Salvar(Guid? id, string nome, long valorTotalCentavos, int parcelas, int parcelasPagas, DateOnly vencimento, Guid? carteiraId)
     {
@@ -20,16 +21,26 @@ public sealed class CartaoCreditoService(
 
         db.EmTransacao(() =>
         {
-            EstornarMovimentacao(id);
-
             var hoje = DateOnly.FromDateTime(DateTime.Today);
+
+            // D-13: edição preserva a competência da movimentação vinculada;
+            // só a criação usa hoje.
+            DateOnly dataMovimentacao = hoje;
+            var movimentacaoAnterior = MovimentacaoAnterior(id);
+            if (movimentacaoAnterior is not null)
+            {
+                dataMovimentacao = movimentacaoAnterior.Data;
+            }
+
+            EstornarMovimentacao(movimentacaoAnterior);
+
             var movimentacao = new Transacao(
                 Guid.NewGuid(),
                 $"Compra no cartão: {compra.Nome}",
                 string.Empty,
                 compra.ValorTotalCentavos,
                 TipoTransacao.Saida,
-                hoje,
+                dataMovimentacao,
                 null,
                 Categoria.Compras,
                 compra.CarteiraId);
@@ -51,7 +62,7 @@ public sealed class CartaoCreditoService(
     {
         db.EmTransacao(() =>
         {
-            EstornarMovimentacao(id);
+            EstornarMovimentacao(MovimentacaoAnterior(id));
             repository.Deletar(id);
         });
     }
@@ -74,17 +85,26 @@ public sealed class CartaoCreditoService(
             return diasAteVencimento >= 0 && diasAteVencimento <= dias && compra.ParcelasRestantes > 0;
         });
 
-    private void EstornarMovimentacao(Guid? id)
+    private Transacao? MovimentacaoAnterior(Guid? id)
     {
         if (id is null)
         {
-            return;
+            return null;
         }
 
         var atual = repository.BuscarPorId(id.Value);
-        if (atual?.TransacaoId is not null)
+        return atual?.TransacaoId is null ? null : transacaoRepository.BuscarPorId(atual.TransacaoId.Value);
+    }
+
+    /// <summary>Exclui a movimentação vinculada via TransacaoService: reverte a
+    /// meta quando a transação foi reclassificada (SF-006/D-05) e valida
+    /// não-negatividade — o DELETE direto no repositório pulava essas regras e
+    /// podia criar dinheiro do nada (auditoria 15/11/2026).</summary>
+    private void EstornarMovimentacao(Transacao? movimentacaoAnterior)
+    {
+        if (movimentacaoAnterior is not null)
         {
-            transacaoRepository.Excluir(atual.TransacaoId.Value);
+            transacoes.ExcluirTransacao(movimentacaoAnterior.Id);
         }
     }
 

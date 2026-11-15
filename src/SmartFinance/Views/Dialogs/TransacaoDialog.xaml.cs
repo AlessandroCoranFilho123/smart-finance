@@ -233,6 +233,7 @@ public partial class TransacaoDialog : Window
         }
         catch (Exception ex)
         {
+            App.RegistrarLog(ex.ToString());
             MostrarErro("Erro ao salvar transação: " + ex.Message);
         }
     }
@@ -259,6 +260,7 @@ public partial class TransacaoDialog : Window
         }
         catch (Exception ex)
         {
+            App.RegistrarLog(ex.ToString());
             MostrarErro("Erro ao excluir: " + ex.Message);
         }
     }

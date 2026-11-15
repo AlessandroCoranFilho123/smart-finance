@@ -11,7 +11,8 @@ namespace SmartFinance.Services;
 public sealed class EmprestimoService(
     Database db,
     EmprestimoRepository repository,
-    TransacaoRepository transacaoRepository)
+    TransacaoRepository transacaoRepository,
+    TransacaoService transacoes)
 {
     public void Salvar(Guid? id, TipoEmprestimo tipo, string nome, long valorCentavos, DateOnly dataPagamento, Guid? carteiraId)
     {
@@ -29,9 +30,19 @@ public sealed class EmprestimoService(
 
         db.EmTransacao(() =>
         {
-            EstornarMovimentacao(id);
-
             var hoje = DateOnly.FromDateTime(DateTime.Today);
+
+            // D-13: edição preserva a competência da movimentação vinculada;
+            // só a criação usa hoje.
+            DateOnly dataMovimentacao = hoje;
+            var movimentacaoAnterior = MovimentacaoAnterior(id);
+            if (movimentacaoAnterior is not null)
+            {
+                dataMovimentacao = movimentacaoAnterior.Data;
+            }
+
+            EstornarMovimentacao(movimentacaoAnterior);
+
             bool saida = tipo == TipoEmprestimo.Emprestei;
             var movimentacao = new Transacao(
                 Guid.NewGuid(),
@@ -39,7 +50,7 @@ public sealed class EmprestimoService(
                 string.Empty,
                 emprestimo.ValorCentavos,
                 saida ? TipoTransacao.Saida : TipoTransacao.Entrada,
-                hoje,
+                dataMovimentacao,
                 null,
                 Categoria.Emprestimo,
                 emprestimo.CarteiraId);
@@ -61,7 +72,7 @@ public sealed class EmprestimoService(
     {
         db.EmTransacao(() =>
         {
-            EstornarMovimentacao(id);
+            EstornarMovimentacao(MovimentacaoAnterior(id));
             repository.Deletar(id);
         });
     }
@@ -72,17 +83,26 @@ public sealed class EmprestimoService(
 
     public long TotalPorTipoCentavos(TipoEmprestimo tipo) => ListarPorTipo(tipo).Sum(e => e.ValorCentavos);
 
-    private void EstornarMovimentacao(Guid? id)
+    private Transacao? MovimentacaoAnterior(Guid? id)
     {
         if (id is null)
         {
-            return;
+            return null;
         }
 
         var atual = repository.BuscarPorId(id.Value);
-        if (atual?.TransacaoId is not null)
+        return atual?.TransacaoId is null ? null : transacaoRepository.BuscarPorId(atual.TransacaoId.Value);
+    }
+
+    /// <summary>Exclui a movimentação vinculada via TransacaoService: reverte a
+    /// meta quando a transação foi reclassificada (SF-006/D-05) e valida
+    /// não-negatividade — o DELETE direto no repositório pulava essas regras
+    /// (auditoria 15/11/2026).</summary>
+    private void EstornarMovimentacao(Transacao? movimentacaoAnterior)
+    {
+        if (movimentacaoAnterior is not null)
         {
-            transacaoRepository.Excluir(atual.TransacaoId.Value);
+            transacoes.ExcluirTransacao(movimentacaoAnterior.Id);
         }
     }
 }

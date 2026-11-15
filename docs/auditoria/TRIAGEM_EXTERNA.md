@@ -90,7 +90,7 @@ Novo achado: **SF-039 (médio/alto, visual)** — barras de progresso nunca pree
 |---|---|
 | SF-052 (GLM: CI vermelho — datas não commitam no runner) | **RESOLVIDO** — causa raiz: o WPF DatePicker parseia com a cultura da thread (não com Language); bootstrap fixa pt-BR; teste usa datas não-ambíguas e ciclo de retentativa; verificação de valores via ValuePattern |
 | SF-053 (GLM: portátil × instalado) | **DECISÃO DO USUÁRIO** ("atualize na minha máquina") — F6 atualiza via instalador, que converte a cópia portátil em instalada |
-| SF-040 (competência das movimentações) | **RESOLVIDO** (D-13) — a edição de compra/empréstimo preserva a data original da movimentação vinculada; teste novo |
+| SF-040 (competência das movimentações) | **RESOLVIDO** (D-13) — a edição de compra/empréstimo preserva a data original da movimentação vinculada; teste novo. **CORREÇÃO (15/11/2026)**: na data deste registro a correção NÃO tinha sido implementada nem testada (auditoria de 15/11 detectou); implementada de fato na rodada 7 com testes |
 | SF-041 (falha de instalação) | **RESOLVIDO** — o app não encerra mais às cegas: monitora o instalador; UAC recusado → mensagem e app continua aberto |
 | SF-055 (janela de download) | **RESOLVIDO** — Owner definido, cancelável (fecha = cancela o download) |
 | SF-056 (acúmulo de temp) | **RESOLVIDO** — instaladores antigos removidos antes de cada download |

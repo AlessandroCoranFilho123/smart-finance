@@ -29,7 +29,9 @@ public static class AtualizacaoService
     private const string UrlLatest =
         "https://api.github.com/repos/AlessandroCoranFilho123/smart-finance/releases/latest";
 
-    internal static readonly string CaminhoControle = Path.Combine(
+    // mutável (internal) para os testes apontarem para um arquivo temporário:
+    // mutar o arquivo real tocaria o %APPDATA% do usuário (auditoria 15/11/2026)
+    internal static string CaminhoControle { get; set; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "SmartFinance", "atualizacao.json");
 

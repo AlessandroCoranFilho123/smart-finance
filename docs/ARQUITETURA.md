@@ -55,8 +55,14 @@ Toda operação que combina mais de um comando (aplicar/resgatar meta, atualizar
   - Os botões de dia/mês (`CalendarDayButton`/`CalendarButton`) são criados em código **dentro da árvore do template do `CalendarItem`**, onde estilos implícitos de aplicativo não são aplicados — por isso entram pelas propriedades `Calendar.CalendarDayButtonStyle` e `Calendar.CalendarButtonStyle` (chaves `BotaoDiaCalendario`/`BotaoMesCalendario`).
   - A troca visão de dias ↔ visão de meses/anos é feita por **`DataTrigger` no `DisplayMode` do `Calendar` ancestral** (`RelativeSource FindAncestor`), pois `CalendarItem` não tem essa propriedade; o `CalendarItem` só popula as grades `PART_MonthView`/`PART_YearView` (nomes obrigatórios).
 - **TextBox**: o `TextBoxView` interno já aplica o `Padding` do controle — o template NÃO deve repetir o padding como `Margin` no `PART_ContentHost`, senão o campo fica ~18px mais alto que ComboBox/SeletorData na mesma linha.
-- **Botões de diálogo**: `Excluir` usa `BotaoExcluir` (base `BotaoSecundario` + texto vermelho) para compartilhar tamanho e linha com Cancelar/Salvar.
+- **Cores de texto em botões (SF-025 estendido)**: o estilo implícito de `TextBlock` (que fixa `Foreground`) **vence** o `Foreground` herdado/anexado dentro de templates — corrigido nos templates de `BotaoPrimario`/`BotaoPerigo`/`BotaoAlternar`/`BotaoExcluir` e dos botões do calendário usando `TextBlock` explícito com `TemplateBinding` (valor local vence o estilo implícito). O estilo implícito e os templates de conteúdo elemento (`BotaoTema`, `BotaoData`) continuam com `ContentPresenter`. `BotaoExcluir` (base `BotaoSecundario` + texto vermelho) compartilha tamanho e linha com Cancelar/Salvar.
 - Esses pontos têm regressão coberta por testes de GUI: `AlinhamentoTests` (alturas/alinhamento via retângulos UIA) e `CapturaTests` (cores do calendário amostradas por pixel nas capturas dos dois temas).
+
+## Codificação de fontes (crítico para strings acentuadas)
+
+- Todo `.cs` do projeto deve ser **UTF-8 estrito** (sem bytes inválidos). O compilador Roslyn valida o arquivo como UTF-8 e, **se houver um único byte inválido, recodifica o arquivo INTEIRO no codepage ANSI (cp1252)** — todas as strings acentuadas viram mojibake no binário (bug real da 3.4.x: a MessageBox de instância única exibia "jÃ¡ estÃ¡").
+- Arquivos UTF-8 válido **sem BOM** compilam corretamente (verificado com repro mínimo no SDK em uso); BOM é opcional, consistência não é.
+- Deteção: `python -c "open(arquivo, 'rb').read().decode('utf-8')"` em todos os `.cs`; o `erro.log` do app (`%APPDATA%\SmartFinance`) exibe as strings do runtime — mojibake lá = arquivo corrompido.
 
 ## Testes
 
@@ -77,7 +83,7 @@ Toda operação que combina mais de um comando (aplicar/resgatar meta, atualizar
 - `CapturaTests` — captura todas as telas/diálogos e o calendário nos dois temas em `docs/auditoria/imagens` (base para verificação visual) e **asserta cores por pixel** (cartão do popup, dia de hoje, campo de data) para prevenir regressão de contraste;
 - `AcessibilidadeTests` — varredura de árvore UIA.
 
-Os testes de GUI exigem sessão interativa do Windows (no CI rodam apenas os unitários, com três testes GUI sensíveis a ambiente excluídos — ver `ci.yml`).
+Contagens atuais: **144 testes unitários** + **15 GUI** (`DataTransacoesTests` excluído do CI). Os testes de GUI exigem sessão interativa do Windows (no CI rodam no runner windows-latest, exceto os dois testes sensíveis a ambiente — ver `ci.yml`).
 
 ## Publicação
 

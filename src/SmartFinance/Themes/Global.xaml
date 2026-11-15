@@ -103,7 +103,12 @@
                             Background="{TemplateBinding Background}"
                             CornerRadius="10"
                             Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <!-- TextBlock em vez de ContentPresenter: o estilo implícito
+                             de TextBlock (SF-025) venceria o Foreground do botão e
+                             o texto primário ficaria com a cor errada sobre o accent.
+                             Usos deste estilo têm conteúdo sempre primitivo. -->
+                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -152,9 +157,39 @@
     </Style>
 
     <!-- Excluir nos diálogos: mesmo tamanho/linha dos outros botões (visual de
-         campo, como BotaoSecundario) com texto vermelho para ação destrutiva. -->
+         campo, como BotaoSecundario) com texto vermelho para ação destrutiva.
+         Template próprio com TextBlock: herdando o template de BotaoSecundario
+         (ContentPresenter), o estilo implícito de TextBlock (SF-025) anularia
+         o vermelho e o texto sairia com a cor de texto comum. -->
     <Style x:Key="BotaoExcluir" TargetType="Button" BasedOn="{StaticResource BotaoSecundario}">
         <Setter Property="Foreground" Value="{DynamicResource BrushSaida}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="fundo"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource BrushFieldBorder}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="{TemplateBinding Padding}">
+                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="fundo" Property="Opacity" Value="0.85" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Botão de ação destrutiva/cancelamento: vermelho sólido com texto branco -->
@@ -169,7 +204,9 @@
                             Background="{TemplateBinding Background}"
                             CornerRadius="10"
                             Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <!-- ver nota do TextBlock no BotaoPrimario -->
+                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -242,7 +279,10 @@
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="0,10">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <!-- ver nota do TextBlock no BotaoPrimario (conteúdo
+                             primitivo "Entrada"/"Saída"/"Emprestei"/"Pedi") -->
+                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
@@ -441,13 +481,15 @@
                 <ControlTemplate TargetType="CalendarDayButton">
                     <Grid>
                         <Border x:Name="fundo" Background="Transparent" CornerRadius="7" />
-                        <ContentPresenter x:Name="texto" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Margin="3"
-                                          TextElement.Foreground="{DynamicResource BrushTextPrimary}" />
+                        <!-- TextBlock real (não ContentPresenter): o estilo implícito
+                             de TextBlock venceria Foreground herdado/anexado, mas
+                             perde para os triggers do template abaixo -->
+                        <TextBlock x:Name="texto" Text="{TemplateBinding Content}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsInactive" Value="True">
-                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushTextSecondary}" />
+                            <Setter TargetName="texto" Property="Foreground" Value="{DynamicResource BrushTextSecondary}" />
                             <Setter TargetName="texto" Property="Opacity" Value="0.55" />
                         </Trigger>
                         <Trigger Property="IsBlackedOut" Value="True">
@@ -458,8 +500,8 @@
                         </Trigger>
                         <Trigger Property="IsToday" Value="True">
                             <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccentSoft}" />
-                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushAccentTexto}" />
-                            <Setter TargetName="texto" Property="TextElement.FontWeight" Value="Bold" />
+                            <Setter TargetName="texto" Property="Foreground" Value="{DynamicResource BrushAccentTexto}" />
+                            <Setter TargetName="texto" Property="FontWeight" Value="Bold" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -470,8 +512,8 @@
                         </MultiTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccent}" />
-                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushAccentForeground}" />
-                            <Setter TargetName="texto" Property="TextElement.FontWeight" Value="SemiBold" />
+                            <Setter TargetName="texto" Property="Foreground" Value="{DynamicResource BrushAccentForeground}" />
+                            <Setter TargetName="texto" Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -490,9 +532,8 @@
                 <ControlTemplate TargetType="CalendarButton">
                     <Grid>
                         <Border x:Name="fundo" Background="Transparent" CornerRadius="7" />
-                        <ContentPresenter x:Name="texto" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Margin="3"
-                                          TextElement.Foreground="{DynamicResource BrushTextPrimary}" />
+                        <TextBlock x:Name="texto" Text="{TemplateBinding Content}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -500,8 +541,8 @@
                         </Trigger>
                         <Trigger Property="HasSelectedDays" Value="True">
                             <Setter TargetName="fundo" Property="Background" Value="{DynamicResource BrushAccentSoft}" />
-                            <Setter TargetName="texto" Property="TextElement.Foreground" Value="{DynamicResource BrushAccentTexto}" />
-                            <Setter TargetName="texto" Property="TextElement.FontWeight" Value="SemiBold" />
+                            <Setter TargetName="texto" Property="Foreground" Value="{DynamicResource BrushAccentTexto}" />
+                            <Setter TargetName="texto" Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -82,9 +82,14 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Transações recentes" Style="{StaticResource TituloSecao}" VerticalAlignment="Center" />
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Content="Ver todas →" Style="{StaticResource BotaoLink}"
+                                <!-- Foreground local no TextBlock: o estilo implícito
+                                     de TextBlock (SF-025) anularia o Foreground do
+                                     BotaoLink (Templates.xaml) -->
+                                <Button Style="{StaticResource BotaoLink}"
                                         VerticalAlignment="Center" Margin="0,0,10,0"
-                                        Click="IrParaTransacoes" />
+                                        Click="IrParaTransacoes">
+                                    <TextBlock Text="Ver todas →" Foreground="{DynamicResource BrushAccentTexto}" />
+                                </Button>
                                 <Button Content="+ Nova transação"
                                         Style="{StaticResource BotaoPrimario}" Padding="12,7"
                                         Click="NovaTransacao" />

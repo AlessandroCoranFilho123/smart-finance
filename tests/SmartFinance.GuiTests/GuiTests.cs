@@ -16,7 +16,8 @@ namespace SmartFinance.GuiTests;
 /// Testes de interface com automação real (UIA/FlaUI). Lançam o aplicativo
 /// com banco isolado em %TEMP% e exercitam navegação, diálogos, teclado,
 /// persistência e tema. Executam em uma sessão interativa do Windows
-/// (no CI são excluídos com o filtro Category!=GUI).
+/// (no CI rodam no runner windows-latest, exceto os dois testes sensíveis a
+/// ambiente — ver ci.yml).
 /// </summary>
 [Trait("Category", "GUI")]
 public class GuiTests : IClassFixture<GuiTests.AppFixture>, IDisposable

@@ -55,8 +55,7 @@ public class RecursosNovosTests : IDisposable
 
         _app.Cartao.Salvar(null, "Notebook", 4800_00, 12, 0, Hoje, Database.CarteiraBancoId);
 
-        // saldo descontou o valor total (dinheiro comprometido com o cartão)
-        Assert.Equal(1000_00 - 4800_00 + 0, _app.Carteiras.CalcularSaldoCarteiraCentavos(Database.CarteiraBancoId) + 4800_00 - 4800_00);
+        // saldo descontou o valor total (dinheiro comprometido com o cartão — D-10)
         Assert.Equal(-3800_00, _app.Carteiras.CalcularSaldoCarteiraCentavos(Database.CarteiraBancoId));
 
         var movimentacao = _app.TransacaoRepo.ListarTodas().Single();
@@ -99,6 +98,70 @@ public class RecursosNovosTests : IDisposable
         // estorno devolveu 1200 ao Banco; a nova saída de 1500 caiu no Dinheiro físico
         Assert.Equal(5000_00, _app.Carteiras.CalcularSaldoCarteiraCentavos(Database.CarteiraBancoId));
         Assert.Equal(-1500_00, _app.Carteiras.CalcularSaldoCarteiraCentavos(Database.CarteiraDinheiroFisicoId));
+    }
+
+    [Fact]
+    public void F2_EditarCompra_PreservaDataDaMovimentacao()
+    {
+        _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 5000_00);
+        _app.Cartao.Salvar(null, "Notebook", 1200_00, 12, 0, Hoje, Database.CarteiraBancoId);
+        var movimentacao = _app.TransacaoRepo.ListarTodas().Single();
+
+        // re-data a movimentação para o mês anterior (competência)
+        var competencia = Hoje.AddDays(-30);
+        _app.Transacoes.Atualizar(movimentacao.Id, TipoTransacao.Saida, Categoria.Compras,
+            movimentacao.ValorCentavos, null, movimentacao.Comentario, competencia, movimentacao.CarteiraId);
+
+        // editar a compra não pode re-datar a movimentação (D-13)
+        var compra = _app.Cartao.ListarTodas().Single();
+        _app.Cartao.Salvar(compra.Id, "Notebook novo", 1500_00, 12, 0, compra.Vencimento, Database.CarteiraBancoId);
+
+        var apos = _app.TransacaoRepo.ListarTodas().Single();
+        Assert.Equal(competencia, apos.Data);
+        Assert.Equal(1500_00, apos.ValorCentavos);
+    }
+
+    [Fact]
+    public void F2_EstornoReverteMeta_QuandoMovimentacaoFoiReclassificada()
+    {
+        _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 500_00);
+        _app.Cartao.Salvar(null, "Notebook", 100_00, 2, 0, Hoje, Database.CarteiraBancoId);
+        var movimentacao = _app.TransacaoRepo.ListarTodas().Single();
+
+        // usuário reclassifica a movimentação "Compra no cartão" como Aplicar em meta
+        _app.Metas.CriarMeta("Reserva", 1000_00);
+        var meta = _app.Metas.ListarTodasMetas().Single();
+        _app.Transacoes.Atualizar(movimentacao.Id, TipoTransacao.Saida, Categoria.AdicionarMeta,
+            movimentacao.ValorCentavos, meta, "", movimentacao.Data, movimentacao.CarteiraId);
+        Assert.Equal(100_00, _app.Metas.BuscarPorId(meta.Id)!.AtualCentavos);
+
+        // excluir a compra precisa reverter a meta — o DELETE direto criava
+        // dinheiro do nada (meta acumulada + carteira de volta)
+        _app.Cartao.Deletar(_app.Cartao.ListarTodas().Single().Id);
+
+        Assert.Equal(0, _app.Metas.BuscarPorId(meta.Id)!.AtualCentavos);
+        Assert.Equal(500_00, _app.Carteiras.CalcularSaldoCarteiraCentavos(Database.CarteiraBancoId));
+        Assert.Empty(_app.TransacaoRepo.ListarTodas());
+    }
+
+    [Fact]
+    public void F2_EstornoBloqueado_QuandoMetaParcialmenteResgatada()
+    {
+        _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 500_00);
+        _app.Cartao.Salvar(null, "Notebook", 100_00, 2, 0, Hoje, Database.CarteiraBancoId);
+        var movimentacao = _app.TransacaoRepo.ListarTodas().Single();
+
+        _app.Metas.CriarMeta("Reserva", 1000_00);
+        var meta = _app.Metas.ListarTodasMetas().Single();
+        _app.Transacoes.Atualizar(movimentacao.Id, TipoTransacao.Saida, Categoria.AdicionarMeta,
+            movimentacao.ValorCentavos, meta, "", movimentacao.Data, movimentacao.CarteiraId);
+
+        // resgate parcial da aplicação: excluir a original criaria dinheiro (SF-006)
+        _app.Transacoes.Registrar(TipoTransacao.Entrada, Categoria.RetirarMeta, 60_00, meta, "", Hoje,
+            Database.CarteiraBancoId);
+
+        Assert.Throws<ArgumentException>(() => _app.Cartao.Deletar(_app.Cartao.ListarTodas().Single().Id));
+        Assert.Equal(40_00, _app.Metas.BuscarPorId(meta.Id)!.AtualCentavos);
     }
 
     // ── F2/D-10: empréstimos movem a carteira ─────────────────────────────
@@ -151,6 +214,28 @@ public class RecursosNovosTests : IDisposable
         Assert.Null(excecao);
     }
 
+    [Fact]
+    public void F2_EditarEmprestimo_PreservaDataDaMovimentacao()
+    {
+        _app.Carteiras.AtualizarSaldoInicial(Database.CarteiraBancoId, 300_00);
+        _app.Emprestimos.Salvar(null, TipoEmprestimo.Emprestei, "Ana", 200_00, Hoje.AddDays(10), Database.CarteiraBancoId);
+        var movimentacao = _app.TransacaoRepo.ListarTodas().Single();
+
+        // re-data a movimentação para o mês anterior (competência)
+        var competencia = Hoje.AddDays(-30);
+        _app.Transacoes.Atualizar(movimentacao.Id, TipoTransacao.Saida, Categoria.Emprestimo,
+            movimentacao.ValorCentavos, null, movimentacao.Comentario, competencia, movimentacao.CarteiraId);
+
+        // editar o empréstimo não pode re-datar a movimentação (D-13)
+        var emprestimo = _app.Emprestimos.ListarTodas().Single();
+        _app.Emprestimos.Salvar(emprestimo.Id, TipoEmprestimo.Emprestei, "Ana", 250_00, emprestimo.DataPagamento,
+            Database.CarteiraBancoId);
+
+        var apos = _app.TransacaoRepo.ListarTodas().Single();
+        Assert.Equal(competencia, apos.Data);
+        Assert.Equal(250_00, apos.ValorCentavos);
+    }
+
     // ── F5: verificação de atualização ────────────────────────────────────
 
     [Theory]
@@ -167,14 +252,24 @@ public class RecursosNovosTests : IDisposable
     [Fact]
     public void F5_DeveVerificarHoje_MarcaUmaVezPorDia()
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(AtualizacaoService.CaminhoControle)!);
-        File.Delete(AtualizacaoService.CaminhoControle); // estado limpo, independente da máquina
-
-        Assert.True(AtualizacaoService.DeveVerificarHoje()); // sem arquivo de controle
-        AtualizacaoService.MarcarVerificadoHoje();
-        Assert.False(AtualizacaoService.DeveVerificarHoje());
-        AtualizacaoService.MarcarVerificadoHoje(); // idempotente no mesmo dia
-        Assert.False(AtualizacaoService.DeveVerificarHoje());
+        // arquivo de controle em temp: tocar o %APPDATA% real sujaria o estado
+        // do usuário e bloquearia a checagem diária do app (auditoria 15/11/2026)
+        var original = AtualizacaoService.CaminhoControle;
+        var temporario = Path.Combine(Path.GetTempPath(), $"sf-f5-{Guid.NewGuid():N}.json");
+        AtualizacaoService.CaminhoControle = temporario;
+        try
+        {
+            Assert.True(AtualizacaoService.DeveVerificarHoje()); // sem arquivo de controle
+            AtualizacaoService.MarcarVerificadoHoje();
+            Assert.False(AtualizacaoService.DeveVerificarHoje());
+            AtualizacaoService.MarcarVerificadoHoje(); // idempotente no mesmo dia
+            Assert.False(AtualizacaoService.DeveVerificarHoje());
+        }
+        finally
+        {
+            AtualizacaoService.CaminhoControle = original;
+            File.Delete(temporario);
+        }
     }
 
     // ── T-R: reconciliação incluindo cartão e empréstimo ──────────────────

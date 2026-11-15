@@ -6,6 +6,9 @@ public class ValorMonetarioTests
 {
     [Theory]
     [InlineData("1.234,56", 123456)]
+    [InlineData("1234,56", 123456)]
+    [InlineData("2500,0", 250000)]
+    [InlineData("123456,78", 12345678)]
     [InlineData("10,50", 1050)]
     [InlineData("10", 1000)]
     [InlineData("10.50", 1050)]
@@ -28,6 +31,7 @@ public class ValorMonetarioTests
     [InlineData("0.500")]
     [InlineData("10,123")]
     [InlineData("99999999999999999999")]
+    [InlineData("9999999999999999999999999999,99")]
     public void ParseCentavos_EntradasAmbiguasOuEstouro_SaoRecusadas(string texto)
     {
         // D-03: valor errado gravado em silêncio é pior que recusar; teto de long (T-014).

@@ -21,7 +21,7 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // SF-052: DatePickerTextBox parseia com a cultura da thread (n„o com Language);
+        // SF-052: DatePickerTextBox parseia com a cultura da thread (n√£o com Language);
         // fixa pt-BR para que dd/MM/yyyy funcione em qualquer Windows.
         System.Threading.Thread.CurrentThread.CurrentCulture = Formatacao.CulturaBr;
         System.Threading.Thread.CurrentThread.CurrentUICulture = Formatacao.CulturaBr;
@@ -91,14 +91,15 @@ public partial class App : Application
         var metaRepo = new MetaRepository(db);
         var carteiraRepo = new CarteiraRepository(db);
         var carteiras = new CarteiraService(carteiraRepo, transacaoRepo);
+        var transacoes = new TransacaoService(db, transacaoRepo, metaRepo, carteiras);
 
         Servicos = new Servicos(
             db,
-            new TransacaoService(db, transacaoRepo, metaRepo, carteiras),
+            transacoes,
             carteiras,
             new MetaService(metaRepo),
-            new CartaoCreditoService(db, new CartaoCreditoRepository(db), transacaoRepo),
-            new EmprestimoService(db, new EmprestimoRepository(db), transacaoRepo));
+            new CartaoCreditoService(db, new CartaoCreditoRepository(db), transacaoRepo, transacoes),
+            new EmprestimoService(db, new EmprestimoRepository(db), transacaoRepo, transacoes));
 
         TemaManager.Inicializar();
 

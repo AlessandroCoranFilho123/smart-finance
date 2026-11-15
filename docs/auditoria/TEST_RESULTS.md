@@ -76,6 +76,8 @@ Banco do usuário **nunca usado em testes destrutivos** — apenas cópia em `%T
 
 | Execução | Escopo | Resultado |
 |---|---|---|
-| Unitária pós-correções | **136 testes** (inclui D-13 competência + migração de compra/emprestimo NT-2) | **PASSOU (136/136)** |
+| Unitária pós-correções | **136 testes** (migração de compra/emprestimo NT-2) | **PASSOU (136/136)** |
+| **CORREÇÃO (15/11/2026)** | a linha acima atribuía àquela rodada a competência D-13, que **não** tinha sido implementada nem testada (revelado pela auditoria de 15/11 — ver REGRESSION_REPORT) | corrigido |
+| Unitária pós-auditoria 15/11/2026 | **144 testes** (agora inclui D-13 de cartão/empréstimo, estorno meta-aware e "1234,56") | **PASSOU (144/144)** |
 | GUI completa (serializada) | **12 testes** | **PASSOU (12/12)** |
 | Smoke binário 3.4.1 | startup ok | **PASSOU** |
