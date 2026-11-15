@@ -32,7 +32,8 @@ $iss = "$raiz\setup\SmartFinance.iss"
 (Get-Content $iss -Raw) -replace '#define VersaoApp "[^"]+"', "#define VersaoApp `"$Versao`"" |
     Set-Content $iss -NoNewline
 $manifest = "$raiz\src\SmartFinancepp.manifest"
-(Get-Content $manifest -Raw) -replace 'version="[0-9.]+\.[0-9]+\.0"', "version=\"$Versao.0\"" |
+$versaoManifest = 'version="' + $Versao + '.0"'
+(Get-Content $manifest -Raw) -replace 'version="[0-9.]+\.0"', $versaoManifest |
     Set-Content $manifest -NoNewline
 git add $csproj $iss $manifest
 if (git status --porcelain -- $csproj $iss $manifest) {
