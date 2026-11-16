@@ -30,10 +30,10 @@
                 <ColumnDefinition Width="8" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <ToggleButton x:Name="BotaoEmprestei" Style="{StaticResource BotaoAlternar}"
+            <ToggleButton x:Name="BotaoEmprestei" Style="{StaticResource BotaoAlternarVerde}"
                           Tag="{DynamicResource BrushEntrada}"
                           Content="Emprestei" Checked="AoMudarTipo" Unchecked="AoMudarTipo" />
-            <ToggleButton x:Name="BotaoPedi" Grid.Column="2" Style="{StaticResource BotaoAlternar}"
+            <ToggleButton x:Name="BotaoPedi" Grid.Column="2" Style="{StaticResource BotaoAlternarLaranja}"
                           Tag="{DynamicResource BrushAviso}"
                           Content="Pedi emprestado" Checked="AoMudarTipo" Unchecked="AoMudarTipo" />
         </Grid>

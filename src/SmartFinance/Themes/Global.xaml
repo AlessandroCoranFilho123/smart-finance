@@ -279,16 +279,18 @@
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="0,10">
-                        <!-- ver nota do TextBlock no BotaoPrimario (conteúdo
-                             primitivo "Entrada"/"Saída"/"Emprestei"/"Pedi") -->
-                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                        <!-- TextBlock com Binding completo (não TemplateBinding):
+                             o Foreground do botão muda com o estado marcado e o
+                             TemplateBinding não resolve a cadeia Binding(Tag) →
+                             DynamicResource (saía PRETO — auditoria 15/11). O
+                             Binding acompanha a mudança e resolve o recurso. -->
+                        <TextBlock Text="{TemplateBinding Content}" Foreground="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="fundo" Property="BorderThickness" Value="2" />
                             <Setter TargetName="fundo" Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}" />
-                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}" />
                             <Setter TargetName="fundo" Property="Background" Value="Transparent" />
                         </Trigger>
                         <MultiTrigger>
@@ -302,6 +304,34 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- Cores de texto do estado marcado: variantes por cor (o Foreground do
+         botão recebe DynamicResource DIRETO no trigger, que o TextBlock do
+         template resolve; a indireção via Tag={DynamicResource} não resolve —
+         texto saía preto, auditoria 15/11/2026). -->
+    <Style x:Key="BotaoAlternarVerde" TargetType="ToggleButton" BasedOn="{StaticResource BotaoAlternar}">
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource BrushEntrada}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BotaoAlternarVermelho" TargetType="ToggleButton" BasedOn="{StaticResource BotaoAlternar}">
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource BrushSaida}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BotaoAlternarLaranja" TargetType="ToggleButton" BasedOn="{StaticResource BotaoAlternar}">
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource BrushAviso}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- ===== Campos de texto ===== -->
