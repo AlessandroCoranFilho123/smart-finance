@@ -57,6 +57,33 @@ dotnet publish src/SmartFinance -c Release -r win-x64 --self-contained true `
     -p:IncludeNativeLibrariesForSelfExtract=true -o dist
 if ($LASTEXITCODE -ne 0) { throw "publish falhou" }
 
+# validação que faltava na 3.4.5: o exe publicado tem que INICIAR — um
+# manifest/encoding corrompido falha no Start-Process (erro SxS) e a release
+# é abortada antes de empacotar um executável morto
+Passo "Validando que o executável inicia"
+$dbValidacao = Join-Path $env:TEMP ("sf-release-" + [guid]::NewGuid().ToString('N') + ".db")
+$env:SMARTFINANCE_DB_PATH = $dbValidacao
+try {
+    $proc = Start-Process -FilePath "$raiz\dist\SmartFinance.exe" -PassThru
+    Start-Sleep -Seconds 15   # primeira execução extrai nativas (single-file)
+    if (-not $proc.HasExited) {
+        Stop-Process -Id $proc.Id -Force
+        Write-Host "exe iniciou e permaneceu vivo — SxS/manifest OK"
+    }
+    elseif ($proc.ExitCode -in 0, 1) {
+        # exit 1 = segunda instância (mutex) — o importante é que o PROCESSO
+        # criou-se com sucesso; falha SxS nem chega a criar processo
+        Write-Host "exe encerrou limpo (instância única ativa) — SxS/manifest OK"
+    }
+    else {
+        throw "exe publicado saiu com código inesperado $($proc.ExitCode) — release abortada"
+    }
+}
+finally {
+    Remove-Item Env:SMARTFINANCE_DB_PATH -ErrorAction SilentlyContinue
+    Remove-Item $dbValidacao -ErrorAction SilentlyContinue
+}
+
 $iscc = "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe"
 if (-not (Test-Path $iscc)) { throw "ISCC não encontrado: $iscc" }
 & $iscc "$raiz\setup\SmartFinance.iss"
