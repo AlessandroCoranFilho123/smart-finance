@@ -174,6 +174,12 @@ exceto `DataTransacoesTests` (ver limitação WAL abaixo).
   (unitários) e pela verificação ponta a ponta do `Publicar.ps1`];
   `F5_DeveVerificarHoje_MarcaUmaVezPorDia` roda com arquivo de controle em temp
   (restaura o original em `finally`).
+- **Publicar.ps1 valida que o exe INICIA** (implementado após o incidente da
+  3.4.5): após o publish, o fluxo de release lança o `dist\SmartFinance.exe`
+  com banco temporário — falha de SxS/manifest aborta a release **antes** de
+  empacotar um executável morto. Ressalva: se o app do usuário estiver rodando,
+  a instância de validação mostra a caixa de instância única e encerra com
+  código 1 — tratado como sucesso (o que importa é o processo ter se criado).
 - **Pilha de segurança**: HTTPS + repositório fixo + SHA-256 publicado nas notas
   (formato parseado por `ExtrairHashSetup`) + recusa sem hash.
 
