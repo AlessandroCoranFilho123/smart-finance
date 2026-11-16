@@ -83,7 +83,9 @@ Toda operação que combina mais de um comando (aplicar/resgatar meta, atualizar
 - `CapturaTests` — captura todas as telas/diálogos e o calendário nos dois temas em `docs/auditoria/imagens` (base para verificação visual) e **asserta cores por pixel** (cartão do popup, dia de hoje, campo de data) para prevenir regressão de contraste;
 - `AcessibilidadeTests` — varredura de árvore UIA.
 
-Contagens atuais: **144 testes unitários** + **15 GUI** (`DataTransacoesTests` excluído do CI). Os testes de GUI exigem sessão interativa do Windows (no CI rodam no runner windows-latest, exceto os dois testes sensíveis a ambiente — ver `ci.yml`).
+Contagens atuais: **225 testes unitários** + **16 GUI** (`DataTransacoesTests` excluído do CI). Os testes de GUI exigem sessão interativa do Windows (no CI rodam no runner windows-latest, exceto os testes sensíveis a ambiente — ver `ci.yml`).
+
+O mapa completo **classe de bug → teste que a prende → reprodução manual** está em [docs/REGRESSAO.md](REGRESSAO.md) — toda classe de bug nova deve ser registrada lá com sua guarda.
 
 ## Publicação
 

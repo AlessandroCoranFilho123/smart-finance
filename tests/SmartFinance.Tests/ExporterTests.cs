@@ -24,6 +24,26 @@ public class ExporterTests
     }
 
     [Fact]
+    public void Txt_Exportar_GravaArquivoEmDisco()
+    {
+        string destino = Path.Combine(Path.GetTempPath(), "sf-test-" + Guid.NewGuid().ToString("N") + ".txt");
+        try
+        {
+            TransacaoTxtExporter.Exportar(destino, Amostra());
+
+            Assert.True(File.Exists(destino));
+            var conteudo = File.ReadAllText(destino);
+            Assert.StartsWith("Smart Finance - Exportação de Transações", conteudo);
+            Assert.Contains("1. 10/11/2026 | Entrada | Salário | R$ 1.500,00", conteudo);
+            Assert.Contains("Categoria: Alimentacao", conteudo);
+        }
+        finally
+        {
+            File.Delete(destino);
+        }
+    }
+
+    [Fact]
     public void Csv_Exportar_GravaComBom()
     {
         string destino = Path.Combine(Path.GetTempPath(), "sf-test-" + Guid.NewGuid().ToString("N") + ".csv");

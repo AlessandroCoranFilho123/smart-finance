@@ -9,6 +9,27 @@ public class TransacaoServiceTests : IDisposable
     private static readonly DateOnly Hoje = new(2026, 11, 10);
 
     [Fact]
+    public void ListarRecentes_OrdenaMaisRecentesPrimeiroELimita()
+    {
+        // inserção deliberadamente fora de ordem cronológica
+        _app.Transacoes.Registrar(TipoTransacao.Entrada, Categoria.Salario, 100_00, null, "mais antiga", Hoje.AddDays(-2));
+        _app.Transacoes.Registrar(TipoTransacao.Entrada, Categoria.Salario, 300_00, null, "mais recente", Hoje);
+        _app.Transacoes.Registrar(TipoTransacao.Entrada, Categoria.Salario, 200_00, null, "intermediária", Hoje.AddDays(-1));
+
+        var recentes = _app.Transacoes.ListarRecentes(2);
+
+        Assert.Equal(2, recentes.Count);
+        Assert.Equal("mais recente", recentes[0].Comentario);
+        Assert.Equal("intermediária", recentes[1].Comentario);
+
+        // limite maior que a quantidade devolve tudo, ordenado
+        var todas = _app.Transacoes.ListarRecentes(10);
+        Assert.Equal(3, todas.Count);
+        Assert.Equal(new[] { "mais recente", "intermediária", "mais antiga" },
+            todas.Select(t => t.Comentario).ToArray());
+    }
+
+    [Fact]
     public void RegistrarEntrada_SalvaTransacaoComDescricaoDaCategoria()
     {
         _app.Transacoes.Registrar(TipoTransacao.Entrada, Categoria.Salario, 100_00, null, "pagamento", Hoje);

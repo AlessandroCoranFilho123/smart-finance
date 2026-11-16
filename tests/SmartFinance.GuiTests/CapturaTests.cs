@@ -166,6 +166,102 @@ public class CapturaTests : IDisposable
             Math.Min(Math.Max(y, 0), bitmap.Height - 1));
     }
 
+    /// <summary>Varre uma região de tela na captura procurando um pixel dentro
+    /// da tolerância da cor esperada (núcleo do glifo chega à cor pura).</summary>
+    private static bool RegiaoContemCor(
+        System.Drawing.Bitmap bitmap, System.Drawing.Rectangle janela,
+        System.Drawing.Rectangle regiaoTela, System.Drawing.Color cor, int tolerancia)
+    {
+        double escala = bitmap.Width / janela.Width;
+        int x0 = (int)((regiaoTela.Left - janela.Left) * escala);
+        int x1 = (int)((regiaoTela.Right - janela.Left) * escala);
+        int y0 = (int)((regiaoTela.Top - janela.Top) * escala);
+        int y1 = (int)((regiaoTela.Bottom - janela.Top) * escala);
+        for (int x = Math.Max(0, x0); x <= Math.Min(bitmap.Width - 1, x1); x++)
+        {
+            for (int y = Math.Max(0, y0); y <= Math.Min(bitmap.Height - 1, y1); y++)
+            {
+                var c = bitmap.GetPixel(x, y);
+                if (Math.Abs(c.R - cor.R) <= tolerancia && Math.Abs(c.G - cor.G) <= tolerancia
+                    && Math.Abs(c.B - cor.B) <= tolerancia)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static System.Drawing.Color Cor(byte r, byte g, byte b) => System.Drawing.Color.FromArgb(r, g, b);
+
+    /// <summary>Reduz o retângulo (para amostrar o INTERIOR do texto, longe da
+    /// borda do controle — que pode ter a mesma cor do estado).</summary>
+    private static System.Drawing.Rectangle Reduzir(System.Drawing.Rectangle r, double fator)
+    {
+        int dx = (int)(r.Width * fator / 2);
+        int dy = (int)(r.Height * fator / 2);
+        return new System.Drawing.Rectangle(r.Left + dx, r.Top + dy, r.Width - 2 * dx, r.Height - 2 * dy);
+    }
+
+    /// <summary>
+    /// Regressão de cores dos alternadores Entrada/Saída (SF-025 estendido —
+    /// o texto do estado marcado chegou a renderizar PRETO no modo escuro):
+    /// o texto do toggle SELECIONADO deve ter a cor do estado (verde) e o não
+    /// selecionado NÃO pode ter a cor de um estado alheio.
+    /// </summary>
+    private void VerificarCoresToggles(Window dialogo, string sufixo)
+    {
+        bool escuro = sufixo == "escuro";
+        var corSelecionado = escuro ? Cor(0x33, 0xC9, 0x8D) : Cor(0x15, 0x80, 0x3D);
+        var corNaoSelecionado = escuro ? Cor(0x97, 0xA1, 0xB8) : Cor(0x5D, 0x68, 0x80);
+
+        using var captura = dialogo.Capture();
+        var retJanela = dialogo.BoundingRectangle;
+
+        var entrada = dialogo.FindFirstDescendant(cf => cf.ByName("Entrada"))
+            ?? throw new InvalidOperationException("toggle 'Entrada' não encontrado");
+        var interiorEntrada = Reduzir(entrada.BoundingRectangle, 0.3);
+        Assert.True(RegiaoContemCor(captura, retJanela, interiorEntrada, corSelecionado, 12),
+            $"texto do toggle selecionado ('Entrada') não está na cor do estado ({corSelecionado}) — " +
+            "regressão de template (SF-025 estendido)");
+
+        var saida = dialogo.FindFirstDescendant(cf => cf.ByName("Saída"))
+            ?? throw new InvalidOperationException("toggle 'Saída' não encontrado");
+        var interiorSaida = Reduzir(saida.BoundingRectangle, 0.3);
+        Assert.False(RegiaoContemCor(captura, retJanela, interiorSaida, corSelecionado, 12),
+            "toggle não selecionado herdou a cor de um estado alheio (verde)");
+        Assert.True(RegiaoContemCor(captura, retJanela, interiorSaida, corNaoSelecionado, 12),
+            "toggle não selecionado perdeu a cor de texto secundária");
+    }
+
+    /// <summary>Regressão das cores dos botões do diálogo de edição: Excluir
+    /// vermelho (chegou a renderizar na cor de texto comum) e Salvar branco
+    /// sobre o accent (chegou a renderizar azul-marinho no tema claro).</summary>
+    private void VerificarCoresBotoesEdicao(Window dialogo, string sufixo)
+    {
+        bool escuro = sufixo == "escuro";
+        var corExcluir = escuro ? Cor(0xF1, 0x6A, 0x70) : Cor(0xD1, 0x34, 0x38);
+        var corPrimario = escuro ? Cor(0xFF, 0xFF, 0xFF) : Cor(0xFF, 0xFF, 0xFF);
+
+        using var captura = dialogo.Capture();
+        var retJanela = dialogo.BoundingRectangle;
+
+        var excluir = dialogo.FindFirstDescendant(cf => cf.ByAutomationId("BotaoExcluir"))
+            ?? throw new InvalidOperationException("botão Excluir não encontrado");
+        var interiorExcluir = Reduzir(excluir.BoundingRectangle, 0.3);
+        Assert.True(RegiaoContemCor(captura, retJanela, interiorExcluir, corExcluir, 12),
+            "texto do botão Excluir não está vermelho — regressão SF-025 estendido");
+
+        var salvar = Retry.WhileNull(() => dialogo.FindFirstDescendant(cf => cf.ByName("Atualizar"))
+                ?? dialogo.FindFirstDescendant(cf => cf.ByName("Salvar")),
+            TimeSpan.FromSeconds(5), ignoreException: true).Result
+            ?? throw new InvalidOperationException("botão Salvar/Atualizar não encontrado");
+        var interiorSalvar = Reduzir(salvar.BoundingRectangle, 0.3);
+        Assert.True(RegiaoContemCor(captura, retJanela, interiorSalvar, corPrimario, 12),
+            "texto do botão primário não está branco sobre o accent — regressão SF-025 estendido");
+    }
+
     /// <summary>Abre o calendário do filtro de transações e fotografa o popup
     /// (janela de topo separada do processo, como em DataTransacoesTests).</summary>
     private void CapturarCalendario(string sufixo)
@@ -240,6 +336,7 @@ public class CapturaTests : IDisposable
         Navegar("NavTransacoes");
         var transacao = AbrirDialogo("+ Nova transação");
         CapturarJanela(transacao, $"06-dialogo-nova-transacao-{sufixo}");
+        VerificarCoresToggles(transacao, sufixo);
         FecharDialogo(transacao);
 
         Navegar("NavInicio");
@@ -280,6 +377,7 @@ public class CapturaTests : IDisposable
             ?? throw new InvalidOperationException("diálogo de edição não abriu");
         Thread.Sleep(400);
         CapturarJanela(dialogo, $"12-dialogo-editar-transacao-{sufixo}");
+        VerificarCoresBotoesEdicao(dialogo, sufixo);
 
         dialogo.FindFirstDescendant(cf => cf.ByName("Cancelar"))?.AsButton().Invoke();
         Thread.Sleep(400);

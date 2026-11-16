@@ -51,7 +51,7 @@ Requisitos: [.NET SDK 10 ou superior](https://dotnet.microsoft.com/download) (o 
 # restaurar e rodar
 dotnet run --project src/SmartFinance
 
-# testes (xUnit)
+# testes (xUnit) — o mapa "classe de bug → teste" está em docs/REGRESSAO.md
 dotnet test tests/SmartFinance.Tests
 
 # publicar executável único autocontido (win-x64)

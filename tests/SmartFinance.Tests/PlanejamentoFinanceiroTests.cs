@@ -115,6 +115,23 @@ public class CartaoEmprestimoMetaServiceTests : IDisposable
     // ── Metas ─────────────────────────────────────────────────────────────
 
     [Fact]
+    public void Metas_AtualizarMeta_ValidacoesECaminhoFeliz()
+    {
+        Assert.Throws<ArgumentNullException>(() => _app.Metas.AtualizarMeta(null!));
+
+        _app.Metas.CriarMeta("Original", 1000_00);
+        var meta = _app.Metas.ListarTodasMetas().Single();
+
+        // meta sem alvo é recusada na atualização (o modelo suporta, a regra não)
+        Assert.Throws<ArgumentException>(() => _app.Metas.AtualizarMeta(new Meta(meta.Id, "Sem alvo", null, meta.AtualCentavos)));
+
+        _app.Metas.AtualizarMeta(new Meta(meta.Id, "Renomeada", 2000_00, meta.AtualCentavos));
+        var apos = _app.Metas.BuscarPorId(meta.Id)!;
+        Assert.Equal("Renomeada", apos.Nome);
+        Assert.Equal(2000_00, apos.AlvoCentavos);
+    }
+
+    [Fact]
     public void Metas_CriarValidacoes()
     {
         Assert.Throws<ArgumentException>(() => _app.Metas.CriarMeta("   ", 100_00));

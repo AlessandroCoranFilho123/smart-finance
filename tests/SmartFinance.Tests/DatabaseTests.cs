@@ -9,6 +9,28 @@ public class DatabaseTests
     private static readonly DateOnly Hoje = new(2026, 11, 10);
 
     [Fact]
+    public void CaminhoPadrao_OverridePorVariavelDeAmbiente()
+    {
+        var original = Environment.GetEnvironmentVariable("SMARTFINANCE_DB_PATH");
+        try
+        {
+            // override do desenvolvimento/teste (usado por TODA a suíte GUI)
+            Environment.SetEnvironmentVariable("SMARTFINANCE_DB_PATH", "C" + Path.DirectorySeparatorChar + "teste.db");
+            Assert.Equal("C" + Path.DirectorySeparatorChar + "teste.db", Database.CaminhoPadrao());
+
+            // sem override: banco do usuário
+            Environment.SetEnvironmentVariable("SMARTFINANCE_DB_PATH", null);
+            var padrao = Database.CaminhoPadrao();
+            Assert.Contains("SmartFinance", padrao);
+            Assert.EndsWith("financas.db", padrao);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("SMARTFINANCE_DB_PATH", original);
+        }
+    }
+
+    [Fact]
     public void Initialize_CriaTabelasECarteirasPadrao()
     {
         using var app = new TestApp();
